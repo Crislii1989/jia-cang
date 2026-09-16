@@ -42,9 +42,9 @@ class _MePageState extends ConsumerState<MePage> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(0, 8, 0, 110),
                 children: [
-                  // 顶部标题（稿子 .nav-top .ttl：17/800；拍照入口已按要求隐藏）
+                  // 顶部标题（用户拍板沿用「个人中心」；拍照入口已按要求隐藏）
                   Text(
-                    '我的',
+                    '个人中心',
                     style: TextStyle(
                       fontSize: 17 * k,
                       fontWeight: FontWeight.w800,
