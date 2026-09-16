@@ -258,7 +258,6 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
       body: GradientBackground(
         child: Stack(
           children: [
-            _buildBackgroundDecoration(),
             SafeArea(
               child: Column(
                 children: [
@@ -331,39 +330,6 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildBackgroundDecoration() {
-    return Positioned.fill(
-      child: Stack(
-        children: [
-          Positioned(
-            top: 40,
-            right: -40,
-            width: 140,
-            height: 140,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.coral.withValues(alpha: 0.07),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 150,
-            left: -30,
-            width: 100,
-            height: 100,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.info.withValues(alpha: 0.05),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

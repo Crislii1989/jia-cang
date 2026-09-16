@@ -2,228 +2,197 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jia_cang/constants/app_colors.dart';
-import 'package:jia_cang/widgets/toast_utils.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
+import 'package:jia_cang/providers/profile_provider.dart';
+import 'package:jia_cang/widgets/emoji_text.dart';
+import 'package:jia_cang/widgets/section_title.dart';
+import 'help_feedback_sheet.dart';
 
-/// 功能入口列表
+/// 应用管理 / 设置 两组功能入口（高保真稿 S5 `.cell-group`，2026-09-16 按稿重排）。
+///
+/// 行式白卡组：行内细分割线（cellDivider），每行 = 26·k emoji 底块 +
+/// 标题（12.5·k）+ 右侧灰值（11.5·k）+ 箭头。
+/// 旧版「私密空间 / 家庭共享（即将上线占位）」不在稿内，已随重排移除。
 class FeatureMenuSection extends ConsumerWidget {
-  final VoidCallback onHelpTap;
-
-  const FeatureMenuSection({super.key, required this.onHelpTap});
-
-  static const _entries = [
-    _MenuEntry(
-      icon: Icons.cloud_upload_outlined,
-      title: '数据备份',
-      subtitle: 'WebDAV 云端备份与恢复',
-      color: AppColors.coral,
-      route: '/data-backup',
-    ),
-    _MenuEntry(
-      icon: Icons.lock_outline,
-      title: '私密空间',
-      subtitle: '保护隐私物品',
-      color: AppColors.purple,
-      comingSoon: true,
-    ),
-    _MenuEntry(
-      icon: Icons.family_restroom,
-      title: '家庭共享',
-      subtitle: '与家人共享物品信息',
-      color: AppColors.info,
-      comingSoon: true,
-    ),
-    _MenuEntry(
-      icon: Icons.update_outlined,
-      title: '检查更新',
-      subtitle: '检查是否有新版本可用',
-      color: AppColors.info,
-      route: '/check-update',
-    ),
-  ];
+  const FeatureMenuSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final k = DesignMetrics.of(context);
+    final stats = ref.watch(profileStatsProvider);
+    final data = stats.value ?? const {};
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ...List.generate(_entries.length, (i) {
-            return TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0, end: 1),
-              duration: const Duration(milliseconds: 400),
-              curve: const Cubic(0.34, 1.56, 0.64, 1),
-              builder: (context, t, child) {
-                return Transform.translate(
-                  offset: Offset(0, 20 * (1 - t)),
-                  child: Opacity(opacity: t.clamp(0.0, 1.0), child: child),
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.only(top: i > 0 ? 10 : 0),
-                child: _buildRow(context, _entries[i]),
-              ),
-            );
-          }),
-          // AI 模型设置
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: 1),
-            duration: const Duration(milliseconds: 400),
-            curve: const Cubic(0.34, 1.56, 0.64, 1),
-            builder: (context, t, child) {
-              return Transform.translate(
-                offset: Offset(0, 20 * (1 - t)),
-                child: Opacity(opacity: t.clamp(0.0, 1.0), child: child),
-              );
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: _buildRow(
-                context,
-                const _MenuEntry(
-                  icon: Icons.smart_toy_outlined,
-                  title: 'AI 模型设置',
-                  subtitle: '选择供应商、配置 API Key',
-                  color: AppColors.info,
-                  route: '/ai-settings',
-                ),
-              ),
-            ),
+          SectionTitle(
+            title: '应用管理',
+            titleSize: 13 * k,
+            titleColor: AppColors.blushInk,
           ),
-          // 帮助反馈
-          // TweenAnimationBuilder<double>(
-          //   tween: Tween(begin: 0, end: 1),
-          //   duration: const Duration(milliseconds: 400),
-          //   curve: const Cubic(0.34, 1.56, 0.64, 1),
-          //   builder: (context, t, child) {
-          //     return Transform.translate(
-          //       offset: Offset(0, 20 * (1 - t)),
-          //       child: Opacity(opacity: t.clamp(0.0, 1.0), child: child),
-          //     );
-          //   },
-          //   child: Padding(
-          //     padding: const EdgeInsets.only(top: 10),
-          //     child: _buildRow(
-          //       context,
-          //       const _MenuEntry(
-          //         icon: Icons.help_outline,
-          //         title: '帮助反馈',
-          //         subtitle: '使用帮助与意见反馈',
-          //         color: AppColors.success,
-          //       ),
-          //       onTap: onHelpTap,
-          //     ),
-          //   ),
-          // ),
+          SizedBox(height: 10 * k),
+          _CellGroup(
+            k: k,
+            cells: [
+              _Cell(
+                emoji: '📦',
+                title: '收纳空间管理',
+                value:
+                    '${data['roomCount'] ?? 0} 房间 · ${data['storageAreaCount'] ?? 0} 收纳区',
+                onTap: () => context.go('/storage'),
+              ),
+              _Cell(
+                emoji: '🏷',
+                title: '分类管理',
+                value: '${data['categoryCount'] ?? 0} 个分类',
+                onTap: () => context.push('/categories'),
+              ),
+            ],
+          ),
+          // 稿子：两组之间 18pt 间距
+          SizedBox(height: 18 * k),
+          SectionTitle(
+            title: '设置',
+            titleSize: 13 * k,
+            titleColor: AppColors.blushInk,
+          ),
+          SizedBox(height: 10 * k),
+          _CellGroup(
+            k: k,
+            cells: [
+              _Cell(
+                emoji: '☁️',
+                title: '数据备份与恢复',
+                onTap: () => context.push('/data-backup'),
+              ),
+              _Cell(
+                emoji: '🤖',
+                title: 'AI 识别设置',
+                onTap: () => context.push('/ai-settings'),
+              ),
+              _Cell(
+                emoji: '🔄',
+                title: '检查更新',
+                onTap: () => context.push('/check-update'),
+              ),
+              _Cell(
+                emoji: '💬',
+                title: '关于 / 反馈',
+                value: 'v1.3.1',
+                onTap: () => HelpFeedbackSheet.show(context),
+              ),
+            ],
+          ),
         ],
-      ),
-    );
-  }
-
-  /// AI 模型配置已迁移到 `/ai-settings` 页面，此 section 仅负责入口展示
-
-  Widget _buildRow(
-    BuildContext context,
-    _MenuEntry entry, {
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap:
-          onTap ??
-          () {
-            if (entry.comingSoon) {
-              ToastUtils.show(context, '即将上线，敬请期待');
-            } else if (entry.route != null) {
-              context.push(entry.route!);
-            }
-          },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: AppColors.cardBg,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.textPrimary.withValues(alpha: 0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: entry.color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(entry.icon, size: 24, color: entry.color),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    entry.title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    entry.subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (entry.comingSoon)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.background,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '即将上线',
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: AppColors.textHint,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              )
-            else
-              Icon(Icons.chevron_right, size: 20, color: AppColors.textHint),
-          ],
-        ),
       ),
     );
   }
 }
 
-class _MenuEntry {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Color color;
-  final String? route;
-  final bool comingSoon;
+/// 一组行式白卡：圆角卡 + 行间 1px cellDivider 细线。
+class _CellGroup extends StatelessWidget {
+  final double k;
+  final List<_Cell> cells;
 
-  const _MenuEntry({
-    required this.icon,
+  const _CellGroup({required this.k, required this.cells});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // 行分割线要顶到卡边，圆角必须显式裁子节点
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: AppColors.cardBg,
+        borderRadius: BorderRadius.circular(14 * k),
+        border: Border.all(color: AppColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.floatCardShadow,
+            blurRadius: 10,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          for (int i = 0; i < cells.length; i++) ...[
+            if (i > 0)
+              Container(height: 1, color: AppColors.cellDivider),
+            cells[i],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// 一行入口：26·k emoji 底块 + 标题 + 右值 + 箭头（稿子 `.cell`）。
+class _Cell extends StatelessWidget {
+  final String emoji;
+  final String title;
+  final String? value;
+  final VoidCallback onTap;
+
+  const _Cell({
+    required this.emoji,
     required this.title,
-    required this.subtitle,
-    required this.color,
-    this.route,
-    this.comingSoon = false,
+    required this.onTap,
+    this.value,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    final k = DesignMetrics.of(context);
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        constraints: BoxConstraints(minHeight: 40 * k),
+        padding: EdgeInsets.symmetric(horizontal: 12 * k, vertical: 10 * k),
+        child: Row(
+          children: [
+            Container(
+              width: 26 * k,
+              height: 26 * k,
+              decoration: BoxDecoration(
+                color: AppColors.goldSoft,
+                borderRadius: BorderRadius.circular(8 * k),
+              ),
+              alignment: Alignment.center,
+              child: EmojiText(emoji: emoji, fontSize: 13 * k),
+            ),
+            SizedBox(width: 10 * k),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12.5 * k,
+                fontWeight: FontWeight.w600,
+                color: AppColors.blushInk,
+              ),
+            ),
+            const Spacer(),
+            if (value != null)
+              Flexible(
+                child: Text(
+                  value!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11.5 * k,
+                    color: AppColors.blushInk3,
+                  ),
+                ),
+              ),
+            SizedBox(width: 4 * k),
+            Icon(
+              Icons.chevron_right,
+              size: 14 * k,
+              color: AppColors.blushInk3,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

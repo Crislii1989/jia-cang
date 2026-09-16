@@ -238,7 +238,6 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
       body: GradientBackground(
         child: Stack(
           children: [
-            _buildBackgroundDecoration(),
             SafeArea(
               child: Column(
                 children: [
@@ -269,36 +268,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
   }
 
   Widget _buildBackgroundDecoration() {
-    return Positioned.fill(
-      child: Stack(
-        children: [
-          Positioned(
-            top: 40,
-            right: -30,
-            width: 140,
-            height: 140,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.coral.withValues(alpha: 0.06),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 120,
-            left: -20,
-            width: 100,
-            height: 100,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.gradientGreen.withValues(alpha: 0.06),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildContent(List<CategoryItem> categories) {

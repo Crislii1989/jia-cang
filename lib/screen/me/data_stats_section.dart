@@ -1,146 +1,151 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jia_cang/constants/app_colors.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/providers/profile_provider.dart';
+import 'package:jia_cang/widgets/emoji_text.dart';
 
-/// 数据概览网格
+/// 数据概览（高保真稿 S5 `.stat` / `.grid2`，2026-09-16 按稿重排）。
+///
+/// 2×2 网格，每张卡：40·k 圆角 emoji 底块 +「数字 + 单位」（18·k/800）+
+/// 标签（10.5·k）。稿子注明「与首页同规格」——底块、字号与全局统计卡同一套。
+///
+/// 每项自带 [key]（profileStatsProvider 的字段名），不用「下标硬编码对应
+/// data 的哪个字段」——那样只要调整顺序就可能把数字接到错误的标签上。
 class DataStatsSection extends ConsumerWidget {
   const DataStatsSection({super.key});
 
-  /// 网格顺序即展示顺序（2 列，按行从左到右填充）：
-  /// 第一行 物品总数 / 分类数量，第二行 房间 / 收纳区。
-  ///
-  /// 每项自带 [key]（profileStatsProvider 的字段名），不再用「下标硬编码对应
-  /// data 的哪个字段」——那样只要调整顺序就可能把数字接到错误的标签上。
   static const _entries = [
     _StatEntry(
       key: 'itemCount',
-      icon: Icons.inventory_2_outlined,
+      emoji: '📦',
       label: '物品总数',
-      color: AppColors.statCoral,
+      unit: '件',
     ),
-    _StatEntry(
-      key: 'categoryCount',
-      icon: Icons.category_outlined,
-      label: '分类数量',
-      color: AppColors.statPeach,
-    ),
-    _StatEntry(
-      key: 'roomCount',
-      icon: Icons.meeting_room_outlined,
-      label: '房间',
-      color: AppColors.statGreen,
-    ),
-    _StatEntry(
-      key: 'storageAreaCount',
-      icon: Icons.grid_view_outlined,
-      label: '收纳区',
-      color: AppColors.statBlue,
-    ),
+    _StatEntry(key: 'categoryCount', emoji: '🏷', label: '分类', unit: '个'),
+    _StatEntry(key: 'roomCount', emoji: '🏠', label: '房间', unit: '间'),
+    _StatEntry(key: 'storageAreaCount', emoji: '🗄', label: '收纳区', unit: '个'),
   ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final k = DesignMetrics.of(context);
     final stats = ref.watch(profileStatsProvider);
 
     return stats.when(
       skipLoadingOnReload: true,
       skipError: true,
-      loading: () => _buildSkeleton(),
-      error: (_, __) => _buildSkeleton(),
+      loading: () => _buildSkeleton(k),
+      error: (_, __) => _buildSkeleton(k),
       data: (data) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-          // 单行「图标 + 数字 + 标签」的实际高度约 44，卡宽约 154；
-          // 原来的 1.1 会让每张卡片高到 140，正文之外多出一大片空白。
-          // 3.5 是反复调过的比例：卡片高约 44+32=76，刚好包住内容。
-          childAspectRatio: 3.5,
+        padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
+        child: Column(
           children: [
-            for (final entry in _entries)
-              _buildCell(entry, data[entry.key] ?? 0),
+            for (int i = 0; i < _entries.length; i += 2) ...[
+              if (i > 0) SizedBox(height: 8 * k),
+              Row(
+                // 两张卡结构一致，自然高度即相等（ListView 内不能 stretch）
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildCard(
+                      k,
+                      _entries[i],
+                      data[_entries[i].key] ?? 0,
+                    ),
+                  ),
+                  SizedBox(width: 8 * k),
+                  Expanded(
+                    child: _buildCard(
+                      k,
+                      _entries[i + 1],
+                      data[_entries[i + 1].key] ?? 0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCell(_StatEntry entry, num value) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 450),
-      curve: const Cubic(0.34, 1.56, 0.64, 1),
-      builder: (context, t, child) {
-        return Transform.scale(
-          scale: 0.85 + 0.15 * t,
-          child: Transform.translate(
-            offset: Offset(0, 16 * (1 - t)),
-            child: child,
+  Widget _buildCard(double k, _StatEntry entry, num value) {
+    return Container(
+      height: 60 * k,
+      padding: EdgeInsets.symmetric(horizontal: 16 * k),
+      decoration: BoxDecoration(
+        color: AppColors.cardBg,
+        borderRadius: BorderRadius.circular(14 * k),
+        border: Border.all(color: AppColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.floatCardShadow,
+            blurRadius: 10,
+            offset: Offset(0, 3),
           ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: AppColors.cardBg,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.textPrimary.withValues(alpha: 0.05),
-              blurRadius: 14,
-              offset: const Offset(0, 4),
+        ],
+      ),
+      child: Row(
+        children: [
+          // 底块：稿子 .tile 40 / r12 / peach-soft
+          Container(
+            width: 40 * k,
+            height: 40 * k,
+            decoration: BoxDecoration(
+              color: AppColors.coralSoft,
+              borderRadius: BorderRadius.circular(12 * k),
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: entry.color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(entry.icon, size: 19, color: entry.color),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _formatValue(value),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      height: 1.1,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.textPrimary,
-                    ),
+            alignment: Alignment.center,
+            child: EmojiText(emoji: entry.emoji, fontSize: 19 * k),
+          ),
+          SizedBox(width: 14 * k),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: _formatValue(value),
+                        style: TextStyle(
+                          fontSize: 18 * k,
+                          fontWeight: FontWeight.w800,
+                          height: 1.15,
+                          letterSpacing: -0.3 * k,
+                          color: AppColors.blushInk,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' ${entry.unit}',
+                        style: TextStyle(
+                          fontSize: 10 * k,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.blushInk2,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    entry.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      height: 1.1,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: 1 * k),
+                Text(
+                  entry.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 10.5 * k,
+                    color: AppColors.blushInk2,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -152,25 +157,38 @@ class DataStatsSection extends ConsumerWidget {
     return value.toString();
   }
 
-  Widget _buildSkeleton() {
+  Widget _buildSkeleton(double k) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: GridView.count(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 3.5,
-        children: List.generate(
-          4,
-          (i) => Container(
-            decoration: BoxDecoration(
-              color: AppColors.cardBg,
-              borderRadius: BorderRadius.circular(18),
+      padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
+      child: Column(
+        children: [
+          for (int i = 0; i < 2; i++) ...[
+            if (i > 0) SizedBox(height: 8 * k),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 60 * k,
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBg,
+                      borderRadius: BorderRadius.circular(14 * k),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8 * k),
+                Expanded(
+                  child: Container(
+                    height: 60 * k,
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBg,
+                      borderRadius: BorderRadius.circular(14 * k),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ),
+          ],
+        ],
       ),
     );
   }
@@ -179,14 +197,14 @@ class DataStatsSection extends ConsumerWidget {
 class _StatEntry {
   /// profileStatsProvider 返回 Map 中对应的字段名
   final String key;
-  final IconData icon;
+  final String emoji;
   final String label;
-  final Color color;
+  final String unit;
 
   const _StatEntry({
     required this.key,
-    required this.icon,
+    required this.emoji,
     required this.label,
-    required this.color,
+    required this.unit,
   });
 }

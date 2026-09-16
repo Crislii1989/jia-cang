@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:jia_cang/constants/app_colors.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/widgets/gradient_background.dart';
-import 'package:jia_cang/widgets/section_title.dart';
 import 'package:jia_cang/widgets/toast_utils.dart';
 import 'package:jia_cang/providers/profile_provider.dart';
 import 'profile_header_section.dart';
 import 'data_stats_section.dart';
 import 'feature_menu_section.dart';
 import 'edit_profile_modal.dart';
-import 'help_feedback_sheet.dart';
 
+/// 「我的」页（高保真稿 S5，2026-09-16 按稿重排）。
+///
+/// 结构：顶部标题「我的」→ 资料卡 → 数据概览（2×2）→
+/// 应用管理 / 设置 两组行式白卡。
+///
+/// 旧版页面自绘的三团圆形色斑已移除——全局背景**只有一层**右上角暖光晕
+/// （[GradientBackground]，S1~S5 共用），各页不再私加装饰。
+/// 右上角拍照（扫描识别）入口按用户要求隐藏，不再在本页显示。
 class MePage extends ConsumerStatefulWidget {
   const MePage({super.key});
 
@@ -24,144 +30,45 @@ class _MePageState extends ConsumerState<MePage> {
 
   @override
   Widget build(BuildContext context) {
+    final k = DesignMetrics.of(context);
+
     return Scaffold(
       body: GradientBackground(
         child: Stack(
           children: [
-            _buildBackgroundDecoration(),
             SafeArea(
-              child: Column(
+              // 注意：横向边距由各 section 自带（与首页等其他页一致），
+              // 这里只留垂直方向，避免双重边距把卡片挤窄
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(0, 8, 0, 110),
                 children: [
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      children: [
-                        _buildPageHeader(),
-                        const SizedBox(height: 16),
-                        ProfileHeaderSection(onEdit: _openEditModal),
-                        const SizedBox(height: 24),
-                        const SectionTitle(title: '数据概览'),
-                        const SizedBox(height: 14),
-                        const DataStatsSection(),
-                        const SizedBox(height: 24),
-                        const SectionTitle(title: '功能服务'),
-                        const SizedBox(height: 14),
-                        FeatureMenuSection(
-                          onHelpTap: () => HelpFeedbackSheet.show(context),
-                        ),
-                        const SizedBox(height: 100),
-                      ],
+                  // 顶部标题（稿子 .nav-top .ttl：17/800；拍照入口已按要求隐藏）
+                  Text(
+                    '我的',
+                    style: TextStyle(
+                      fontSize: 17 * k,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.blushInk,
                     ),
                   ),
+                  SizedBox(height: 14 * k),
+                  ProfileHeaderSection(onEdit: _openEditModal),
+                  SizedBox(height: 20 * k),
+                  const DataStatsSection(),
+                  SizedBox(height: 8 * k),
+                  const FeatureMenuSection(),
                 ],
               ),
             ),
-            if (_showEditModal) _buildEditModal(),
+            // 编辑资料弹窗走全局居中圆角底座（见 widgets/center_sheet.dart）
+            if (_showEditModal) _buildEditModalOverlay(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBackgroundDecoration() {
-    return Positioned.fill(
-      child: Stack(
-        children: [
-          Positioned(
-            top: 80,
-            left: -50,
-            width: 180,
-            height: 180,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.coral.withValues(alpha: 0.06),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 350,
-            right: -30,
-            width: 120,
-            height: 120,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.success.withValues(alpha: 0.05),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 220,
-            left: -20,
-            width: 100,
-            height: 100,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.info.withValues(alpha: 0.05),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPageHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  '个人中心',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary,
-                    height: 1.2,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  '管理账号与应用设置',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // 扫描按钮：调用 flutter_smart_scanner 识别物体
-          GestureDetector(
-            onTap: () => context.push('/scan'),
-            child: Container(
-    width: 38,
-    height: 38,
-    decoration: BoxDecoration(
-      color: Color(0xFFFFF3DD), // 和头像背景同色系浅暖黄
-      borderRadius: BorderRadius.circular(99),
-    ),
-    child: Center(
-      child: Icon(Icons.crop_free, size: 22, color: Color(0xFF33281E)),
-    ),
-  ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _openEditModal() {
-    setState(() => _showEditModal = true);
-  }
-
-  Widget _buildEditModal() {
+  Widget _buildEditModalOverlay() {
     final profile = ref.read(profileManagerProvider).value ?? {};
     return EditProfileModal(
       currentNickname: profile['nickname'] ?? '小橘',
@@ -174,5 +81,9 @@ class _MePageState extends ConsumerState<MePage> {
         ToastUtils.show(context, '资料已更新');
       },
     );
+  }
+
+  void _openEditModal() {
+    setState(() => _showEditModal = true);
   }
 }

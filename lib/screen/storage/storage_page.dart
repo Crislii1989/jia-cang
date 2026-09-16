@@ -1086,7 +1086,6 @@ class _StoragePageState extends ConsumerState<StoragePage> {
       body: GradientBackground(
         child: Stack(
           children: [
-            _buildBackgroundDecoration(),
             SafeArea(
               child: Column(
                 children: [
@@ -1142,39 +1141,6 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildBackgroundDecoration() {
-    return Positioned.fill(
-      child: Stack(
-        children: [
-          Positioned(
-            top: 80,
-            right: -40,
-            width: 150,
-            height: 150,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.coral.withValues(alpha: 0.06),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 350,
-            left: -25,
-            width: 90,
-            height: 90,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.gradientBlue.withValues(alpha: 0.06),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
