@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jia_cang/constants/app_colors.dart';
+import 'package:jia_cang/constants/home_metrics.dart';
 import 'package:jia_cang/providers/item_providers.dart';
 
 /// 首页概览：一行四张**竖排统计高卡**（高保真稿 V2.6 定稿）。
@@ -11,11 +12,16 @@ import 'package:jia_cang/providers/item_providers.dart';
 /// 卡底是各自色系的水彩渐变（粉 / 绿 / 蓝 / 紫），一眼区分四个维度。
 /// 四个维度固定为：物品总数 / 即将到期 / 出借中 / 长期闲置。
 /// 点击统一进物品库——后续接入「按条件预筛」时只需在这里改跳转参数。
+///
+/// **尺寸全部经 [HomeMetrics] 等比换算**：设计稿是 320 机型（内容宽 292），
+/// 直接写死绝对值会在宽视口下把卡片拉成横版、数字相对变小
+/// （见 `home_metrics.dart` 的说明）。
 class StatMinisSection extends ConsumerWidget {
   const StatMinisSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final k = HomeMetrics.of(context);
     final total = ref.watch(itemCountProvider);
     final expiring = ref.watch(expiringSoonCountProvider);
     final lent = ref.watch(lentCountProvider);
@@ -59,14 +65,14 @@ class StatMinisSection extends ConsumerWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
       child: Row(
         // 不用 stretch：本 Row 位于 ListView 内，交叉轴高度无界，
         // stretch 会要求无限高度。四张卡结构完全一致，自然高度即相等。
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (int i = 0; i < cards.length; i++) ...[
-            if (i > 0) const SizedBox(width: 7),
+            if (i > 0) SizedBox(width: 7 * k),
             Expanded(child: cards[i]),
           ],
         ],
@@ -95,11 +101,13 @@ class _StatHighCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final k = HomeMetrics.of(context);
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(5, 10, 5, 11),
+        padding: EdgeInsets.fromLTRB(5 * k, 10 * k, 5 * k, 11 * k),
         decoration: BoxDecoration(
           // 158deg：近似「自上而下略斜」的水彩渐变
           gradient: LinearGradient(
@@ -107,30 +115,30 @@ class _StatHighCard extends StatelessWidget {
             end: const Alignment(0.4, 1),
             colors: bg,
           ),
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15 * k),
           border: Border.all(color: AppColors.floatHairlineSoft),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.floatCardShadow,
-              blurRadius: 10,
-              offset: Offset(0, 3),
+              blurRadius: 10 * k,
+              offset: Offset(0, 3 * k),
             ),
           ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 25, color: fg),
-            const SizedBox(height: 7),
+            Icon(icon, size: 25 * k, color: fg),
+            SizedBox(height: 7 * k),
             Text.rich(
               TextSpan(
                 children: [
                   TextSpan(
                     text: '$value',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 20 * k,
                       fontWeight: FontWeight.w800,
-                      letterSpacing: -0.6,
+                      letterSpacing: -0.6 * k,
                       height: 1.05,
                       color: fg,
                     ),
@@ -138,7 +146,7 @@ class _StatHighCard extends StatelessWidget {
                   TextSpan(
                     text: '件',
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 11 * k,
                       fontWeight: FontWeight.w700,
                       color: fg,
                     ),
@@ -149,13 +157,13 @@ class _StatHighCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8 * k),
             Text(
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 10.5,
+              style: TextStyle(
+                fontSize: 10.5 * k,
                 color: AppColors.statHighLabel,
               ),
             ),

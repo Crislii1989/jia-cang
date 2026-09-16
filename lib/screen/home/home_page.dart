@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jia_cang/constants/app_colors.dart';
+import 'package:jia_cang/constants/home_metrics.dart';
 import 'package:jia_cang/models/item.dart';
 import 'package:jia_cang/providers/item_providers.dart';
 import 'package:jia_cang/providers/profile_provider.dart';
@@ -21,6 +22,9 @@ import 'stat_minis_section.dart';
 ///
 /// 背景走全局那一片（[GradientBackground]，V2.2/V2.3 起 S1~S5 共用，
 /// 内容滚动时固定不动），页面自身不再画光晕。
+///
+/// 所有尺寸经 [HomeMetrics] 按设计稿（320 机型 / 内容宽 292）等比换算——
+/// 设计值是绝对值，运行时容器却是流式的，不换算就会在宽视口下失真。
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -41,6 +45,8 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final k = HomeMetrics.of(context);
+
     return Scaffold(
       // 透明：透出 MainShell 那一片全局背景
       backgroundColor: Colors.transparent,
@@ -50,39 +56,40 @@ class _HomePageState extends ConsumerState<HomePage> {
             color: AppColors.coral,
             onRefresh: _onRefresh,
             child: ListView(
-              // 底部 12：滚到底时最后一张卡与悬浮导航条之间的呼吸位（V2.5）
+              // 底部 12：滚到底时最后一张卡与悬浮导航条之间的呼吸位（V2.5）。
+              // 这条与悬浮条 `bottomGap 8 + 条高 60` 是配套的固定值，**不参与缩放**。
               padding: const EdgeInsets.only(top: 8, bottom: 12),
               children: [
-                _buildHeaderContent(),
-                const SizedBox(height: 10),
-                _buildSearchBar(),
-                const SizedBox(height: 10),
+                _buildHeaderContent(k),
+                SizedBox(height: 10 * k),
+                _buildSearchBar(k),
+                SizedBox(height: 10 * k),
                 const StatMinisSection(),
-                const SizedBox(height: 10),
+                SizedBox(height: 10 * k),
                 SectionTitle(
                   title: '分类',
-                  titleSize: 13,
-                  moreSize: 11,
+                  titleSize: 13 * k,
+                  moreSize: 11 * k,
                   titleColor: AppColors.blushInk,
                   showMore: true,
                   moreText: '全部 ›',
                   moreColor: AppColors.coralDeep,
                   onMoreTap: () => context.push('/categories'),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10 * k),
                 const CategoryCirclesSection(),
-                const SizedBox(height: 10),
+                SizedBox(height: 10 * k),
                 SectionTitle(
                   title: '提醒',
-                  titleSize: 13,
-                  moreSize: 11,
+                  titleSize: 13 * k,
+                  moreSize: 11 * k,
                   titleColor: AppColors.blushInk,
                   showMore: true,
                   moreText: '全部 ›',
                   moreColor: AppColors.coralDeep,
                   onMoreTap: () => context.go('/inventory'),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10 * k),
                 const ReminderSection(),
               ],
             ),
@@ -93,34 +100,34 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   /// 搜索条大胶囊（46pt，V2.1 参考图规格）：假输入框，点击进物品库
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(double k) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => context.go('/inventory'),
         child: Container(
-          height: 46,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: 46 * k,
+          padding: EdgeInsets.symmetric(horizontal: 16 * k),
           decoration: BoxDecoration(
             color: AppColors.cardBg,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(color: AppColors.floatHairline),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
                 color: AppColors.floatCardShadow,
-                blurRadius: 12,
-                offset: Offset(0, 3),
+                blurRadius: 12 * k,
+                offset: Offset(0, 3 * k),
               ),
             ],
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.search, size: 17, color: AppColors.blushInk3),
-              SizedBox(width: 9),
+              Icon(Icons.search, size: 17 * k, color: AppColors.blushInk3),
+              SizedBox(width: 9 * k),
               Text(
                 '搜索物品名称 / 位置',
-                style: TextStyle(fontSize: 12.5, color: AppColors.blushInk3),
+                style: TextStyle(fontSize: 12.5 * k, color: AppColors.blushInk3),
               ),
             ],
           ),
@@ -129,7 +136,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildHeaderContent() {
+  Widget _buildHeaderContent(double k) {
     final profile = ref.watch(profileManagerProvider);
     final nickname = profile.asData?.value['nickname'] ?? '小橘';
     final hour = DateTime.now().hour;
@@ -156,7 +163,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final dateText = '${now.month} 月 ${now.day} 日';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -171,36 +178,36 @@ class _HomePageState extends ConsumerState<HomePage> {
                         '$greeting，$nickname',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 21,
+                        style: TextStyle(
+                          fontSize: 21 * k,
                           fontWeight: FontWeight.w800,
                           color: AppColors.greetInk,
-                          letterSpacing: 0.5,
+                          letterSpacing: 0.5 * k,
                           height: 1.2,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    const Icon(
+                    SizedBox(width: 6 * k),
+                    Icon(
                       Icons.favorite,
-                      size: 15,
+                      size: 15 * k,
                       color: AppColors.greetHeart,
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4 * k),
                 Text(
                   '$dateText · $subtitle',
-                  style: const TextStyle(fontSize: 11, color: AppColors.greetSub),
+                  style: TextStyle(fontSize: 11 * k, color: AppColors.greetSub),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12 * k),
           // 头部右侧：线描房子（V2.1 参考图，替换原来的珊瑚渐变小房子头像）
-          const Icon(
+          Icon(
             Icons.home_outlined,
-            size: 30,
+            size: 30 * k,
             color: AppColors.homeHouseIcon,
           ),
         ],

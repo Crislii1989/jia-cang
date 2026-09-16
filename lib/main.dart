@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_router.dart';
 import 'services/first_run_service.dart';
 import 'services/encryption_service.dart';
+import 'widgets/app_canvas.dart';
 import 'widgets/db_gate.dart';
 import 'utils/package_info_setup_web.dart'
     if (dart.library.io) 'utils/package_info_setup_io.dart';
@@ -58,6 +59,10 @@ class _MyAppState extends ConsumerState<MyApp> {
         title: '家藏',
         theme: ThemeData(primarySwatch: Colors.amber),
         routerConfig: _router,
+        // AppCanvas：宽视口（桌面 / 网页预览）把内容居中限宽到手机宽度。
+        // 挂在 builder 上，所以所有路由与弹窗一并收敛；真机是 no-op。
+        builder: (context, child) =>
+            AppCanvas(child: child ?? const SizedBox.shrink()),
       ),
     );
   }

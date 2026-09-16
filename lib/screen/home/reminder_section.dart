@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jia_cang/constants/app_colors.dart';
+import 'package:jia_cang/constants/home_metrics.dart';
 import 'package:jia_cang/models/category.dart';
 import 'package:jia_cang/models/reminder_entry.dart';
 import 'package:jia_cang/providers/category_provider.dart';
@@ -16,28 +17,31 @@ import 'package:jia_cang/widgets/emoji_text.dart';
 /// 并**去掉「去处理」按钮**——整行就是入口，右侧改为显示日期
 /// （到期条目显示「09-14 到期」，闲置条目显示「06-01 登记」）。
 /// 无提醒时显示空态。
+///
+/// 字号与行距经 [HomeMetrics] 等比换算，保证宽视口下与设计稿同比例。
 class ReminderSection extends ConsumerWidget {
   const ReminderSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final k = HomeMetrics.of(context);
     final reminders = ref.watch(homeRemindersProvider);
 
     if (reminders.isEmpty) return const _AllClearCard();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
       child: Container(
         // 行内分割线要顶到卡片边，圆角必须显式裁子节点
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: AppColors.cardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
+          borderRadius: BorderRadius.circular(16 * k),
+          boxShadow: [
             BoxShadow(
               color: AppColors.floatCardShadow,
-              blurRadius: 12,
-              offset: Offset(0, 3),
+              blurRadius: 12 * k,
+              offset: Offset(0, 3 * k),
             ),
           ],
         ),
@@ -65,29 +69,31 @@ class _AllClearCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final k = HomeMetrics.of(context);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(vertical: 16 * k),
         decoration: BoxDecoration(
           color: AppColors.cardBg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
+          borderRadius: BorderRadius.circular(16 * k),
+          boxShadow: [
             BoxShadow(
               color: AppColors.floatCardShadow,
-              blurRadius: 12,
-              offset: Offset(0, 3),
+              blurRadius: 12 * k,
+              offset: Offset(0, 3 * k),
             ),
           ],
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            EmojiText(emoji: '✅', fontSize: 16),
-            SizedBox(width: 6),
+            EmojiText(emoji: '✅', fontSize: 16 * k),
+            SizedBox(width: 6 * k),
             Text(
               '一切妥当，暂无待处理提醒',
-              style: TextStyle(fontSize: 12, color: AppColors.blushInk2),
+              style: TextStyle(fontSize: 12 * k, color: AppColors.blushInk2),
             ),
           ],
         ),
@@ -113,6 +119,7 @@ class _ReminderRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final k = HomeMetrics.of(context);
     final item = entry.item;
 
     final Color statusColor = switch (entry.kind) {
@@ -125,12 +132,12 @@ class _ReminderRow extends ConsumerWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () => context.push('/item/${item.id}'),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 11),
+        padding: EdgeInsets.symmetric(horizontal: 13 * k, vertical: 11 * k),
         child: Row(
           children: [
             Container(
-              width: 38,
-              height: 38,
+              width: 38 * k,
+              height: 38 * k,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
@@ -142,10 +149,10 @@ class _ReminderRow extends ConsumerWidget {
               alignment: Alignment.center,
               child: EmojiText(
                 emoji: _emojiOf(ref, item.categoryKey),
-                fontSize: 18,
+                fontSize: 18 * k,
               ),
             ),
-            const SizedBox(width: 11),
+            SizedBox(width: 11 * k),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,19 +162,19 @@ class _ReminderRow extends ConsumerWidget {
                     item.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 13,
+                    style: TextStyle(
+                      fontSize: 13 * k,
                       fontWeight: FontWeight.w700,
                       color: AppColors.blushInk,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: 3 * k),
                   Text(
                     entry.badgeText,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 11,
+                      fontSize: 11 * k,
                       fontWeight: FontWeight.w600,
                       color: statusColor,
                     ),
@@ -175,11 +182,11 @@ class _ReminderRow extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8 * k),
             Text(
               _rightText(),
-              style: const TextStyle(
-                fontSize: 11,
+              style: TextStyle(
+                fontSize: 11 * k,
                 color: AppColors.reminderDate,
               ),
             ),
