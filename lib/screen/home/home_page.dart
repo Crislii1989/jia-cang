@@ -1,18 +1,26 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:jia_cang/constants/app_colors.dart';
 import 'package:jia_cang/models/item.dart';
-import 'package:jia_cang/widgets/toast_utils.dart';
-import 'package:jia_cang/widgets/gradient_background.dart';
-import 'package:jia_cang/widgets/quick_action_card.dart';
-import 'package:jia_cang/widgets/section_title.dart';
 import 'package:jia_cang/providers/item_providers.dart';
 import 'package:jia_cang/providers/profile_provider.dart';
-import 'data_cards_section.dart';
-import 'recent_section.dart';
+import 'package:jia_cang/widgets/gradient_background.dart';
+import 'package:jia_cang/widgets/section_title.dart';
+import 'package:jia_cang/widgets/toast_utils.dart';
+import 'category_circles_section.dart';
+import 'reminder_section.dart';
+import 'stat_minis_section.dart';
 
+/// 首页（高保真稿 V2.6 定稿）。
+///
+/// 自上而下：水彩头部（问候 + 线描房子）→ 46pt 大搜索胶囊 →
+/// 四张竖排统计高卡（线性图标 / 数字 / 标签）→ 分类大圆一行 4 个 →
+/// 提醒卡组（行间细分割线 + 右侧日期）。
+///
+/// 背景走全局那一片（[GradientBackground]，V2.2/V2.3 起 S1~S5 共用，
+/// 内容滚动时固定不动），页面自身不再画光晕。
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -21,203 +29,102 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  bool _isRefreshing = false;
-  static const _bgAsset = 'assets/icon/background1.jpg';
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // 预加载背景图，避免页面渲染后再解码导致的闪烁
-    // 必须在 didChangeDependencies 中调用，因为 precacheImage 依赖 MediaQuery
-    precacheImage(AssetImage(_bgAsset), context);
-  }
-
   Future<void> _onRefresh() async {
-    setState(() => _isRefreshing = true);
     // 真正刷新：invalidate itemsProvider 触发重新从数据库读取
     ref.invalidate(itemsProvider);
     // 等待数据加载完成，使 RefreshIndicator 的 spinner 保持到数据就绪
     await ref.read(itemsProvider.future).catchError((_) => <Item>[]);
     if (mounted) {
-      setState(() => _isRefreshing = false);
       ToastUtils.show(context, '数据已刷新 \u{1F389}');
     }
-  }
-
-  void _handleAddTap() {
-    context.push('/add_item');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // 透明：透出 MainShell 那一片全局背景
+      backgroundColor: Colors.transparent,
       body: GradientBackground(
-        child: Stack(
-          children: [
-            _buildBackgroundDecoration(),
-            _buildHeaderBackground(),
-            SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: _onRefresh,
-                      child: ListView(
-                        padding: const EdgeInsets.only(top: 12, bottom: 12),
-                        children: [
-                         
-                          _buildHeaderContent(),
-                          const SizedBox(height: 16),
-                          _buildDataCards(),
-                          const SizedBox(height: 24),
-                          const SectionTitle(title: '快捷功能'),
-                          const SizedBox(height: 14),
-                          _buildQuickActions(),
-                          const SizedBox(height: 24),
-                          SectionTitle(
-                            title: '最近新增',
-                            showMore: true,
-                            onMoreTap: () => _navigateToInventory(),
-                          ),
-                          const SizedBox(height: 14),
-                          const RecentSection(),
-                          const SizedBox(height: 100),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+        child: SafeArea(
+          child: RefreshIndicator(
+            color: AppColors.coral,
+            onRefresh: _onRefresh,
+            child: ListView(
+              // 底部 12：滚到底时最后一张卡与悬浮导航条之间的呼吸位（V2.5）
+              padding: const EdgeInsets.only(top: 8, bottom: 12),
+              children: [
+                _buildHeaderContent(),
+                const SizedBox(height: 10),
+                _buildSearchBar(),
+                const SizedBox(height: 10),
+                const StatMinisSection(),
+                const SizedBox(height: 10),
+                SectionTitle(
+                  title: '分类',
+                  titleSize: 13,
+                  moreSize: 11,
+                  titleColor: AppColors.blushInk,
+                  showMore: true,
+                  moreText: '全部 ›',
+                  moreColor: AppColors.coralDeep,
+                  onMoreTap: () => context.push('/categories'),
+                ),
+                const SizedBox(height: 10),
+                const CategoryCirclesSection(),
+                const SizedBox(height: 10),
+                SectionTitle(
+                  title: '提醒',
+                  titleSize: 13,
+                  moreSize: 11,
+                  titleColor: AppColors.blushInk,
+                  showMore: true,
+                  moreText: '全部 ›',
+                  moreColor: AppColors.coralDeep,
+                  onMoreTap: () => context.go('/inventory'),
+                ),
+                const SizedBox(height: 10),
+                const ReminderSection(),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildHeaderBackground() {
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 320,
-      child: Stack(
-        children: [
-          // 兜底背景色：图片解码完成前显示此颜色，避免闪烁
-          Positioned.fill(child: Container(color: AppColors.primaryLight)),
-          Positioned.fill(
-            child: Image.asset(
-              _bgAsset,
-              fit: BoxFit.fill,
-              // 图片解码完成后淡入显示，避免突然出现的闪烁
-              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                final loaded = wasSynchronouslyLoaded || frame != null;
-                return AnimatedOpacity(
-                  opacity: loaded ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                  child: child,
-                );
-              },
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    AppColors.background.withValues(alpha: 0.15),
-                    AppColors.background.withValues(alpha: 0.08),
-                    AppColors.background.withValues(alpha: 0.25),
-                    AppColors.background.withValues(alpha: 0.6),
-                    AppColors.background.withValues(alpha: 0.9),
-                    AppColors.background,
-                  ],
-                  stops: const [0.0, 0.15, 0.45, 0.7, 0.88, 1.0],
-                ),
+  /// 搜索条大胶囊（46pt，V2.1 参考图规格）：假输入框，点击进物品库
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => context.go('/inventory'),
+        child: Container(
+          height: 46,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: AppColors.cardBg,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: AppColors.floatHairline),
+            boxShadow: const [
+              BoxShadow(
+                color: AppColors.floatCardShadow,
+                blurRadius: 12,
+                offset: Offset(0, 3),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBackgroundDecoration() {
-    return Positioned.fill(
-      child: Stack(
-        children: [
-          Positioned(
-            top: 60,
-            right: -40,
-            width: 160,
-            height: 160,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            top: 300,
-            left: -30,
-            width: 100,
-            height: 100,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.warning.withValues(alpha: 0.06),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 200,
-            right: -20,
-            width: 120,
-            height: 120,
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.05),
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatusBar() {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 28, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            '9:41',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          Row(
-            children: [
-              Icon(
-                Icons.signal_cellular_alt,
-                size: 16,
-                color: AppColors.textPrimary,
-              ),
-              SizedBox(width: 6),
-              Icon(Icons.wifi, size: 16, color: AppColors.textPrimary),
-              SizedBox(width: 6),
-              Icon(Icons.battery_full, size: 16, color: AppColors.textPrimary),
             ],
           ),
-        ],
+          child: const Row(
+            children: [
+              Icon(Icons.search, size: 17, color: AppColors.blushInk3),
+              SizedBox(width: 9),
+              Text(
+                '搜索物品名称 / 位置',
+                style: TextStyle(fontSize: 12.5, color: AppColors.blushInk3),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -245,6 +152,9 @@ class _HomePageState extends ConsumerState<HomePage> {
       subtitle = '晚安前，回顾今日';
     }
 
+    final now = DateTime.now();
+    final dateText = '${now.month} 月 ${now.day} 日';
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -254,153 +164,46 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '$greeting，$nickname',
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary,
-                    height: 1.2,
-                  ),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        '$greeting，$nickname',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 21,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.greetInk,
+                          letterSpacing: 0.5,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Icon(
+                      Icons.favorite,
+                      size: 15,
+                      color: AppColors.greetHeart,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
+                  '$dateText · $subtitle',
+                  style: const TextStyle(fontSize: 11, color: AppColors.greetSub),
                 ),
               ],
             ),
           ),
           const SizedBox(width: 12),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDataCards() {
-    return DataCardsSection(
-      itemCount: ref.watch(itemCountProvider),
-      weeklyNewCount: ref.watch(weeklyNewCountProvider),
-      monthlyNewCount: ref.watch(monthlyNewCountProvider),
-    );
-  }
-
-  Widget _buildQuickActions() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: GridView.count(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 4,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 0.75,
-        children: [
-          // QuickActionCard(
-          //   icon: Icons.download,
-          //   label: '一键导入',
-          //   startColor: AppColors.gradientGold,
-          //   endColor: AppColors.primary,
-          //   onTap: () => context.push('/order-import'),
-          //   delayMs: 50,
-          // ),
-          // QuickActionCard(
-          //   icon: Icons.add_circle,
-          //   label: '新增物品',
-          //   startColor: AppColors.gradientOrange,
-          //   endColor: AppColors.gradientOrangeEnd,
-          //   onTap: _handleAddTap,
-          //   delayMs: 120,
-          // ),
-          QuickActionCard(
-            icon: Icons.grid_view,
-            label: '分类管理',
-            startColor: AppColors.gradientGreen,
-            endColor: AppColors.gradientGreenEnd,
-            onTap: () => context.push('/categories'),
-            delayMs: 190,
-          ),
-          QuickActionCard(
-            icon: Icons.home,
-            label: '收纳位置',
-            startColor: AppColors.gradientBlue,
-            endColor: AppColors.gradientBlueEnd,
-            onTap: () => context.go('/storage'),
-            delayMs: 260,
+          // 头部右侧：线描房子（V2.1 参考图，替换原来的珊瑚渐变小房子头像）
+          const Icon(
+            Icons.home_outlined,
+            size: 30,
+            color: AppColors.homeHouseIcon,
           ),
         ],
-      ),
-    );
-  }
-
-  void _navigateToInventory() {
-    context.go('/inventory');
-  }
-}
-
-/// 打招呼的小猫小狗动画组件
-class _GreetingPet extends StatefulWidget {
-  const _GreetingPet();
-
-  @override
-  State<_GreetingPet> createState() => _GreetingPetState();
-}
-
-class _GreetingPetState extends State<_GreetingPet>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _wave;
-  Timer? _swapTimer;
-  bool _showCat = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    _wave = Tween<double>(
-      begin: 0.85,
-      end: 1.08,
-    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.elasticOut));
-    _ctrl.repeat(reverse: true);
-    _swapTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-      if (mounted) setState(() => _showCat = !_showCat);
-    });
-  }
-
-  @override
-  void dispose() {
-    _swapTimer?.cancel();
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _wave,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _wave.value,
-          child: Transform.rotate(
-            angle: (_wave.value - 1.0) * 0.5,
-            child: child,
-          ),
-        );
-      },
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 400),
-        switchInCurve: Curves.easeOutBack,
-        child: Text(
-          _showCat ? '🐱' : '🐶',
-          key: ValueKey(_showCat),
-          style: const TextStyle(fontSize: 32),
-        ),
       ),
     );
   }

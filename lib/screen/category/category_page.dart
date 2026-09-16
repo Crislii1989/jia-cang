@@ -878,11 +878,14 @@ class _CategoryCard extends StatelessWidget {
       'kitchen': Color(0xFFFF6B6B),
       'clothing': Color(0xFF9B7BFF),
       'books': Color(0xFF4ECDC4),
-      'storage': Color(0xFFFFB800),
+      'home_living': Color(0xFFFFB800),
       'toy': Color(0xFFFF8FA3),
       'sports': Color(0xFF6BCB77),
       'stationery': Color(0xFFFF9E40),
       'tools': Color(0xFF7B8794),
+      'jewelry': Color(0xFFB08DFF),
+      'decoration': Color(0xFFF28CB1),
+      'other': Color(0xFFA0A8B8),
     };
     return palette[id] ?? AppColors.primary;
   }

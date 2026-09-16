@@ -63,4 +63,14 @@ class AppDimensions {
     minHeight: iconContainerSmall,
     maxHeight: iconContainerSmall,
   );
+
+  // ── 信息板三级行高（UI 改版定稿，全局统一） ──
+  /// 小号：搜索条等工具型输入，34
+  static const double rowHeightSmall = 34;
+  /// 标准：普通信息板（列表 cell / 表单字段 / 入口行），40
+  static const double rowHeightNormal = 40;
+  /// 统计概览卡（图标块 40 + 双行文字），60
+  static const double statCardHeight = 60;
+  /// 统计卡图标块尺寸
+  static const double statCardTileSize = 40;
 }

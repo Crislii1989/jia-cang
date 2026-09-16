@@ -1,3 +1,5 @@
+// foundation 提供 kIsWeb（Web 端文字光学补偿用）；其 Category 注解与模型类重名，hide 掉
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -56,10 +58,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
 
   // ── 筛选面板 ──
   String? _selectedLocation;
-  // 筛选弹窗是否处于打开状态。
-  // StatefulShellRoute.indexedStack 切换分支不会自动关闭分支内的 modal route，
-  // 因此需显式跟踪，以便从首页快捷入口跳转回来时主动关闭残留弹窗。
-  bool _filterPanelOpen = false;
   // 弹窗外部关闭信号：每次自增触发 FilterPanel 用自身 context 执行 pop。
   // showModalBottomSheet 默认 useRootNavigator=false，弹窗 push 到最近层导航器
   // （StatefulShellBranch 的分支导航器），而本页 build context 解析到的 Navigator
@@ -472,60 +470,68 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         !tabs.any((c) => c.key == _activeCategory)) {
       _activeCategory = 'all';
     }
-    return SizedBox(
-      height: 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.pageMarginHorizontal,
+    // Wrap 多行流式布局：内置分类扩充到 14 个后，单行横滑会展示不全，
+    // 改为自动换行让全部分类一屏可见（约 2~3 行，由内容自然决定）。
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.pageMarginHorizontal,
+      ),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final cat in tabs) _buildCategoryChip(cat),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryChip(Category cat) {
+    final isActive = _activeCategory == cat.key;
+    return GestureDetector(
+      onTap: () => _onCategoryChanged(cat.key),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+        decoration: BoxDecoration(
+          color: isActive ? null : AppColors.cardBg,
+          gradient: isActive
+              ? const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [AppColors.primary, AppColors.warning],
+                )
+              : null,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    blurRadius: 14,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: AppColors.textPrimary.withValues(alpha: 0.06),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
-        itemCount: tabs.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (context, index) {
-          final cat = tabs[index];
-          final isActive = _activeCategory == cat.key;
-          return GestureDetector(
-            onTap: () => _onCategoryChanged(cat.key),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
-              decoration: BoxDecoration(
-                color: isActive ? null : AppColors.cardBg,
-                gradient: isActive
-                    ? const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [AppColors.primary, AppColors.warning],
-                      )
-                    : null,
-                borderRadius: BorderRadius.circular(22),
-                boxShadow: isActive
-                    ? [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.3),
-                          blurRadius: 14,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : [
-                        BoxShadow(
-                          color: AppColors.textPrimary.withValues(alpha: 0.06),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-              ),
-              child: Text(
-                cat.label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isActive ? Colors.white : AppColors.textSecondary,
-                ),
-              ),
+        child: Transform.translate(
+          // Web 端 CJK 文字墨水偏下，与 filter_panel 的胶囊文字同一光学补偿
+          offset: Offset(0, kIsWeb ? PillContent.kWebTextOpticalLift : 0.0),
+          child: Text(
+            cat.label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isActive ? Colors.white : AppColors.textSecondary,
+              leadingDistribution: TextLeadingDistribution.even,
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -1133,7 +1139,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   // ─── Filter Panel (Bottom Sheet) ───────────
 
   void _showFilterPanel() {
-    _filterPanelOpen = true;
     FilterPanel.show(
       context,
       initialLocation: _selectedLocation,
@@ -1149,9 +1154,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           _selectedLocation = null;
         });
       },
-    ).then((_) {
-      // 弹窗无论以何种方式关闭（确认/重置/点遮罩/程序 pop）都清除标记
-      if (mounted) _filterPanelOpen = false;
-    });
+    );
   }
 }

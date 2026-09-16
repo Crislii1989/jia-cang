@@ -49,8 +49,6 @@ class _MePageState extends ConsumerState<MePage> {
                         FeatureMenuSection(
                           onHelpTap: () => HelpFeedbackSheet.show(context),
                         ),
-                        //const SizedBox(height: 32),
-                        //_buildVersionInfo(),
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -155,35 +153,6 @@ class _MePageState extends ConsumerState<MePage> {
   ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildVersionInfo() {
-    return GestureDetector(
-      onTap: () => context.push('/check-update'),
-      child: Center(
-        child: Column(
-          children: [
-            Text(
-              '家藏 v1.0.0',
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.textHint,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '点击检查更新',
-              style: TextStyle(
-                fontSize: 11,
-                color: AppColors.primary.withValues(alpha: 0.8),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

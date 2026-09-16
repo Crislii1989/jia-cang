@@ -32,7 +32,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   /// 本地数据库名。Web 端 drift 会以这个名字在 IndexedDB 中保存数据库文件，
   /// 名字不一致会导致「清理本地数据」清错对象，因此统一在这里声明。
@@ -123,6 +123,31 @@ class AppDatabase extends _$AppDatabase {
           );
         });
       }
+      // v8: 内置分类调整为 14 个「用户定义清单」。
+      //     - 「收纳 storage」移除，原属物品并入「家居生活 home_living」；
+      //     - 新增「饰品贵重 jewelry」「家居装饰 decoration」「其他 other」；
+      //     - 其余分类仅改名/换图标（数码→数码电子、洗护→个人洗护、厨房→餐厨用品、
+      //       衣物→衣物鞋包、运动→运动户外、文具→文具办公、玩具→玩具兴趣、工具→工具五金）。
+      //     沿用 v7 的三步模式：先重映射物品引用 → 清理移除的内置分类行 →
+      //     upsert 新分类集合（改名/换图标 + 插入新增），用户自建分类不受影响。
+      if (from < 8) {
+        // 1) 物品分类重映射：收纳 → 家居生活
+        await customStatement(
+          "UPDATE items SET category_key = 'home_living' WHERE category_key = 'storage'",
+        );
+        // 2) 清理已移除的旧内置分类
+        await customStatement(
+          "DELETE FROM categories WHERE is_built_in = 1 AND id = 'storage'",
+        );
+        // 3) upsert 新内置分类集合（改名/换图标 + 插入新增分类）
+        await batch((b) {
+          b.insertAll(
+            categories,
+            SeedData.categories,
+            mode: InsertMode.insertOrReplace,
+          );
+        });
+      }
     },
   );
 
@@ -182,7 +207,7 @@ class AppDatabase extends _$AppDatabase {
   }
 
   /// 首次安装时写入默认种子数据：
-  /// - 12 个内置分类
+  /// - 14 个内置分类
   /// - 2 项默认用户设置
   /// - 3 个默认房间（不含柜体/格子，柜体由用户按需创建）
   ///

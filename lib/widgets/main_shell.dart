@@ -12,59 +12,20 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F3ED),
+      // 悬浮导航条周围的底色（各 Tab 页自己铺全局背景，这里只托住条四周的缝）
+      backgroundColor: AppColors.blushBg,
       body: navigationShell,
-      bottomNavigationBar: _buildBottomNavBar(context),
-    );
-  }
-
-  Widget _buildBottomNavBar(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        BottomNavBar(
-          currentTab: TabType.values[navigationShell.currentIndex],
-          onTabChanged: (tab) {
-            navigationShell.goBranch(
-              tab.index,
-              initialLocation: tab.index == navigationShell.currentIndex,
-            );
-          },
-        ),
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: Center(
-            child: GestureDetector(
-              onTap: () {
-                context.push('/add_item');
-              },
-              child: Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.primary, AppColors.warning],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.35),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                  border: Border.all(color: AppColors.cardBg, width: 3),
-                ),
-                child: const Icon(Icons.add, color: Colors.white, size: 26),
-              ),
-            ),
-          ),
-        ),
-      ],
+      // UI 改版（V2.4~V2.6）：导航条改为悬浮圆角白条，中央添加钮内置在其中，
+      // 不再用 Stack 浮层叠加，添加入口唯一收敛到导航栏中央。
+      bottomNavigationBar: BottomNavBar(
+        currentTab: TabType.values[navigationShell.currentIndex],
+        onTabChanged: (tab) {
+          navigationShell.goBranch(
+            tab.index,
+            initialLocation: tab.index == navigationShell.currentIndex,
+          );
+        },
+      ),
     );
   }
 }

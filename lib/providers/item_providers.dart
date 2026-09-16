@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../database/database.dart' as db;
 import '../daos/item_dao.dart';
 import '../models/item.dart';
+import '../models/reminder_entry.dart';
 import 'database_provider.dart';
 
 part 'generated/item_providers.g.dart';
@@ -236,3 +237,138 @@ Item? itemById(Ref ref, String id) {
         orElse: () => null,
       );
 }
+
+// ─── 首页概览 / 提醒 派生 Providers（V2.0 新首页） ──────────
+
+/// 临期阈值：到期前 N 天内算「即将到期」。
+/// 与「我的 → 提醒设置」的默认值保持一致，将来接入设置项时改这里即可。
+const int kExpiringSoonDays = 3;
+
+/// 闲置阈值：登记后超过 N 天没再动过，算「长期闲置」。
+///
+/// 数据口径说明：items 表目前只有 `createdAt`（登记时间），没有「最后动过」的时间戳，
+/// 所以闲置天数按 `createdAt` 计算——即「登记满 90 天且仍在库」的物品。
+/// 若将来补上 `updatedAt`，只需把这里换成后者，UI 无需改动。
+const int kIdleDays = 90;
+
+/// 已过期的物品（到期日早于今天，且未标记为已用完/已丢失）
+@riverpod
+List<Item> overdueItems(Ref ref) {
+  final today = _dateOnly(DateTime.now());
+  return ref
+      .watch(itemsProvider)
+      .maybeWhen(
+        data: (items) => items.where((i) {
+          final d = i.expiryDate;
+          if (d == null) return false;
+          if (i.status == 'used' || i.status == 'lost') return false;
+          return _dateOnly(d).isBefore(today);
+        }).toList(),
+        orElse: () => [],
+      );
+}
+
+/// 即将到期的物品（今天起 [kExpiringSoonDays] 天内到期，含今天，不含已过期）
+@riverpod
+List<Item> expiringSoonItems(Ref ref) {
+  final today = _dateOnly(DateTime.now());
+  final limit = today.add(const Duration(days: kExpiringSoonDays));
+  return ref
+      .watch(itemsProvider)
+      .maybeWhen(
+        data: (items) => items.where((i) {
+          final d = i.expiryDate;
+          if (d == null) return false;
+          if (i.status == 'used' || i.status == 'lost') return false;
+          final day = _dateOnly(d);
+          return !day.isBefore(today) && !day.isAfter(limit);
+        }).toList(),
+        orElse: () => [],
+      );
+}
+
+/// 长期闲置的物品（在库 + 登记已满 [kIdleDays] 天）
+@riverpod
+List<Item> idleItems(Ref ref) {
+  final cutoff = DateTime.now().subtract(const Duration(days: kIdleDays));
+  return ref
+      .watch(itemsProvider)
+      .maybeWhen(
+        data: (items) => items
+            .where((i) => i.status == 'safe' && i.createdAt.isBefore(cutoff))
+            .toList(),
+        orElse: () => [],
+      );
+}
+
+/// 概览：即将到期数量
+@riverpod
+int expiringSoonCount(Ref ref) => ref.watch(expiringSoonItemsProvider).length;
+
+/// 概览：出借中数量
+@riverpod
+int lentCount(Ref ref) {
+  return ref
+      .watch(itemsProvider)
+      .maybeWhen(
+        data: (items) => items.where((i) => i.status == 'lent').length,
+        orElse: () => 0,
+      );
+}
+
+/// 概览：长期闲置数量
+@riverpod
+int idleCount(Ref ref) => ref.watch(idleItemsProvider).length;
+
+/// 首页「提醒」条目：已逾期 → 即将到期 → 长期闲置，按紧急度排序，
+/// 每类内部按「更紧急/更久」优先，最多返回 [_maxHomeReminders] 条（首页只展示前几条）。
+@riverpod
+List<ReminderEntry> homeReminders(Ref ref) {
+  final today = _dateOnly(DateTime.now());
+
+  final entries = <ReminderEntry>[];
+
+  // ① 已逾期：逾期越久越靠前
+  final overdue = [...ref.watch(overdueItemsProvider)]
+    ..sort((a, b) => a.expiryDate!.compareTo(b.expiryDate!));
+  for (final item in overdue) {
+    final days = today.difference(_dateOnly(item.expiryDate!)).inDays;
+    entries.add(ReminderEntry(
+      item: item,
+      kind: ReminderKind.overdue,
+      badgeText: '已逾期 $days 天',
+    ));
+  }
+
+  // ② 即将到期：越早到期越靠前
+  final expiring = [...ref.watch(expiringSoonItemsProvider)]
+    ..sort((a, b) => a.expiryDate!.compareTo(b.expiryDate!));
+  for (final item in expiring) {
+    final days = _dateOnly(item.expiryDate!).difference(today).inDays;
+    entries.add(ReminderEntry(
+      item: item,
+      kind: ReminderKind.expiring,
+      badgeText: days == 0 ? '今天到期' : '$days 天后到期',
+    ));
+  }
+
+  // ③ 长期闲置：登记越久越靠前
+  final idle = [...ref.watch(idleItemsProvider)]
+    ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+  for (final item in idle) {
+    final days = DateTime.now().difference(item.createdAt).inDays;
+    entries.add(ReminderEntry(
+      item: item,
+      kind: ReminderKind.idle,
+      badgeText: '闲置 $days 天',
+    ));
+  }
+
+  return entries.take(_maxHomeReminders).toList();
+}
+
+/// 首页「提醒」最多展示条数
+const int _maxHomeReminders = 4;
+
+/// 去掉时分秒，只保留日期，避免「今天到期」被算成「已逾期」。
+DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);

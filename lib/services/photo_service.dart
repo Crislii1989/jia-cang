@@ -72,50 +72,95 @@ class PhotoService {
   /// 从相册多选照片，返回可用的照片地址条目。
   /// [remaining] 为当前还能添加几张（上限 - 已有数）。
   /// 注意：当 remaining=1 时使用 pickImage（单选），因为 pickMultiImage 要求 limit>=2。
+  ///
+  /// 选图器抛出的异常（平台不支持 / 权限拒绝等）统一在这里兜住转成错误文案，
+  /// 否则调用方的 `_isPicking` 状态会永远卡在 true，界面表现为「点了没反应」。
   Future<PickResult> pickFromGallery({required int remaining}) async {
     if (remaining <= 0) {
       return const PickResult(error: '最多添加 $maxPhotos 张照片');
     }
 
-    if (remaining == 1) {
-      // pickMultiImage 要求 limit>=2，单选时使用 pickImage
-      final x = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
-      if (x == null) return const PickResult();
-      return _accept(x);
-    }
-
-    final picked = await _picker.pickMultiImage(
-      imageQuality: 85,
-      limit: remaining,
-    );
-    if (picked.isEmpty) return const PickResult();
-
-    final entries = <PhotoEntry>[];
-    String? error;
-
-    for (final x in picked) {
-      final result = await _accept(x);
-      if (result.error != null) {
-        error = result.error;
-        continue;
+    try {
+      if (remaining == 1) {
+        // pickMultiImage 要求 limit>=2，单选时使用 pickImage
+        final x = await _picker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 85,
+        );
+        if (x == null) return const PickResult();
+        return await _accept(x);
       }
-      entries.addAll(result.entries);
-    }
 
-    return PickResult(entries: entries, error: error);
+      final picked = await _picker.pickMultiImage(
+        imageQuality: 85,
+        limit: remaining,
+      );
+      if (picked.isEmpty) return const PickResult();
+
+      final entries = <PhotoEntry>[];
+      String? error;
+
+      for (final x in picked) {
+        final result = await _accept(x);
+        if (result.error != null) {
+          error = result.error;
+          continue;
+        }
+        entries.addAll(result.entries);
+      }
+
+      return PickResult(entries: entries, error: error);
+    } catch (_) {
+      return const PickResult(error: '选择图片失败，请重试');
+    }
   }
 
   /// 调用相机拍摄单张照片。
+  ///
+  /// 相机在各端的支持情况差异很大（Web 端需要浏览器/iframe 授权、
+  /// Windows 桌面端 image_picker 直接抛 StateError、无摄像头设备会 NotFoundError），
+  /// 这些异常若不接住，调用方会表现为「点了拍照没有任何反应」。
+  /// 这里统一兜住并翻译成人话，让界面能给出明确提示。
   Future<PickResult> pickFromCamera() async {
-    final x = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 85,
-    );
-    if (x == null) return const PickResult();
-    return _accept(x);
+    try {
+      final x = await _picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+      );
+      if (x == null) return const PickResult();
+      return await _accept(x);
+    } catch (e) {
+      return PickResult(error: _cameraErrorMessage(e));
+    }
+  }
+
+  /// 把相机调用的异常翻译成用户能看懂的提示。
+  String _cameraErrorMessage(Object e) {
+    final s = e.toString().toLowerCase();
+    // Windows 桌面端：image_picker_windows 对 camera 源抛 StateError
+    // （CameraDelegatingImagePickerPlatform 未设置 cameraDelegate）。
+    if (e is StateError ||
+        s.contains('stateerror') ||
+        s.contains('camera delegate') ||
+        s.contains('unimplemented') ||
+        s.contains('missingplugin')) {
+      return '当前设备不支持拍照，请改用「从相册选择」';
+    }
+    // Web 端 getUserMedia 的权限类错误（含预览 iframe 未授权 camera 的情况）
+    if (s.contains('denied') ||
+        s.contains('notallowed') ||
+        s.contains('permission') ||
+        s.contains('securityerror')) {
+      return '相机权限被拒绝，请在浏览器/系统设置中允许访问摄像头';
+    }
+    // 无摄像头设备
+    if (s.contains('notfound') ||
+        s.contains('notfounderror') ||
+        s.contains('no camera') ||
+        s.contains('device not')) {
+      return '未检测到可用摄像头';
+    }
+    return '无法打开相机，请重试';
   }
 
   /// 校验并落地单张照片。

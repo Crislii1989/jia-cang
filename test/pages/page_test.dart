@@ -52,15 +52,17 @@ List<Override> _addItemPageOverrides() => [
 
 void main() {
   group('HomePage', () {
+    /// 首页 V2.0 的数据全部派生自 itemsProvider 与分类 provider，
+    /// 两个都用内存假实现覆盖，避免 widget 测试打开真实数据库。
+    List<Override> homeOverrides({List<Item> items = const []}) => [
+      itemsProvider.overrideWith(() => _FakeItems(items)),
+      categoryManagerProvider.overrideWith(() => _FakeCategoryManager()),
+    ];
+
     testWidgets('renders greeting', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            itemCountProvider.overrideWith((ref) => 2),
-            weeklyNewCountProvider.overrideWith((ref) => 1),
-            monthlyNewCountProvider.overrideWith((ref) => 2),
-            recentItemsProvider.overrideWith((ref) => []),
-          ],
+          overrides: homeOverrides(),
           child: const MaterialApp(home: HomePage()),
         ),
       );
@@ -71,23 +73,55 @@ void main() {
       expect(find.textContaining('小橘'), findsOneWidget);
     });
 
-    testWidgets('renders data card labels', (tester) async {
+    testWidgets('renders 4 stat high cards and category circles', (tester) async {
       await tester.pumpWidget(
         ProviderScope(
-          overrides: [
-            itemCountProvider.overrideWith((ref) => 2),
-            weeklyNewCountProvider.overrideWith((ref) => 1),
-            monthlyNewCountProvider.overrideWith((ref) => 2),
-            recentItemsProvider.overrideWith((ref) => []),
-          ],
+          overrides: homeOverrides(),
           child: const MaterialApp(home: HomePage()),
         ),
       );
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pump();
 
+      // V2.0 概览：一行四张竖排迷你卡
       expect(find.text('物品总数'), findsOneWidget);
-      expect(find.text('本月新增'), findsOneWidget);
+      expect(find.text('即将到期'), findsOneWidget);
+      expect(find.text('出借中'), findsOneWidget);
+      expect(find.text('长期闲置'), findsOneWidget);
+      // 分类大圆入口（假分类：运动）
+      expect(find.text('运动'), findsOneWidget);
+      // 旧版卡片已退役
+      expect(find.text('本月新增'), findsNothing);
+    });
+
+    testWidgets('提醒流：逾期物品显示状态文案与到期日（无“去处理”）', (tester) async {
+      final expiredAt = DateTime.now().subtract(const Duration(days: 2));
+      final overdue = Item(
+        id: 'i_overdue',
+        name: '阿莫西林胶囊',
+        categoryKey: 'sports',
+        expiryDate: expiredAt,
+        createdAt: DateTime.now(),
+      );
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: homeOverrides(items: [overdue]),
+          child: const MaterialApp(home: HomePage()),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump();
+
+      expect(find.text('阿莫西林胶囊'), findsOneWidget);
+      expect(find.text('已逾期 2 天'), findsOneWidget);
+      // V2.1 起提醒改成「一组白卡 + 行间细分割线」，整行就是入口，
+      // 不再有「去处理」按钮；右侧改为显示日期
+      expect(find.text('去处理'), findsNothing);
+      final md =
+          '${expiredAt.month.toString().padLeft(2, '0')}'
+          '-${expiredAt.day.toString().padLeft(2, '0')}';
+      expect(find.text('$md 到期'), findsOneWidget);
+      expect(find.text('一切妥当，暂无待处理提醒'), findsNothing);
     });
   });
 

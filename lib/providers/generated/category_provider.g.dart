@@ -8,22 +8,22 @@ part of '../category_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// 物品库 tab 与新增物品页分类选择器共用的合并分类列表。
-/// 派生自 [CategoryManager]（数据库分类，含用户增删改）+ [Category.virtualCategories]（固定虚拟物品分类）。
+/// 物品库 tab 与新增物品页分类选择器共用的分类列表。
+/// 派生自 [CategoryManager]（数据库分类，含内置系统分类与用户自定义分类）。
 /// 用户在分类管理页的新增/编辑/删除会通过此 provider 实时反映到所有使用方。
 
 @ProviderFor(availableCategories)
 final availableCategoriesProvider = AvailableCategoriesProvider._();
 
-/// 物品库 tab 与新增物品页分类选择器共用的合并分类列表。
-/// 派生自 [CategoryManager]（数据库分类，含用户增删改）+ [Category.virtualCategories]（固定虚拟物品分类）。
+/// 物品库 tab 与新增物品页分类选择器共用的分类列表。
+/// 派生自 [CategoryManager]（数据库分类，含内置系统分类与用户自定义分类）。
 /// 用户在分类管理页的新增/编辑/删除会通过此 provider 实时反映到所有使用方。
 
 final class AvailableCategoriesProvider
     extends $FunctionalProvider<List<Category>, List<Category>, List<Category>>
     with $Provider<List<Category>> {
-  /// 物品库 tab 与新增物品页分类选择器共用的合并分类列表。
-  /// 派生自 [CategoryManager]（数据库分类，含用户增删改）+ [Category.virtualCategories]（固定虚拟物品分类）。
+  /// 物品库 tab 与新增物品页分类选择器共用的分类列表。
+  /// 派生自 [CategoryManager]（数据库分类，含内置系统分类与用户自定义分类）。
   /// 用户在分类管理页的新增/编辑/删除会通过此 provider 实时反映到所有使用方。
   AvailableCategoriesProvider._()
     : super(
@@ -59,7 +59,7 @@ final class AvailableCategoriesProvider
 }
 
 String _$availableCategoriesHash() =>
-    r'e9880a5e7b4019b679653b2dd70af79898bf2868';
+    r'558e2f5b729976cce9d9f53240b69130e16bf2b3';
 
 @ProviderFor(CategoryManager)
 final categoryManagerProvider = CategoryManagerProvider._();
@@ -85,7 +85,7 @@ final class CategoryManagerProvider
   CategoryManager create() => CategoryManager();
 }
 
-String _$categoryManagerHash() => r'f4430b8b5d51ae5f3a7ffcf1039b3dce18fb8b38';
+String _$categoryManagerHash() => r'5b4e63b26313b5ee0a89922a19ba616247bbe93b';
 
 abstract class _$CategoryManager extends $AsyncNotifier<List<CategoryItem>> {
   FutureOr<List<CategoryItem>> build();

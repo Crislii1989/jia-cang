@@ -7,6 +7,8 @@ import 'package:jia_cang/models/picker_item.dart';
 import 'package:jia_cang/models/item.dart';
 import 'package:jia_cang/widgets/center_sheet.dart';
 import 'package:jia_cang/widgets/emoji_text.dart';
+import 'package:jia_cang/widgets/floating_bar.dart';
+import 'package:jia_cang/widgets/gradient_background.dart';
 import 'package:jia_cang/widgets/photo_image.dart';
 import 'package:jia_cang/widgets/toast_utils.dart';
 import 'package:jia_cang/providers/item_providers.dart';
@@ -765,46 +767,44 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Stack(
-        children: [
-          // 主内容
-          Column(
-            children: [
-              // 状态栏占位
-              SizedBox(height: MediaQuery.of(context).padding.top),
-              // 滚动区域
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildTopBar(),
-                      const SizedBox(height: 8),
-                      _buildPhotoSection(),
-                      const SizedBox(height: 16),
-                      _buildBasicInfoSection(),
-                      const SizedBox(height: 12),
-                      _buildCategoryLocationSection(),
-                      const SizedBox(height: 100),
-                    ],
+      // 透明：透出全局那一层背景（S1~S5 共用同一片）
+      backgroundColor: Colors.transparent,
+      body: GradientBackground(
+        child: Stack(
+          children: [
+            // 主内容：滚动区 + 固定底部的悬浮操作条
+            Column(
+              children: [
+                // 状态栏占位
+                SizedBox(height: MediaQuery.of(context).padding.top),
+                // 滚动区域
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTopBar(),
+                        const SizedBox(height: 8),
+                        _buildPhotoSection(),
+                        const SizedBox(height: 16),
+                        _buildBasicInfoSection(),
+                        const SizedBox(height: 12),
+                        _buildCategoryLocationSection(),
+                        // 操作条已不悬浮在内容之上，只留一点收尾留白
+                        const SizedBox(height: 24),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          // 底部按钮
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildBottomActions(),
-          ),
-          // 成功弹窗
-          if (_showSuccess) _buildSuccessOverlay(),
-        ],
+                _buildBottomActions(),
+              ],
+            ),
+            // 成功弹窗
+            if (_showSuccess) Positioned.fill(child: _buildSuccessOverlay()),
+          ],
+        ),
       ),
     );
   }
@@ -1077,84 +1077,29 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
     );
   }
 
-  // ==================== 底部按钮 ====================
+  // ==================== 底部操作条 ====================
+  /// V2.6：与底部导航同一套悬浮圆角白条语言（不是满宽贴底渐变条），
+  /// 条内托 40pt 胶囊按钮——保存入库/保存修改（主按钮）+ 保存并继续新增（次要）。
   Widget _buildBottomActions() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            AppColors.background,
-            AppColors.background.withValues(alpha: 0),
-          ],
-          stops: const [0.6, 1.0],
-        ),
-      ),
-      padding: EdgeInsets.fromLTRB(
-        20,
-        12,
-        20,
-        MediaQuery.of(context).padding.bottom + 20,
-      ),
+    return FloatingBar(
+      background: AppColors.actionBarBg,
       child: Row(
         children: [
-          // 保存入库 / 保存修改
           Expanded(
-            child: GestureDetector(
+            child: FloatingBarButton(
+              label: _isEdit ? '保存修改' : '保存入库',
+              tone: FloatingBarTone.primary,
               onTap: () => _saveItem(false),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.warning],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    _isEdit ? '保存修改' : '保存入库',
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
             ),
           ),
           // 新增模式才显示“保存并继续新增”
           if (!_isEdit) ...[
             const SizedBox(width: 10),
             Expanded(
-              child: GestureDetector(
+              child: FloatingBarButton(
+                label: '保存并继续新增',
+                tone: FloatingBarTone.ghost,
                 onTap: () => _saveItem(true),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    color: AppColors.cardBg,
-                    border: Border.all(color: AppColors.primary, width: 2),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      '保存并继续新增',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primaryDark,
-                      ),
-                    ),
-                  ),
-                ),
               ),
             ),
           ],

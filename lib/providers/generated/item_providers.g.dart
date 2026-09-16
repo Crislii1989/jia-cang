@@ -379,3 +379,331 @@ final class ItemByIdFamily extends $Family
   @override
   String toString() => r'itemByIdProvider';
 }
+
+/// 已过期的物品（到期日早于今天，且未标记为已用完/已丢失）
+
+@ProviderFor(overdueItems)
+final overdueItemsProvider = OverdueItemsProvider._();
+
+/// 已过期的物品（到期日早于今天，且未标记为已用完/已丢失）
+
+final class OverdueItemsProvider
+    extends $FunctionalProvider<List<Item>, List<Item>, List<Item>>
+    with $Provider<List<Item>> {
+  /// 已过期的物品（到期日早于今天，且未标记为已用完/已丢失）
+  OverdueItemsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'overdueItemsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$overdueItemsHash();
+
+  @$internal
+  @override
+  $ProviderElement<List<Item>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  List<Item> create(Ref ref) {
+    return overdueItems(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Item> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Item>>(value),
+    );
+  }
+}
+
+String _$overdueItemsHash() => r'750dd36ebe2a43001fe298d889d8b6256520bae8';
+
+/// 即将到期的物品（今天起 [kExpiringSoonDays] 天内到期，含今天，不含已过期）
+
+@ProviderFor(expiringSoonItems)
+final expiringSoonItemsProvider = ExpiringSoonItemsProvider._();
+
+/// 即将到期的物品（今天起 [kExpiringSoonDays] 天内到期，含今天，不含已过期）
+
+final class ExpiringSoonItemsProvider
+    extends $FunctionalProvider<List<Item>, List<Item>, List<Item>>
+    with $Provider<List<Item>> {
+  /// 即将到期的物品（今天起 [kExpiringSoonDays] 天内到期，含今天，不含已过期）
+  ExpiringSoonItemsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'expiringSoonItemsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$expiringSoonItemsHash();
+
+  @$internal
+  @override
+  $ProviderElement<List<Item>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  List<Item> create(Ref ref) {
+    return expiringSoonItems(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Item> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Item>>(value),
+    );
+  }
+}
+
+String _$expiringSoonItemsHash() => r'a3bb82514558302aaf28885b2ec8616caa13d694';
+
+/// 长期闲置的物品（在库 + 登记已满 [kIdleDays] 天）
+
+@ProviderFor(idleItems)
+final idleItemsProvider = IdleItemsProvider._();
+
+/// 长期闲置的物品（在库 + 登记已满 [kIdleDays] 天）
+
+final class IdleItemsProvider
+    extends $FunctionalProvider<List<Item>, List<Item>, List<Item>>
+    with $Provider<List<Item>> {
+  /// 长期闲置的物品（在库 + 登记已满 [kIdleDays] 天）
+  IdleItemsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'idleItemsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$idleItemsHash();
+
+  @$internal
+  @override
+  $ProviderElement<List<Item>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  List<Item> create(Ref ref) {
+    return idleItems(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Item> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Item>>(value),
+    );
+  }
+}
+
+String _$idleItemsHash() => r'4dfbcfa7a45ded0788bbd8beb0223dca84e3f06d';
+
+/// 概览：即将到期数量
+
+@ProviderFor(expiringSoonCount)
+final expiringSoonCountProvider = ExpiringSoonCountProvider._();
+
+/// 概览：即将到期数量
+
+final class ExpiringSoonCountProvider extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
+  /// 概览：即将到期数量
+  ExpiringSoonCountProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'expiringSoonCountProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$expiringSoonCountHash();
+
+  @$internal
+  @override
+  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  int create(Ref ref) {
+    return expiringSoonCount(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$expiringSoonCountHash() => r'ce975d7195f3f39af96f22097422244d47e59c73';
+
+/// 概览：出借中数量
+
+@ProviderFor(lentCount)
+final lentCountProvider = LentCountProvider._();
+
+/// 概览：出借中数量
+
+final class LentCountProvider extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
+  /// 概览：出借中数量
+  LentCountProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'lentCountProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$lentCountHash();
+
+  @$internal
+  @override
+  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  int create(Ref ref) {
+    return lentCount(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$lentCountHash() => r'9f01a51a3448a824eb5b3f9751eb7c28dca468bd';
+
+/// 概览：长期闲置数量
+
+@ProviderFor(idleCount)
+final idleCountProvider = IdleCountProvider._();
+
+/// 概览：长期闲置数量
+
+final class IdleCountProvider extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
+  /// 概览：长期闲置数量
+  IdleCountProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'idleCountProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$idleCountHash();
+
+  @$internal
+  @override
+  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  int create(Ref ref) {
+    return idleCount(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$idleCountHash() => r'13f767fe2ddc62e15ffb683071d7d89a233a9a3e';
+
+/// 首页「提醒」条目：已逾期 → 即将到期 → 长期闲置，按紧急度排序，
+/// 每类内部按「更紧急/更久」优先，最多返回 [_maxHomeReminders] 条（首页只展示前几条）。
+
+@ProviderFor(homeReminders)
+final homeRemindersProvider = HomeRemindersProvider._();
+
+/// 首页「提醒」条目：已逾期 → 即将到期 → 长期闲置，按紧急度排序，
+/// 每类内部按「更紧急/更久」优先，最多返回 [_maxHomeReminders] 条（首页只展示前几条）。
+
+final class HomeRemindersProvider
+    extends
+        $FunctionalProvider<
+          List<ReminderEntry>,
+          List<ReminderEntry>,
+          List<ReminderEntry>
+        >
+    with $Provider<List<ReminderEntry>> {
+  /// 首页「提醒」条目：已逾期 → 即将到期 → 长期闲置，按紧急度排序，
+  /// 每类内部按「更紧急/更久」优先，最多返回 [_maxHomeReminders] 条（首页只展示前几条）。
+  HomeRemindersProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'homeRemindersProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$homeRemindersHash();
+
+  @$internal
+  @override
+  $ProviderElement<List<ReminderEntry>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  List<ReminderEntry> create(Ref ref) {
+    return homeReminders(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<ReminderEntry> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<ReminderEntry>>(value),
+    );
+  }
+}
+
+String _$homeRemindersHash() => r'7de53a615d1d6f0f6f819d45f9b73901d871e323';

@@ -3,7 +3,7 @@ part of 'database.dart';
 /// 种子数据 —— 仅在数据库首次创建时插入。
 ///
 /// 包含：
-/// - 11 个内置分类（isBuiltIn = true）
+/// - 14 个内置分类（isBuiltIn = true）
 /// - 2 项默认用户设置（昵称、头像）
 /// - 3 个默认房间（卧室、厨房、客厅）
 ///
@@ -19,7 +19,7 @@ class SeedData {
   static List<CategoriesCompanion> get categories => [
     CategoriesCompanion.insert(
       id: 'digital',
-      label: '数码',
+      label: '数码电子',
       emoji: '📱',
       isBuiltIn: const Value(true),
       sortOrder: const Value(0),
@@ -32,67 +32,88 @@ class SeedData {
       sortOrder: const Value(1),
     ),
     CategoriesCompanion.insert(
-      id: 'toiletry',
-      label: '洗护',
-      emoji: '🧼',
+      id: 'clothing',
+      label: '衣物鞋包',
+      emoji: '👔',
       isBuiltIn: const Value(true),
       sortOrder: const Value(2),
     ),
     CategoriesCompanion.insert(
-      id: 'kitchen',
-      label: '厨房',
-      emoji: '🍚',
+      id: 'toiletry',
+      label: '个人洗护',
+      emoji: '🧼',
       isBuiltIn: const Value(true),
       sortOrder: const Value(3),
     ),
     CategoriesCompanion.insert(
-      id: 'clothing',
-      label: '衣物',
-      emoji: '👔',
+      id: 'kitchen',
+      label: '餐厨用品',
+      emoji: '🍚',
       isBuiltIn: const Value(true),
       sortOrder: const Value(4),
+    ),
+    CategoriesCompanion.insert(
+      id: 'home_living',
+      label: '家居生活',
+      emoji: '🏠',
+      isBuiltIn: const Value(true),
+      sortOrder: const Value(5),
+    ),
+    CategoriesCompanion.insert(
+      id: 'sports',
+      label: '运动户外',
+      emoji: '🏋️',
+      isBuiltIn: const Value(true),
+      sortOrder: const Value(6),
     ),
     CategoriesCompanion.insert(
       id: 'books',
       label: '书籍',
       emoji: '📚',
       isBuiltIn: const Value(true),
-      sortOrder: const Value(5),
-    ),
-    CategoriesCompanion.insert(
-      id: 'storage',
-      label: '收纳',
-      emoji: '📦',
-      isBuiltIn: const Value(true),
-      sortOrder: const Value(6),
-    ),
-    CategoriesCompanion.insert(
-      id: 'toy',
-      label: '玩具',
-      emoji: '🧸',
-      isBuiltIn: const Value(true),
       sortOrder: const Value(7),
     ),
     CategoriesCompanion.insert(
-      id: 'sports',
-      label: '运动',
-      emoji: '🏋️',
+      id: 'stationery',
+      label: '文具办公',
+      emoji: '✏️',
       isBuiltIn: const Value(true),
       sortOrder: const Value(8),
     ),
     CategoriesCompanion.insert(
-      id: 'stationery',
-      label: '文具',
-      emoji: '🎨',
+      id: 'toy',
+      label: '玩具兴趣',
+      emoji: '🧸',
       isBuiltIn: const Value(true),
       sortOrder: const Value(9),
     ),
     CategoriesCompanion.insert(
       id: 'tools',
-      label: '工具',
+      label: '工具五金',
       emoji: '🔧',
       isBuiltIn: const Value(true),
       sortOrder: const Value(10),
+    ),
+    CategoriesCompanion.insert(
+      id: 'jewelry',
+      label: '饰品贵重',
+      emoji: '💍',
+      isBuiltIn: const Value(true),
+      sortOrder: const Value(11),
+    ),
+    CategoriesCompanion.insert(
+      id: 'decoration',
+      label: '家居装饰',
+      emoji: '🖼️',
+      isBuiltIn: const Value(true),
+      sortOrder: const Value(12),
+    ),
+    CategoriesCompanion.insert(
+      id: 'other',
+      label: '其他',
+      emoji: '📦',
+      isBuiltIn: const Value(true),
+      sortOrder: const Value(13),
     ),
   ];
 

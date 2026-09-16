@@ -31,7 +31,6 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
   // 新版本信息（API 返回后填充）
   String _latestVersion = '';
   String _releaseNotes = '';
-  String _downloadUrl = '';
   String _htmlUrl = '';
 
   // 错误信息
@@ -85,7 +84,6 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
       if (outcome.info != null) {
         _latestVersion = outcome.info!.latestVersion;
         _releaseNotes = outcome.info!.releaseNotes;
-        _downloadUrl = outcome.info!.downloadUrl;
         _htmlUrl = outcome.info!.htmlUrl;
       }
     });

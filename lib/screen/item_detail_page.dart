@@ -7,6 +7,7 @@ import 'package:jia_cang/constants/app_dimensions.dart';
 import 'package:jia_cang/widgets/base_page.dart';
 import 'package:jia_cang/widgets/card_container.dart';
 import 'package:jia_cang/widgets/emoji_text.dart';
+import 'package:jia_cang/widgets/floating_bar.dart';
 import 'package:jia_cang/widgets/info_cell.dart';
 import 'package:jia_cang/widgets/photo_carousel.dart';
 import 'package:jia_cang/widgets/center_sheet.dart';
@@ -37,19 +38,30 @@ class ItemDetailPage extends ConsumerWidget {
     }
 
     return BasePage(
+      // 操作条固定在屏幕底部（V2.6 悬浮圆角白条），内容区独立滚动
+      useScrollView: false,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildTopBar(context),
-          const SizedBox(height: AppDimensions.spacingLarge),
-          _buildImageGallery(item),
-          const SizedBox(height: AppDimensions.spacingExtraLarge),
-          _buildItemHeader(item),
-          const SizedBox(height: AppDimensions.spacingExtraLarge),
-          _buildInfoSection(context, ref, item),
-          const SizedBox(height: AppDimensions.spacingExtraLarge),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: AppDimensions.pagePadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildTopBar(context),
+                  const SizedBox(height: AppDimensions.spacingLarge),
+                  _buildImageGallery(item),
+                  const SizedBox(height: AppDimensions.spacingExtraLarge),
+                  _buildItemHeader(item),
+                  const SizedBox(height: AppDimensions.spacingExtraLarge),
+                  _buildInfoSection(context, ref, item),
+                  const SizedBox(height: AppDimensions.spacingExtraLarge),
+                ],
+              ),
+            ),
+          ),
           _buildBottomActions(context, ref, item),
-          const SizedBox(height: AppDimensions.spacingExtraLarge),
         ],
       ),
     );
@@ -111,7 +123,7 @@ class ItemDetailPage extends ConsumerWidget {
               AppDimensions.borderRadiusMedium,
             ),
           ),
-          child: Center(child: EmojiText(emoji: '\U0001F4E6', fontSize: 96)),
+          child: Center(child: EmojiText(emoji: '📦', fontSize: 96)),
         ),
       );
     }
@@ -119,75 +131,28 @@ class ItemDetailPage extends ConsumerWidget {
     return PhotoCarousel(photos: item.photos);
   }
 
-  /// 底部操作按钮：编辑物品 + 删除物品（并排平齐）
+  /// 底部操作条（V2.6）：与底部导航同一套悬浮圆角白条语言，
+  /// 条内托两颗 40pt 胶囊按钮——编辑物品（主按钮）/ 删除物品（危险次要按钮）。
   Widget _buildBottomActions(BuildContext context, WidgetRef ref, Item item) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacingMedium,
-      ),
+    return FloatingBar(
+      background: AppColors.actionBarBg,
       child: Row(
         children: [
-          // 编辑物品
           Expanded(
-            child: GestureDetector(
+            child: FloatingBarButton(
+              label: '编辑物品',
+              icon: Icons.edit,
+              tone: FloatingBarTone.primary,
               onTap: () => context.push('/edit_item/${item.id}'),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  color: AppColors.cardBg,
-                  border: Border.all(color: AppColors.primary, width: 2),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.edit, size: 18, color: AppColors.primaryDark),
-                    SizedBox(width: 8),
-                    Text(
-                      '编辑物品',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.primaryDark,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
-          const SizedBox(width: 12),
-          // 删除物品
+          const SizedBox(width: 10),
           Expanded(
-            child: GestureDetector(
+            child: FloatingBarButton(
+              label: '删除物品',
+              icon: Icons.delete_outline,
+              tone: FloatingBarTone.danger,
               onTap: () => _confirmDelete(context, ref, item),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  color: AppColors.cardBg,
-                  border: Border.all(color: AppColors.danger, width: 2),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.delete_outline,
-                      size: 18,
-                      color: AppColors.danger,
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      '删除物品',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.danger,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
         ],
@@ -334,6 +299,10 @@ class ItemDetailPage extends ConsumerWidget {
 
   /// 修改物品收纳位置（联动柜体/格子）
   void _changeLocation(BuildContext context, WidgetRef ref, Item item) {
+    // 在 await 之前取到 messenger：位置更新是异步的，跨异步间隙再用
+    // 外层 BuildContext 会被 lint 判为 use_build_context_synchronously，
+    // 弹窗关闭后该 context 还有失效风险。
+    final messenger = ScaffoldMessenger.of(context);
     showCenterSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -381,7 +350,7 @@ class ItemDetailPage extends ConsumerWidget {
                       locationLabel: node.pathLabel,
                     );
                 if (ctx.mounted) Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
+                messenger.showSnackBar(
                   SnackBar(
                     content: Text('已更新收纳位置：${node.pathLabel}'),
                     duration: const Duration(seconds: 2),
