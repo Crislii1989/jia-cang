@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
-import '../constants/home_metrics.dart';
+import '../constants/design_metrics.dart';
 
 /// 宽视口下的「手机画布」（2026-09-16「实际效果 vs 参考图」修正）。
 ///
-/// 窗口宽于 [HomeMetrics.maxContentWidth] 时，把**整个应用内容**居中限制到该宽度，
+/// 窗口宽于 [DesignMetrics.maxContentWidth] 时，把**整个应用内容**居中限制到该宽度，
 /// 两侧用全局底色托底；窄于该宽度（也就是真机）时原样返回，零影响。
 ///
 /// 挂在 `MaterialApp.builder` 上，所以**所有路由、弹窗、浮层**一并生效，
@@ -17,7 +17,7 @@ class AppCanvas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (MediaQuery.sizeOf(context).width <= HomeMetrics.maxContentWidth) {
+    if (MediaQuery.sizeOf(context).width <= DesignMetrics.maxContentWidth) {
       return child;
     }
 
@@ -30,7 +30,7 @@ class AppCanvas extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Spacer(),
-          SizedBox(width: HomeMetrics.maxContentWidth, child: child),
+          SizedBox(width: DesignMetrics.maxContentWidth, child: child),
           const Spacer(),
         ],
       ),

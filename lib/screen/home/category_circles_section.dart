@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jia_cang/constants/app_colors.dart';
-import 'package:jia_cang/constants/home_metrics.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/models/category.dart';
 import 'package:jia_cang/providers/category_provider.dart';
 import 'package:jia_cang/providers/item_providers.dart';
@@ -16,7 +16,7 @@ import 'package:jia_cang/widgets/emoji_text.dart';
 /// 点击某个分类 → 写入「待选分类」并切到物品库 Tab，由物品库在挂载/兜底
 /// 逻辑里消费（见 `pendingCategoryProvider`）。
 ///
-/// 圆直径与间距经 [HomeMetrics] 等比换算：设计稿的内容宽 292 下，
+/// 圆直径与间距经 [DesignMetrics] 等比换算：设计稿的内容宽 292 下，
 /// 四格槽位是 68.5、圆占 56；写死 56 的话视口一宽槽位就涨到 110+，
 /// 每个圆两侧多出几十像素空白，整行看着又小又散。
 class CategoryCirclesSection extends ConsumerWidget {
@@ -34,14 +34,14 @@ class CategoryCirclesSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final k = HomeMetrics.of(context);
+    final k = DesignMetrics.of(context);
     final categories = ref.watch(availableCategoriesProvider);
     final visible = categories.take(_maxVisible).toList();
 
     if (visible.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
+      padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -78,7 +78,7 @@ class _CategoryCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final k = HomeMetrics.of(context);
+    final k = DesignMetrics.of(context);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

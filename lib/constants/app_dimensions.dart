@@ -73,4 +73,56 @@ class AppDimensions {
   static const double statCardHeight = 60;
   /// 统计卡图标块尺寸
   static const double statCardTileSize = 40;
+
+  // ── S3 详情页 / S4 添加页（高保真稿 V2.6，2026-09-16 落地） ──
+  //
+  // 下面这些都是**设计稿（320 机型 / 内容宽 292）的绝对值**。
+  // 落地时必须经 `DesignMetrics.of(context)` 换算后再用（`值 * k`），
+  // 不要把常量直接当像素用——否则宽视口下又会横向拉伸。
+  // 例外见 [delKnobSize] / [delKnobBottom] 的注释。
+
+  /// 详情页沉浸大图：高度 / 圆角
+  static const double heroHeight = 158;
+  static const double heroRadius = 16;
+
+  /// 大图上的返回圆钮：直径 / 距大图左上内缩（稿子 .icon-btn 30 + top/left 10）
+  static const double heroBackSize = 30;
+  static const double heroBackInset = 10;
+
+  /// 大图底部轮播点：激活点宽 / 点高 / 间距 / 距大图底
+  static const double heroDotActiveWidth = 14;
+  static const double heroDotSize = 4;
+  static const double heroDotGap = 4;
+  static const double heroDotBottom = 9;
+
+  /// 信息组单行：普通信息行最小高 / 表单行最小高 / 表单行内距
+  static const double infoRowMinHeight = 40;
+  static const double formRowMinHeight = 44;
+  static const double formRowPadding = 12;
+
+  /// 表单行标签列宽（稿子 .f-cell .lb width:64）
+  static const double formLabelWidth = 64;
+
+  /// 信息行内的小图标块：边长 / 圆角
+  static const double cellIconTile = 26;
+  static const double cellIconTileRadius = 8;
+
+  /// 备注行高度（稿子 `.f-cell min-height:140px`，标签与值都顶部对齐）
+  static const double noteRowHeight = 140;
+
+  /// 照片块：边长 / 圆角（稿子 .photo-tile 72 / .photo-add height 72）
+  static const double photoTileSize = 72;
+  static const double photoTileRadius = 14;
+
+  /// 详情页删除旋钮：直径。
+  /// **不缩放**——稿子里它与底部条按钮等高（都是 40），而悬浮条本身是
+  /// 固定 chrome（不随内容缩放），所以旋钮也保持原尺寸才不会与条脱节。
+  static const double delKnobSize = 40;
+
+  /// 删除旋钮距屏幕左边（与 `FloatingBar.sideInset` 14 对齐，稿子 `left:14px`）
+  static const double delKnobInset = 14;
+
+  /// 删除旋钮距屏幕底：悬浮条顶（bottomGap 8 + height 60 = 68）再留 8。
+  /// **不缩放**，理由同 [delKnobSize]。
+  static const double delKnobBottom = 76;
 }

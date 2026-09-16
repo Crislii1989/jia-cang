@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jia_cang/constants/app_colors.dart';
-import 'package:jia_cang/constants/home_metrics.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/providers/item_providers.dart';
 
 /// 首页概览：一行四张**竖排统计高卡**（高保真稿 V2.6 定稿）。
@@ -13,15 +13,15 @@ import 'package:jia_cang/providers/item_providers.dart';
 /// 四个维度固定为：物品总数 / 即将到期 / 出借中 / 长期闲置。
 /// 点击统一进物品库——后续接入「按条件预筛」时只需在这里改跳转参数。
 ///
-/// **尺寸全部经 [HomeMetrics] 等比换算**：设计稿是 320 机型（内容宽 292），
+/// **尺寸全部经 [DesignMetrics] 等比换算**：设计稿是 320 机型（内容宽 292），
 /// 直接写死绝对值会在宽视口下把卡片拉成横版、数字相对变小
-/// （见 `home_metrics.dart` 的说明）。
+/// （见 `design_metrics.dart` 的说明）。
 class StatMinisSection extends ConsumerWidget {
   const StatMinisSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final k = HomeMetrics.of(context);
+    final k = DesignMetrics.of(context);
     final total = ref.watch(itemCountProvider);
     final expiring = ref.watch(expiringSoonCountProvider);
     final lent = ref.watch(lentCountProvider);
@@ -65,7 +65,7 @@ class StatMinisSection extends ConsumerWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
+      padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
       child: Row(
         // 不用 stretch：本 Row 位于 ListView 内，交叉轴高度无界，
         // stretch 会要求无限高度。四张卡结构完全一致，自然高度即相等。
@@ -101,7 +101,7 @@ class _StatHighCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final k = HomeMetrics.of(context);
+    final k = DesignMetrics.of(context);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,

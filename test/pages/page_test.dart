@@ -135,9 +135,13 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('物品名称'), findsOneWidget);
+      // S4 行式字段卡：标签在左（名称/分类/存放位置/到期日/登记时间/备注）
+      expect(find.text('名称'), findsOneWidget);
+      expect(find.text('分类'), findsOneWidget);
+      expect(find.text('存放位置'), findsOneWidget);
       expect(find.text('到期日'), findsOneWidget);
       expect(find.text('登记时间'), findsOneWidget);
+      expect(find.text('备注'), findsOneWidget);
       expect(find.text('保存入库'), findsOneWidget);
     });
 

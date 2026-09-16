@@ -14,11 +14,29 @@ class PhotoCarousel extends StatefulWidget {
 
   final BorderRadius borderRadius;
 
+  /// 轮播背景装饰。沉浸大图（详情页）传珊瑚渐变；默认用浅底色。
+  final BoxDecoration? background;
+
+  /// 指示器形态：true = 底部圆点（激活点拉宽成白色胶囊，稿子 S3 的样式）；
+  /// false = 「n / m」计数胶囊（默认，列表页的样式）。
+  final bool dotIndicator;
+
+  /// 是否显示左右切换圆钮（沉浸大图靠滑动 + 圆点，不需要它们）
+  final bool showNavButtons;
+
+  /// 固定高度。传了就**精确**用这个值（详情页沉浸大图要按设计稿 158*k）；
+  /// 不传才走「屏幕宽 × 3/4，clamp 到 [maxHeight]」的响应式逻辑。
+  final double? height;
+
   const PhotoCarousel({
     super.key,
     required this.photos,
     this.maxHeight = 240,
     this.borderRadius = const BorderRadius.all(Radius.circular(16)),
+    this.background,
+    this.dotIndicator = false,
+    this.showNavButtons = true,
+    this.height,
   });
 
   @override
@@ -67,8 +85,9 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
     }
 
     final screenWidth = MediaQuery.sizeOf(context).width;
-    // 响应式高度：屏幕宽度 × 3/4，但不超过 maxHeight
-    final height = (screenWidth * 0.75).clamp(160.0, widget.maxHeight);
+    // 固定高度优先（沉浸大图按设计稿）；否则按屏宽 3/4 响应式
+    final height =
+        widget.height ?? (screenWidth * 0.75).clamp(160.0, widget.maxHeight);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -94,9 +113,9 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
                       onTapUp: (_, __, ___) => _openFullScreen(i),
                     );
                   },
-                  backgroundDecoration: const BoxDecoration(
-                    color: AppColors.background,
-                  ),
+                  backgroundDecoration:
+                      widget.background ??
+                      const BoxDecoration(color: AppColors.background),
                   loadingBuilder: (_, __) => const Center(
                     child: CircularProgressIndicator(
                       color: AppColors.coral,
@@ -105,8 +124,8 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
                   ),
                 ),
 
-                // 左右切换按钮
-                if (photos.length > 1) ...[
+                // 左右切换按钮（沉浸大图关闭，靠滑动翻页）
+                if (widget.showNavButtons && photos.length > 1) ...[
                   _NavButton(
                     alignment: Alignment.centerLeft,
                     icon: Icons.chevron_left,
@@ -119,15 +138,23 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
                     visible: _current < photos.length - 1,
                     onTap: () => _goTo(_current + 1),
                   ),
+                ],
 
-                  // 底部指示器 + 计数
+                // 底部指示器
+                if (photos.length > 1)
                   Positioned(
-                    bottom: 8,
+                    bottom: widget.dotIndicator
+                        ? 9
+                        : 8,
                     left: 0,
                     right: 0,
-                    child: _Indicator(count: photos.length, current: _current),
+                    child: widget.dotIndicator
+                        ? _DotIndicator(
+                            count: photos.length,
+                            current: _current,
+                          )
+                        : _Indicator(count: photos.length, current: _current),
                   ),
-                ],
 
                 // 点击放大提示（单图也支持）
                 if (photos.length == 1)
@@ -248,6 +275,37 @@ class _Indicator extends StatelessWidget {
             ],
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// 底部圆点指示器（稿子 S3）：激活点拉宽成白色胶囊，其余是半透明小点。
+class _DotIndicator extends StatelessWidget {
+  final int count;
+  final int current;
+
+  const _DotIndicator({required this.count, required this.current});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (int i = 0; i < count; i++) ...[
+          if (i > 0) const SizedBox(width: 4),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: i == current ? 14 : 4,
+            height: 4,
+            decoration: BoxDecoration(
+              color: i == current
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+        ],
       ],
     );
   }

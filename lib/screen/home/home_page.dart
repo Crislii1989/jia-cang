@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jia_cang/constants/app_colors.dart';
-import 'package:jia_cang/constants/home_metrics.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/models/item.dart';
 import 'package:jia_cang/providers/item_providers.dart';
 import 'package:jia_cang/providers/profile_provider.dart';
@@ -23,7 +23,7 @@ import 'stat_minis_section.dart';
 /// 背景走全局那一片（[GradientBackground]，V2.2/V2.3 起 S1~S5 共用，
 /// 内容滚动时固定不动），页面自身不再画光晕。
 ///
-/// 所有尺寸经 [HomeMetrics] 按设计稿（320 机型 / 内容宽 292）等比换算——
+/// 所有尺寸经 [DesignMetrics] 按设计稿（320 机型 / 内容宽 292）等比换算——
 /// 设计值是绝对值，运行时容器却是流式的，不换算就会在宽视口下失真。
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -45,7 +45,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final k = HomeMetrics.of(context);
+    final k = DesignMetrics.of(context);
 
     return Scaffold(
       // 透明：透出 MainShell 那一片全局背景
@@ -102,7 +102,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   /// 搜索条大胶囊（46pt，V2.1 参考图规格）：假输入框，点击进物品库
   Widget _buildSearchBar(double k) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
+      padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => context.go('/inventory'),
@@ -163,7 +163,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final dateText = '${now.month} 月 ${now.day} 日';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
+      padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

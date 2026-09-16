@@ -286,4 +286,46 @@ class AppColors {
   static const chipBorder = blushLine;
   /// 未选中标签文字：次级暖棕
   static const chipFg = blushInk2;
+
+  // ── V2.7 令牌（高保真稿 S3 详情 / S4 添加页落地，2026-09-16） ──
+  //
+  // 这一段的取值直接取自 docs/ui-hifi-mockups.html 的 S3/S4 内联样式与
+  // `.cell / .f-cell / .photo-add / .delknob / .badge` 规则，别再各页自己拼。
+  //
+  // 状态徽标与分类徽标**不需要新色**，四个状态与稿子的 `.bg-*` 完全对上：
+  //   在库   → .bg-ok     = statGreen / statGreenBg
+  //   出借中 → .bg-info   = statBlue  / statBlueBg
+  //   已丢失 → .bg-danger = alertRed  / alertRedBg
+  //   已使用 → .bg-muted  = blushInk2 / statPeachBg
+
+  /// 详情页沉浸大图的珊瑚渐变底（稿子 140deg：#FFB9A5 → #F2705B 55% → #DD5B46）
+  static const heroGradient = [
+    Color(0xFFFFB9A5),
+    Color(0xFFF2705B),
+    Color(0xFFDD5B46),
+  ];
+
+  /// 信息组（cell-group）行与行之间的极浅分割线（稿子 #FAF0EA）
+  static const cellDivider = Color(0xFFFAF0EA);
+
+  /// 新增照片虚线块的虚线色（稿子 1.5px dashed #F0B7A6）
+  static const photoAddBorder = Color(0xFFF0B7A6);
+
+  /// 新增照片虚线块的底色（稿子 #FFF7F3）
+  static const photoAddBg = Color(0xFFFFF7F3);
+
+  /// 详情页删除旋钮的描边（稿子 1.5px #F0B9B9，底色用 [alertRedBg]）
+  static const delKnobBorder = Color(0xFFF0B9B9);
+
+  /// 详情页删除旋钮投影（稿子 rgba(214,69,69,.18) / 0 3px 8px）
+  static const delKnobShadow = Color(0x2ED64545);
+
+  /// 卡片投影（稿子 `--shadow: 0 2px 10px rgba(77,55,51,.07)`）
+  static const cardShadow = Color(0x124D3733);
+
+  /// 详情页「到期日」条的描边（稿子 `.stat.hot` 的 #F6C4B4，底色 [coralSoft]）
+  static const expiryRowBorder = Color(0xFFF6C4B4);
+
+  /// 到期日条里「还剩 N 天」的强调色（稿子 #C25A3C）
+  static const expiryHint = Color(0xFFC25A3C);
 }

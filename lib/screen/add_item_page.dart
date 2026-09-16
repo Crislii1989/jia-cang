@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart' hide DatePickerTheme;
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jia_cang/constants/app_colors.dart';
+import 'package:jia_cang/constants/app_dimensions.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/models/category_item.dart';
 import 'package:jia_cang/models/picker_item.dart';
 import 'package:jia_cang/models/item.dart';
@@ -769,6 +770,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
   // ==================== Build ====================
   @override
   Widget build(BuildContext context) {
+    final k = DesignMetrics.of(context);
     return Scaffold(
       // 透明：透出全局那一层背景（S1~S5 共用同一片）
       backgroundColor: Colors.transparent,
@@ -784,17 +786,17 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
                 Expanded(
                   child: SingleChildScrollView(
                     controller: _scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DesignMetrics.pageMargin,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildTopBar(),
-                        const SizedBox(height: 8),
-                        _buildPhotoSection(),
-                        const SizedBox(height: 16),
-                        _buildBasicInfoSection(),
-                        const SizedBox(height: 12),
-                        _buildCategoryLocationSection(),
+                        _buildTopBar(k),
+                        SizedBox(height: 10 * k),
+                        _buildPhotoSection(k),
+                        SizedBox(height: 10 * k),
+                        _buildFieldsSection(k),
                         // 操作条已不悬浮在内容之上，只留一点收尾留白
                         const SizedBox(height: 24),
                       ],
@@ -813,42 +815,53 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
   }
 
   // ==================== 顶部导航 ====================
-  Widget _buildTopBar() {
+  /// 稿子 S4：`取消（左）· 标题（中）· 保存（右）` 三点式模态导航，
+  /// 取代旧的「白色圆角返回钮 + 左对齐标题」。
+  Widget _buildTopBar(double k) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 4),
+      padding: const EdgeInsets.only(top: 8, bottom: 2),
       child: Row(
         children: [
-          // 返回按钮
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () => Navigator.of(context).pop(),
-            child: Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: AppColors.cardBg,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.textPrimary.withValues(alpha: 0.06),
-                    blurRadius: 12,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.chevron_left,
-                size: 20,
-                color: AppColors.textSecondary,
+            child: SizedBox(
+              width: 44 * k,
+              child: Text(
+                '取消',
+                style: TextStyle(
+                  fontSize: 13 * k,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.blushInk2,
+                ),
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          Text(
-            _isEdit ? '编辑物品' : '新增物品',
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+          Expanded(
+            child: Text(
+              _isEdit ? '编辑物品' : '添加物品',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15 * k,
+                fontWeight: FontWeight.w800,
+                color: AppColors.blushInk,
+              ),
+            ),
+          ),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => _saveItem(false),
+            child: SizedBox(
+              width: 44 * k,
+              child: Text(
+                '保存',
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 13 * k,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.coralDeep,
+                ),
+              ),
             ),
           ),
         ],
@@ -857,226 +870,168 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
   }
 
   // ==================== 照片区域 ====================
-  Widget _buildPhotoSection() {
+  /// 稿子 S4：一张白卡里横排 72pt 照片块 + 虚线「＋ / 拍照 / 相册」添加块。
+  /// 取代旧的「物品照片 · 0/10 计数行 + 100pt 大块」。
+  Widget _buildPhotoSection(double k) {
     final canAddMore = _photos.length < PhotoService.maxPhotos;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.photo_camera_outlined,
-              size: 14,
-              color: AppColors.coralDeep,
+    final tileSize = AppDimensions.photoTileSize * k;
+
+    Widget addTile() {
+      return GestureDetector(
+        onTap: _isPicking ? null : _showPhotoSourceSheet,
+        child: Container(
+          width: 110 * k,
+          height: tileSize,
+          decoration: BoxDecoration(
+            color: AppColors.photoAddBg,
+            borderRadius: BorderRadius.circular(AppDimensions.photoTileRadius * k),
+            border: Border.all(
+              color: AppColors.photoAddBorder,
+              width: 1.5,
+              strokeAlign: BorderSide.strokeAlignInside,
+              style: BorderStyle.solid,
             ),
-            const SizedBox(width: 6),
-            Text(
-              '物品照片 · ${_photos.length}/${PhotoService.maxPhotos}（JPG/PNG，≤5MB）',
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 100,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: _photos.length + (canAddMore ? 1 : 0),
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, index) {
-              if (index == _photos.length) {
-                // 添加按钮
-                return GestureDetector(
-                  onTap: _isPicking ? null : _showPhotoSourceSheet,
-                  child: Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: AppColors.cardBg,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: AppColors.border,
-                        width: 2.5,
-                        strokeAlign: BorderSide.strokeAlignInside,
+          ),
+          child: _isPicking
+              ? const Center(
+                  child: SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.coral,
+                    ),
+                  ),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add, size: 18 * k, color: AppColors.coralDeep),
+                    SizedBox(height: 3 * k),
+                    Text(
+                      '拍照 / 相册',
+                      style: TextStyle(
+                        fontSize: 11 * k,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.coralDeep,
                       ),
                     ),
-                    child: _isPicking
-                        ? const Center(
-                            child: SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppColors.coral,
-                              ),
-                            ),
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.add,
-                                size: 28,
-                                color: AppColors.textHint,
-                              ),
-                              const SizedBox(height: 6),
-                              const Text(
-                                '添加照片',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textHint,
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
-                );
-              }
-              // 照片缩略图
-              final photo = _photos[index];
-              return _PhotoThumb(
-                entry: photo,
-                isCover: index == 0,
-                onRemove: () => _removePhoto(index),
-                onRetry: photo.status == PhotoStatus.failed
-                    ? () => _retryPhoto(index)
-                    : null,
-              );
-            },
-          ),
+                  ],
+                ),
         ),
-      ],
+      );
+    }
+
+    return Container(
+      padding: EdgeInsets.all(10 * k),
+      decoration: BoxDecoration(
+        color: AppColors.cardBg,
+        borderRadius: BorderRadius.circular(16 * k),
+        border: Border.all(color: AppColors.blushLine),
+        boxShadow: const [
+          BoxShadow(color: AppColors.cardShadow, blurRadius: 10, offset: Offset(0, 2)),
+        ],
+      ),
+      child: SizedBox(
+        height: tileSize,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.zero,
+          itemCount: _photos.length + (canAddMore ? 1 : 0),
+          separatorBuilder: (_, __) => SizedBox(width: 9 * k),
+          itemBuilder: (context, index) {
+            if (index == _photos.length) return addTile();
+            // 照片缩略图
+            final photo = _photos[index];
+            return _PhotoThumb(
+              entry: photo,
+              size: tileSize,
+              isCover: index == 0,
+              onRemove: () => _removePhoto(index),
+              onRetry: photo.status == PhotoStatus.failed
+                  ? () => _retryPhoto(index)
+                  : null,
+            );
+          },
+        ),
+      ),
     );
   }
 
-  // ==================== 基本信息 ====================
-  Widget _buildBasicInfoSection() {
-    return _FormCard(
-      icon: Icons.edit,
-      title: '基本信息',
-      children: [
-        // 物品名称
-        _buildLabel('物品名称', required: true),
-        const SizedBox(height: 6),
-        _buildInput(
-          controller: _nameController,
-          placeholder: '例如：AirPods Pro 2',
-        ),
-        const SizedBox(height: 14),
-        // 到期日（可选，用于食品/药品/耗材等有保质期的东西）
-        _buildLabel('到期日'),
-        const SizedBox(height: 6),
-        _buildInput(
-          controller: _expiryController,
-          placeholder: '点击选择日期（可不填）',
-          readOnly: true,
-          onTap: _pickExpiryDate,
-          fontSize: 15,
-          suffix: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (_expiryDate != null)
-                GestureDetector(
-                  onTap: _clearExpiryDate,
-                  behavior: HitTestBehavior.opaque,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 6),
-                    child: Icon(
-                      Icons.close,
-                      size: 16,
-                      color: AppColors.textHint,
-                    ),
-                  ),
-                ),
-              const Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: Icon(
-                  Icons.calendar_today_outlined,
-                  size: 16,
-                  color: AppColors.textHint,
-                ),
-              ),
-            ],
+  // ==================== 字段区 ====================
+  /// 稿子 S4：所有字段合成**一张白卡**（cell-group，行间细线），
+  /// 行式布局——标签在左（宽 64）、值在右，取代旧的「标签在上 + 输入框在下」分组卡片。
+  /// 「登记时间」是稿子里没有的字段，按用户要求保留（只读展示）。
+  Widget _buildFieldsSection(double k) {
+    Widget divider() => Container(height: 1, color: AppColors.cellDivider);
+    return Container(
+      clipBehavior: Clip.antiAlias, // 圆角卡片有子内容顶边，必须显式裁剪
+      decoration: BoxDecoration(
+        color: AppColors.cardBg,
+        borderRadius: BorderRadius.circular(12 * k),
+        border: Border.all(color: AppColors.blushLine),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.cardShadow,
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
-        ),
-        const SizedBox(height: 14),
-        // 登记时间（自动按系统时间录入，不可编辑）
-        _buildLabel('登记时间'),
-        const SizedBox(height: 6),
-        _buildInput(
-          controller: _registeredController,
-          placeholder: '自动记录',
-          readOnly: true,
-          fontSize: 15,
-          suffix: const Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: Icon(
-              Icons.schedule,
-              size: 16,
-              color: AppColors.textHint,
-            ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _FormTextRow(
+            k: k,
+            label: '名称',
+            isRequired: true,
+            controller: _nameController,
+            placeholder: '例如：AirPods Pro 2',
           ),
-        ),
-      ],
-    );
-  }
-
-  // ==================== 归属信息 ====================
-  Widget _buildCategoryLocationSection() {
-    return _FormCard(
-      icon: Icons.inventory_2_outlined,
-      title: '归属信息',
-      children: [
-        Row(
-          children: [
-            // 物品分类
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLabel('物品分类', required: true),
-                  const SizedBox(height: 6),
-                  _buildSelectTrigger(
-                    text: _selectedCategory ?? '选择分类',
-                    hasValue: _selectedCategory != null,
-                    onTap: _openCategoryPicker,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 10),
-            // 收纳位置
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLabel('收纳位置', required: true),
-                  const SizedBox(height: 6),
-                  _buildSelectTrigger(
-                    text: _selectedLocation ?? '选择位置',
-                    hasValue: _selectedLocation != null,
-                    onTap: _openLocationPicker,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 14),
-        // 备注
-        _buildLabel('备注'),
-        const SizedBox(height: 6),
-        _buildInput(
-          controller: _noteController,
-          placeholder: '记录一些补充信息…',
-          maxLines: 4,
-        ),
-      ],
+          divider(),
+          _FormRow(
+            k: k,
+            label: '分类',
+            isRequired: true,
+            value: _selectedCategory ?? '请选择',
+            filled: _selectedCategory != null,
+            showChevron: true,
+            onTap: _openCategoryPicker,
+          ),
+          divider(),
+          _FormRow(
+            k: k,
+            label: '存放位置',
+            value: _selectedLocation ?? '可不填',
+            filled: _selectedLocation != null,
+            showChevron: true,
+            onTap: _openLocationPicker,
+          ),
+          divider(),
+          _FormRow(
+            k: k,
+            label: '到期日',
+            value: _expiryDate == null ? '可不填' : _formatDate(_expiryDate!),
+            filled: _expiryDate != null,
+            showChevron: true,
+            onClear: _expiryDate == null ? null : _clearExpiryDate,
+            onTap: _pickExpiryDate,
+          ),
+          divider(),
+          _FormRow(
+            k: k,
+            label: '登记时间',
+            value: _registeredController.text,
+            filled: true,
+          ),
+          divider(),
+          _FormNoteRow(
+            k: k,
+            label: '备注',
+            controller: _noteController,
+            placeholder: '补充信息（可不填）',
+          ),
+        ],
+      ),
     );
   }
 
@@ -1185,115 +1140,79 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
   }
 
   // ==================== 通用组件 ====================
-  Widget _buildLabel(String text, {bool required = false}) {
-    return Row(
-      children: [
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textSecondary,
-          ),
-        ),
-        if (required)
-          const Padding(
-            padding: EdgeInsets.only(left: 4),
-            child: Text(
-              '*',
-              style: TextStyle(fontSize: 10, color: AppColors.danger),
-            ),
-          ),
-      ],
-    );
-  }
+}
 
-  Widget _buildInput({
-    required TextEditingController controller,
-    required String placeholder,
-    int maxLines = 1,
-    TextInputType? keyboardType,
-    List<TextInputFormatter>? inputFormatters,
-    bool readOnly = false,
-    VoidCallback? onTap,
-    double fontSize = 16,
-    EdgeInsets? padding,
-    Widget? suffix,
-  }) {
-    return GestureDetector(
-      onTap: readOnly ? onTap : null,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border, width: 1.5),
-        ),
-        child: TextField(
-          controller: controller,
-          readOnly: readOnly,
-          onTap: onTap,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          inputFormatters: inputFormatters,
-          style: TextStyle(fontSize: fontSize, color: AppColors.textPrimary),
-          decoration: InputDecoration(
-            hintText: placeholder,
-            hintStyle: TextStyle(color: AppColors.textHint, fontSize: fontSize),
-            contentPadding:
-                padding ??
-                //const EdgeInsets.fromLTRB(14, 11, 4, 11),
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-            border: InputBorder.none,
-            suffixIcon: suffix,
-          ),
-        ),
-      ),
-    );
-  }
+// ==================== S4 行式表单行 ====================
 
-  Widget _buildSelectTrigger({
-    required String text,
-    required bool hasValue,
-    required VoidCallback onTap,
-    bool disabled = false,
-  }) {
-    return GestureDetector(
-      onTap: disabled ? null : onTap,
+/// 「标签在左（宽 64·k）/ 值在右」的通用表单行 —— 稿子 S4 字段卡的标准行。
+class _FormRow extends StatelessWidget {
+  final double k;
+  final String label;
+  final bool isRequired;
+  final String value;
+
+  /// 值是否已填写（决定文字用主色还是提示色）
+  final bool filled;
+  final bool showChevron;
+
+  /// 值右侧的清除按钮（到期日用）
+  final VoidCallback? onClear;
+  final VoidCallback? onTap;
+
+  const _FormRow({
+    required this.k,
+    required this.label,
+    required this.value,
+    this.isRequired = false,
+    this.filled = false,
+    this.showChevron = false,
+    this.onClear,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-        decoration: BoxDecoration(
-          color: disabled
-              ? AppColors.border.withValues(alpha: 0.3)
-              : AppColors.background,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: disabled
-                ? AppColors.border.withValues(alpha: 0.5)
-                : AppColors.border,
-            width: 1.5,
-          ),
+        constraints: BoxConstraints(minHeight: AppDimensions.formRowMinHeight * k),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppDimensions.formRowPadding * k,
+          vertical: 8 * k,
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            _formLabel(label, isRequired, k),
+            SizedBox(width: 8 * k),
             Expanded(
               child: Text(
-                text,
+                value,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: disabled
-                      ? AppColors.textSecondary
-                      : (hasValue ? AppColors.textPrimary : AppColors.textHint),
+                  fontSize: 14 * k,
+                  fontWeight: filled ? FontWeight.w600 : FontWeight.w400,
+                  color: filled ? AppColors.textPrimary : AppColors.textHint,
                 ),
               ),
             ),
-            Icon(
-              disabled ? Icons.lock_outline : Icons.expand_more,
-              size: 14,
-              color: AppColors.textHint,
-            ),
+            if (onClear != null) ...[
+              SizedBox(width: 6 * k),
+              GestureDetector(
+                onTap: onClear,
+                behavior: HitTestBehavior.opaque,
+                child: Icon(Icons.cancel, size: 16 * k, color: AppColors.textHint),
+              ),
+            ],
+            if (showChevron) ...[
+              SizedBox(width: 4 * k),
+              Icon(
+                Icons.chevron_right,
+                size: 18 * k,
+                color: AppColors.textHint,
+              ),
+            ],
           ],
         ),
       ),
@@ -1301,53 +1220,135 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
   }
 }
 
-// ==================== 表单卡片容器 ====================
-class _FormCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final List<Widget> children;
+/// 标签列：必填项带红星。抽出来供三种行共用。
+Widget _formLabel(String text, bool required, double k) {
+  return SizedBox(
+    width: AppDimensions.formLabelWidth * k,
+    child: Row(
+      children: [
+        Flexible(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 14 * k,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
+        if (required) ...[
+          SizedBox(width: 2 * k),
+          Text('*', style: TextStyle(fontSize: 12 * k, color: AppColors.danger)),
+        ],
+      ],
+    ),
+  );
+}
 
-  const _FormCard({
-    required this.icon,
-    required this.title,
-    required this.children,
+/// 「名称」这类单行文本输入行：左标签、右内联 TextField。
+class _FormTextRow extends StatelessWidget {
+  final double k;
+  final String label;
+  final bool isRequired;
+  final TextEditingController controller;
+  final String placeholder;
+
+  const _FormTextRow({
+    required this.k,
+    required this.label,
+    required this.controller,
+    required this.placeholder,
+    this.isRequired = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.coral.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+      constraints: BoxConstraints(minHeight: AppDimensions.formRowMinHeight * k),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppDimensions.formRowPadding * k,
+        vertical: 6 * k,
+      ),
+      child: Row(
+        children: [
+          _formLabel(label, isRequired, k),
+          SizedBox(width: 8 * k),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              style: TextStyle(
+                fontSize: 14 * k,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: placeholder,
+                hintStyle: TextStyle(
+                  fontSize: 14 * k,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textHint,
+                ),
+                border: InputBorder.none,
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// 「备注」多行大输入区：min-height 140·k，标签在顶部一行。
+class _FormNoteRow extends StatelessWidget {
+  final double k;
+  final String label;
+  final TextEditingController controller;
+  final String placeholder;
+
+  const _FormNoteRow({
+    required this.k,
+    required this.label,
+    required this.controller,
+    required this.placeholder,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // 注意：本行位于滚动区的 Column 里（垂直无界），不能给子树用
+    // Expanded/Flexible —— 输入区给固定高度，超出内容在 TextField 内滚动。
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppDimensions.formRowPadding * k,
+        vertical: 10 * k,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 标题
-          Row(
-            children: [
-              Icon(icon, size: 16, color: AppColors.coralDeep),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
+          _formLabel(label, false, k),
+          SizedBox(height: 6 * k),
+          SizedBox(
+            height: AppDimensions.noteRowHeight * k - 40 * k,
+            child: TextField(
+              controller: controller,
+              maxLines: null,
+              expands: true,
+              textAlignVertical: TextAlignVertical.top,
+              style: TextStyle(
+                fontSize: 13 * k,
+                color: AppColors.textPrimary,
               ),
-            ],
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: placeholder,
+                hintStyle: TextStyle(
+                  fontSize: 13 * k,
+                  color: AppColors.textHint,
+                ),
+                border: InputBorder.none,
+              ),
+            ),
           ),
-          const SizedBox(height: 14),
-          ...children,
         ],
       ),
     );
@@ -1671,11 +1672,15 @@ class _LocationTile extends StatelessWidget {
 class _PhotoThumb extends StatelessWidget {
   final PhotoEntry entry;
   final bool isCover;
+
+  /// 缩略图边长（×k 后传入），稿子 S4 是 72pt 小方块
+  final double size;
   final VoidCallback onRemove;
   final VoidCallback? onRetry;
 
   const _PhotoThumb({
     required this.entry,
+    required this.size,
     required this.isCover,
     required this.onRemove,
     this.onRetry,
@@ -1686,10 +1691,10 @@ class _PhotoThumb extends StatelessWidget {
     final failed = entry.status == PhotoStatus.failed;
     final uploading = entry.status == PhotoStatus.uploading;
     return Container(
-      width: 100,
-      height: 100,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
             color: AppColors.textPrimary.withValues(alpha: 0.06),

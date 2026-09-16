@@ -130,13 +130,22 @@ void main() {
 
     _expectFloatingBarGeometry(tester);
 
+    // V2.6/S3 改版：条内是「出借（ghost，safe 物品）/ 编辑（primary）」；
+    // 删除不再是条内按钮，而是左下角固定旋钮（见 _DeleteKnob）。
     expect(find.byType(FloatingBarButton), findsNWidgets(2));
-    for (final label in ['编辑物品', '删除物品']) {
+    for (final label in ['出借', '编辑']) {
       final pill = tester.widget<Container>(_pillOf(label));
       final deco = pill.decoration as BoxDecoration;
       expect(tester.getSize(_pillOf(label)).height, FloatingBar.buttonHeight);
       expect(deco.borderRadius, BorderRadius.circular(999));
     }
+    // 删除旋钮：左下角贴边固定（left 14 / bottom 76），不随内容滚动
+    final knob = tester.getRect(
+      find.ancestor(of: find.byIcon(Icons.delete_outline), matching: find.byType(Container)).first,
+    );
+    expect(knob.width, 40);
+    expect(knob.height, 40);
+    expect(knob.left, 14);
   });
 
   testWidgets('添加页操作条：与导航条同规格', (tester) async {

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:jia_cang/constants/app_colors.dart';
-import 'package:jia_cang/constants/home_metrics.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/models/category.dart';
 import 'package:jia_cang/models/reminder_entry.dart';
 import 'package:jia_cang/providers/category_provider.dart';
@@ -18,19 +18,19 @@ import 'package:jia_cang/widgets/emoji_text.dart';
 /// （到期条目显示「09-14 到期」，闲置条目显示「06-01 登记」）。
 /// 无提醒时显示空态。
 ///
-/// 字号与行距经 [HomeMetrics] 等比换算，保证宽视口下与设计稿同比例。
+/// 字号与行距经 [DesignMetrics] 等比换算，保证宽视口下与设计稿同比例。
 class ReminderSection extends ConsumerWidget {
   const ReminderSection({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final k = HomeMetrics.of(context);
+    final k = DesignMetrics.of(context);
     final reminders = ref.watch(homeRemindersProvider);
 
     if (reminders.isEmpty) return const _AllClearCard();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
+      padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
       child: Container(
         // 行内分割线要顶到卡片边，圆角必须显式裁子节点
         clipBehavior: Clip.antiAlias,
@@ -69,10 +69,10 @@ class _AllClearCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final k = HomeMetrics.of(context);
+    final k = DesignMetrics.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: HomeMetrics.pageMargin),
+      padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 16 * k),
         decoration: BoxDecoration(
@@ -119,7 +119,7 @@ class _ReminderRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final k = HomeMetrics.of(context);
+    final k = DesignMetrics.of(context);
     final item = entry.item;
 
     final Color statusColor = switch (entry.kind) {

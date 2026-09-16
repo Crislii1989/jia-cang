@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jia_cang/constants/home_metrics.dart';
+import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/models/category_item.dart';
 import 'package:jia_cang/models/item.dart';
 import 'package:jia_cang/providers/category_provider.dart';
@@ -52,30 +52,30 @@ Finder get _squareContainers => find.byWidgetPredicate((w) {
 });
 
 void main() {
-  group('HomeMetrics', () {
+  group('DesignMetrics', () {
     test('按设计稿内容宽 292 计算缩放因子', () {
       // 320 机型：可用行宽 = 320 − 2×20 = 280
-      expect(HomeMetrics.scaleFor(320), closeTo(280 / 292, 0.0001));
+      expect(DesignMetrics.scaleFor(320), closeTo(280 / 292, 0.0001));
       // 常见真机
-      expect(HomeMetrics.scaleFor(360), closeTo(320 / 292, 0.0001));
-      expect(HomeMetrics.scaleFor(390), closeTo(350 / 292, 0.0001));
+      expect(DesignMetrics.scaleFor(360), closeTo(320 / 292, 0.0001));
+      expect(DesignMetrics.scaleFor(390), closeTo(350 / 292, 0.0001));
       // 宽视口上限 430：可用行宽 390
-      expect(HomeMetrics.scaleFor(430), closeTo(390 / 292, 0.0001));
+      expect(DesignMetrics.scaleFor(430), closeTo(390 / 292, 0.0001));
     });
 
     test('宽于 430 的视口一律按 430 计算（与 AppCanvas 的限宽一致）', () {
-      expect(HomeMetrics.scaleFor(531), HomeMetrics.scaleFor(430));
-      expect(HomeMetrics.scaleFor(1440), HomeMetrics.scaleFor(430));
+      expect(DesignMetrics.scaleFor(531), DesignMetrics.scaleFor(430));
+      expect(DesignMetrics.scaleFor(1440), DesignMetrics.scaleFor(430));
     });
 
     test('缩放因子被夹在 [0.9, 1.35] 内，不会失控', () {
-      expect(HomeMetrics.scaleFor(200), HomeMetrics.minScale);
+      expect(DesignMetrics.scaleFor(200), DesignMetrics.minScale);
       expect(
-        HomeMetrics.scaleFor(4000),
-        lessThanOrEqualTo(HomeMetrics.maxScale),
+        DesignMetrics.scaleFor(4000),
+        lessThanOrEqualTo(DesignMetrics.maxScale),
       );
       // 上限本身不会被突破，且限宽后各宽视口结果完全一致
-      expect(HomeMetrics.scaleFor(4000), HomeMetrics.scaleFor(430));
+      expect(DesignMetrics.scaleFor(4000), DesignMetrics.scaleFor(430));
     });
   });
 
@@ -104,7 +104,7 @@ void main() {
       );
 
       final rect = tester.getRect(find.byKey(key));
-      expect(rect.width, HomeMetrics.maxContentWidth);
+      expect(rect.width, DesignMetrics.maxContentWidth);
       expect(rect.center.dx, closeTo(450, 0.5)); // 居中
       expect(rect.height, 700); // 高度仍撑满，导航条/操作条贴底不塌
     });
@@ -130,7 +130,7 @@ void main() {
     testWidgets('分类圆直径 = 56 × k（430 视口下 k≈1.336）', (tester) async {
       await pumpHome(tester, const Size(430, 932));
 
-      final k = HomeMetrics.scaleFor(430);
+      final k = DesignMetrics.scaleFor(430);
       expect(_squareContainers, findsNWidgets(4));
       for (final element in _squareContainers.evaluate()) {
         final size = tester.getSize(find.byWidget(element.widget));
@@ -142,7 +142,7 @@ void main() {
     testWidgets('分类圆直径 = 56 × k（320 机型下 k≈0.959）', (tester) async {
       await pumpHome(tester, const Size(320, 640));
 
-      final k = HomeMetrics.scaleFor(320);
+      final k = DesignMetrics.scaleFor(320);
       for (final element in _squareContainers.evaluate()) {
         final size = tester.getSize(find.byWidget(element.widget));
         expect(size.width, closeTo(56 * k, 0.5));

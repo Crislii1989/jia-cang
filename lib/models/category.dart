@@ -32,3 +32,23 @@ String categoryLabelOf(
   }
   return key;
 }
+
+/// 把物品的 `categoryKey` 翻成分类 emoji。
+///
+/// 详情页沉浸大图**没有照片**时，用所属分类的 emoji 当占位图形
+/// （设计稿 S3 画的就是 🎮，即「分类 = 游戏机」的那颗）。
+///
+/// - [key] 为空或查不到：返回 [fallback]（默认 📦，与旧的占位一致）
+String categoryEmojiOf(
+  List<Category> cats,
+  String key, {
+  String fallback = '📦',
+}) {
+  if (key.isEmpty) return fallback;
+  for (final c in cats) {
+    if (c.key == key) {
+      return c.emoji.isEmpty ? fallback : c.emoji;
+    }
+  }
+  return fallback;
+}
