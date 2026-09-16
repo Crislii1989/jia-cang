@@ -9,6 +9,7 @@ import 'package:jia_cang/models/reminder_entry.dart';
 import 'package:jia_cang/providers/category_provider.dart';
 import 'package:jia_cang/providers/item_providers.dart';
 import 'package:jia_cang/widgets/emoji_text.dart';
+import 'package:jia_cang/widgets/photo_image.dart';
 
 /// 首页「提醒」模块（高保真稿 V2.6 定稿；标题按 V2.8 约定不加 emoji）。
 ///
@@ -130,26 +131,35 @@ class _ReminderRow extends ConsumerWidget {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => context.push('/item/${item.id}'),
+      onTap: () => context.push('/detail/${item.id}'),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 13 * k, vertical: 11 * k),
         child: Row(
           children: [
-            Container(
+            // 缩略图：有照片用照片圆头（经 PhotoImage，Web/真机通吃）；
+            // 无照片回退水彩渐变底 + 分类 emoji
+            SizedBox(
               width: 38 * k,
               height: 38 * k,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: const Alignment(-0.5, -1),
-                  end: const Alignment(0.5, 1),
-                  colors: _thumbGradients[index % _thumbGradients.length],
-                ),
-              ),
-              alignment: Alignment.center,
-              child: EmojiText(
-                emoji: _emojiOf(ref, item.categoryKey),
-                fontSize: 18 * k,
+              child: ClipOval(
+                child: item.photos.isNotEmpty
+                    ? PhotoImage(source: item.photos.first)
+                    : Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            begin: const Alignment(-0.5, -1),
+                            end: const Alignment(0.5, 1),
+                            colors:
+                                _thumbGradients[index % _thumbGradients.length],
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: EmojiText(
+                          emoji: _emojiOf(ref, item.categoryKey),
+                          fontSize: 18 * k,
+                        ),
+                      ),
               ),
             ),
             SizedBox(width: 11 * k),

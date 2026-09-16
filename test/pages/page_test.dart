@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jia_cang/app_router.dart';
+import 'package:jia_cang/models/category.dart';
 import 'package:jia_cang/models/category_item.dart';
 import 'package:jia_cang/models/item.dart';
 import 'package:jia_cang/providers/category_provider.dart';
@@ -9,6 +11,8 @@ import 'package:jia_cang/providers/item_providers.dart';
 import 'package:jia_cang/providers/storage_providers.dart';
 import 'package:jia_cang/screen/home_page.dart';
 import 'package:jia_cang/screen/add_item_page.dart';
+import 'package:jia_cang/screen/item_detail_page.dart';
+import 'package:jia_cang/widgets/photo_image.dart';
 
 /// 测试用分类管理器：避免测试环境访问真实数据库。
 ///
@@ -122,6 +126,48 @@ void main() {
           '-${expiredAt.day.toString().padLeft(2, '0')}';
       expect(find.text('$md 到期'), findsOneWidget);
       expect(find.text('一切妥当，暂无待处理提醒'), findsNothing);
+    });
+
+    testWidgets('提醒行：有照片显示照片缩略图；点按跳 /detail/<id>', (tester) async {
+      // 1×1 红色 PNG 的内联 data URL（Web 端照片的真实存储形态）
+      const photo =
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJ'
+          'AAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+      final item = Item(
+        id: 'i_photo',
+        name: '牙刷',
+        categoryKey: 'sports',
+        expiryDate: DateTime.now().add(const Duration(days: 2)),
+        createdAt: DateTime.now(),
+        photos: [photo],
+      );
+      // 走真实路由表：曾经把提醒行跳转误写成 /item/<id> 导致 Page Not Found，
+      // 这条断言能直接拦住同类回归。
+      final router = createAppRouter(initialLocation: '/home');
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            ...homeOverrides(items: [item]),
+            availableCategoriesProvider.overrideWith(
+              (ref) => const [Category('sports', '运动', emoji: '🏋️')],
+            ),
+            storageLocationTreeProvider.overrideWith(
+              (ref) async => <StorageLocationNode>[],
+            ),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump();
+
+      // 有照片：显示照片缩略图（经 PhotoImage），不再只是分类 emoji
+      expect(find.byType(PhotoImage), findsOneWidget);
+
+      await tester.tap(find.text('牙刷'));
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump();
+      expect(find.byType(ItemDetailPage), findsOneWidget);
     });
   });
 

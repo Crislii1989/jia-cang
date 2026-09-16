@@ -235,7 +235,7 @@ class ItemDetailPage extends ConsumerWidget {
         child: Row(
           children: [
             EmojiText(emoji: '⏰', fontSize: 14 * k),
-            SizedBox(width: 14 * k),
+            SizedBox(width: 10 * k),
             Text(
               '到期日',
               style: TextStyle(
@@ -244,23 +244,30 @@ class ItemDetailPage extends ConsumerWidget {
                 color: AppColors.blushInk,
               ),
             ),
-            SizedBox(width: 8 * k),
+            SizedBox(width: 6 * k),
+            // 日期是本行的关键信息：空间不够时整体缩一点（scaleDown），
+            // 不做省略截断；提示短句放不下才省略
             Flexible(
-              child: Text(
-                _formatDate(expiry),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 13 * k,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.coralDeep,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Text(
+                  _formatDate(expiry),
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 13 * k,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.coralDeep,
+                  ),
                 ),
               ),
             ),
             if (hint.isNotEmpty) ...[
-              SizedBox(width: 8 * k),
+              SizedBox(width: 6 * k),
               Text(
                 '· $hint',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 12 * k,
                   fontWeight: FontWeight.w700,
