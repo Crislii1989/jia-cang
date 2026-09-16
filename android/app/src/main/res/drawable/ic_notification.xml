@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <!-- 盒盖（顶部带斜边的开口） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M3,8 L21,8 L19,11 L5,11 Z" />
+    <!-- 盒体（主体矩形，圆角底部） -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M5,11 L19,11 L19,20 C19,20.55 18.55,21 18,21 L6,21 C5.45,21 5,20.55 5,20 Z" />
+    <!-- 中间分割槽（透明缝隙，模拟盒盖与盒体分界） -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.6"
+        android:pathData="M5,11 L19,11" />
+</vector>
