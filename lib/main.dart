@@ -2,8 +2,10 @@ import 'package:bugsnag_flutter/bugsnag_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_router.dart';
+import 'constants/app_theme.dart';
 import 'services/first_run_service.dart';
 import 'services/encryption_service.dart';
 import 'widgets/app_canvas.dart';
@@ -57,7 +59,15 @@ class _MyAppState extends ConsumerState<MyApp> {
     return DbGate(
       child: MaterialApp.router(
         title: '家藏',
-        theme: ThemeData(primarySwatch: Colors.amber),
+        theme: buildAppTheme(),
+        // 应用纯中文：日期选择器等系统组件一并本地化为中文
+        locale: const Locale('zh'),
+        supportedLocales: const [Locale('zh'), Locale('en')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         routerConfig: _router,
         // AppCanvas：宽视口（桌面 / 网页预览）把内容居中限宽到手机宽度。
         // 挂在 builder 上，所以所有路由与弹窗一并收敛；真机是 no-op。
