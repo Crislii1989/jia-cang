@@ -301,7 +301,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     return Stack(
       children: [
         RefreshIndicator(
-          color: AppColors.primary,
+          color: AppColors.coral,
           onRefresh: _onRefresh,
           child: CustomScrollView(
             controller: _scrollController,
@@ -420,8 +420,8 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   /// 而这里的功能是「勾选多件物品再统一处理」。改用清单+对勾的
   /// `checklist_rounded`，语义直接。
   ///
-  /// 高亮方式与「收纳」页右上角的 + 按钮统一：品牌橙渐变 + 白色图标 + 橙色辉光。
-  /// 未激活时就已经是页面里最亮的一块，激活后再加深为暗金橙并加强辉光，
+  /// 高亮方式与「收纳」页右上角的 + 按钮统一：实心珊瑚 + 白色图标 + 珊瑚辉光。
+  /// 未激活时是较浅一档的珊瑚，激活后加深并加强辉光，
   /// 提示「批量模式已开启」（底部同时会出现批量操作栏）。
   Widget _buildBatchToggle() {
     final active = _batchMode;
@@ -432,26 +432,21 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: active
-                ? const [AppColors.accentGold, AppColors.primaryDeep]
-                : const [AppColors.primary, AppColors.warning],
-          ),
+          // 稿子 `.btn.primary` 无渐变：激活 = 实心珊瑚，未激活 = 珊瑚软底
+          color: active ? AppColors.btnPrimaryBg : AppColors.coralSoft,
           borderRadius: BorderRadius.circular(AppDimensions.borderRadiusMedium),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: active ? 0.42 : 0.3),
+              color: AppColors.btnPrimaryShadow,
               blurRadius: active ? 16 : 12,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: const Icon(
+        child: Icon(
           Icons.checklist_rounded,
           size: 20,
-          color: Colors.white,
+          color: active ? AppColors.btnPrimaryFg : AppColors.btnSoftFg,
         ),
       ),
     );
@@ -494,19 +489,12 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         duration: const Duration(milliseconds: 250),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
         decoration: BoxDecoration(
-          color: isActive ? null : AppColors.cardBg,
-          gradient: isActive
-              ? const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.primary, AppColors.warning],
-                )
-              : null,
+          color: isActive ? AppColors.chipSelectedBg : AppColors.chipBg,
           borderRadius: BorderRadius.circular(22),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.btnPrimaryShadow,
                     blurRadius: 14,
                     offset: const Offset(0, 4),
                   ),
@@ -527,7 +515,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: isActive ? Colors.white : AppColors.textSecondary,
+              color: isActive ? AppColors.chipSelectedFg : AppColors.chipFg,
               leadingDistribution: TextLeadingDistribution.even,
             ),
           ),
@@ -573,10 +561,9 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
 
   /// 筛选 / 排序 chip。
   ///
-  /// 选中态沿用「批量处理按钮」与「确认筛选」的橙色渐变 + 白字：
+  /// 选中态与所有页面的 chip 统一走 `AppColors.chip*` 令牌：实心珊瑚 + 白字。
   /// 之前的选中态是浅金底（#F1C64D）+ 金字（#E5A500），两者亮度太接近，
-  /// 对比度只有 1.5:1 左右，字几乎糊在底上。改成饱和橙渐变 + 纯白文字后
-  /// 对比度约 3.3:1，且与页面里其它主按钮视觉语言统一。
+  /// 对比度只有 1.5:1 左右，字几乎糊在底上。
   Widget _buildFilterChip({
     required String label,
     required bool isActive,
@@ -584,30 +571,23 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     IconData? icon,
     required VoidCallback onTap,
   }) {
-    final fg = isActive ? Colors.white : AppColors.textSecondary;
+    final fg = isActive ? AppColors.chipSelectedFg : AppColors.chipFg;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-          gradient: isActive
-              ? const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [AppColors.primary, AppColors.warning],
-                )
-              : null,
-          color: isActive ? null : AppColors.cardBg,
+          color: isActive ? AppColors.chipSelectedBg : AppColors.chipBg,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isActive ? AppColors.primary : AppColors.border,
+            color: isActive ? AppColors.chipSelectedBg : AppColors.chipBorder,
             width: 1.5,
           ),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.btnPrimaryShadow,
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -671,13 +651,13 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         width: 34,
         height: 34,
         decoration: BoxDecoration(
-          color: isActive ? AppColors.accentGold : AppColors.cardBg,
+          color: isActive ? AppColors.chipSelectedBg : AppColors.chipBg,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
           icon,
           size: 16,
-          color: isActive ? Colors.white : AppColors.textHint,
+          color: isActive ? AppColors.chipSelectedFg : AppColors.textHint,
         ),
       ),
     );
@@ -696,7 +676,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: AppColors.accentGold,
+              color: AppColors.coralDeep,
             ),
           ),
           const TextSpan(
@@ -776,7 +756,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.08),
+                color: AppColors.coral.withValues(alpha: 0.08),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -793,7 +773,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                     // 图片/Emoji 背景
                     Container(
                       width: double.infinity,
-                      color: AppColors.accentLightBg,
+                      color: AppColors.coralSoft,
                       child: _buildThumb(item, emojiSize: 44),
                     ),
                     // 批量选择圆圈
@@ -809,11 +789,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: isSelected
-                                  ? AppColors.primary
+                                  ? AppColors.chipSelectedBg
                                   : Colors.black12,
                               border: Border.all(
                                 color: isSelected
-                                    ? AppColors.primary
+                                    ? AppColors.chipSelectedBg
                                     : Colors.white.withValues(alpha: 0.7),
                                 width: 2,
                               ),
@@ -822,7 +802,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                                 ? const Icon(
                                     Icons.check,
                                     size: 14,
-                                    color: Colors.white,
+                                    color: AppColors.chipSelectedFg,
                                   )
                                 : null,
                           ),
@@ -941,7 +921,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: AppColors.accentLightBg,
+                      color: AppColors.coralSoft,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     clipBehavior: Clip.antiAlias,
@@ -959,11 +939,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: isSelected
-                                ? AppColors.primary
+                                ? AppColors.chipSelectedBg
                                 : Colors.black12,
                             border: Border.all(
                               color: isSelected
-                                  ? AppColors.primary
+                                  ? AppColors.chipSelectedBg
                                   : AppColors.cardBg,
                               width: 2,
                             ),
@@ -972,7 +952,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                               ? const Icon(
                                   Icons.check,
                                   size: 12,
-                                  color: Colors.white,
+                                  color: AppColors.chipSelectedFg,
                                 )
                               : null,
                         ),
@@ -1086,7 +1066,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                 TextSpan(
                   text: '${_selectedIds.length}',
                   style: const TextStyle(
-                    color: AppColors.accentGold,
+                    color: AppColors.coralDeep,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -1096,15 +1076,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           ),
           Row(
             children: [
-              _buildBatchBtn('移动', AppColors.infoLight, AppColors.info),
+              _buildBatchBtn('移动'),
               const SizedBox(width: 8),
-              _buildBatchBtn(
-                '导出',
-                AppColors.successLight,
-                AppColors.statusUsing,
-              ),
+              _buildBatchBtn('导出'),
               const SizedBox(width: 8),
-              _buildBatchBtn('删除', AppColors.dangerLight, AppColors.danger),
+              _buildBatchBtn('删除', danger: true),
             ],
           ),
         ],
@@ -1112,7 +1088,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     );
   }
 
-  Widget _buildBatchBtn(String label, Color bgColor, Color textColor) {
+  /// 批量操作栏的次级按钮。
+  ///
+  /// 按高保真稿 `.btn.ghost`（白底 + 1.5px 浅粉线 + 深暖棕字）绘制；
+  /// [danger] 为 true 时改用稿子的 `--red` 系（删除这类不可逆动作用红）。
+  Widget _buildBatchBtn(String label, {bool danger = false}) {
     return GestureDetector(
       onTap: () {
         final actions = {'移动': '移动到…', '导出': '导出选中物品', '删除': '确认删除？'};
@@ -1121,15 +1101,21 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: bgColor,
+          color: danger ? AppColors.btnDangerBg : AppColors.btnGhostBg,
           borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: danger
+                ? AppColors.btnDangerFg.withValues(alpha: 0.35)
+                : AppColors.btnGhostBorder,
+            width: AppColors.btnGhostBorderWidth,
+          ),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: textColor,
+            color: danger ? AppColors.btnDangerFg : AppColors.btnGhostFg,
           ),
         ),
       ),

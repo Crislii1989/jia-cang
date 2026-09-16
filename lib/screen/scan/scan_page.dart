@@ -310,7 +310,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                   color: const Color(0xFF1A1A1A),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.coral.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
@@ -370,16 +370,16 @@ class _ScanPageState extends ConsumerState<ScanPage> {
       decoration: BoxDecoration(
         border: Border(
           left: isLeft
-              ? const BorderSide(color: AppColors.primary, width: 3)
+              ? const BorderSide(color: AppColors.coral, width: 3)
               : BorderSide.none,
           right: !isLeft
-              ? const BorderSide(color: AppColors.primary, width: 3)
+              ? const BorderSide(color: AppColors.coral, width: 3)
               : BorderSide.none,
           top: isTop
-              ? const BorderSide(color: AppColors.primary, width: 3)
+              ? const BorderSide(color: AppColors.coral, width: 3)
               : BorderSide.none,
           bottom: !isTop
-              ? const BorderSide(color: AppColors.primary, width: 3)
+              ? const BorderSide(color: AppColors.coral, width: 3)
               : BorderSide.none,
         ),
       ),
@@ -446,7 +446,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                 children: [
                   const Icon(
                     Icons.smart_toy_outlined,
-                    color: AppColors.primary,
+                    color: AppColors.coral,
                     size: 16,
                   ),
                   const SizedBox(width: 6),
@@ -634,7 +634,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                 const Icon(
                   Icons.smart_toy_outlined,
                   size: 20,
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                 ),
                 const SizedBox(width: 8),
                 const Text(
@@ -742,7 +742,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                       leading: isSelected
                           ? const Icon(
                               Icons.check_circle,
-                              color: AppColors.primary,
+                              color: AppColors.coral,
                             )
                           : Icon(
                               Icons.radio_button_unchecked,
@@ -805,7 +805,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                 width: 36,
                 height: 36,
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(AppColors.primary),
+                  valueColor: AlwaysStoppedAnimation(AppColors.coral),
                   strokeWidth: 3,
                 ),
               ),
@@ -868,7 +868,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                   icon: const Icon(Icons.refresh, size: 16),
                   label: const Text('重试'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.primary,
+                    foregroundColor: AppColors.coral,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -896,7 +896,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               children: [
                 const Icon(
                   Icons.auto_awesome,
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                   size: 22,
                 ),
                 const SizedBox(width: 8),
@@ -1140,12 +1140,12 @@ class _ScanPageState extends ConsumerState<ScanPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: AppColors.primaryLight,
+        color: AppColors.coralSoft,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         '#$text',
-        style: const TextStyle(fontSize: 12, color: AppColors.accentGold),
+        style: const TextStyle(fontSize: 12, color: AppColors.coralDeep),
       ),
     );
   }
@@ -1159,8 +1159,8 @@ class _ScanPageState extends ConsumerState<ScanPage> {
             child: OutlinedButton.icon(
               onPressed: _reset,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primary,
-                side: const BorderSide(color: AppColors.primary),
+                foregroundColor: AppColors.coral,
+                side: const BorderSide(color: AppColors.coral),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -1180,7 +1180,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
             child: ElevatedButton.icon(
               onPressed: _addToLibrary,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.coral,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),

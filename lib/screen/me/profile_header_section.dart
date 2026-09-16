@@ -60,7 +60,7 @@ class ProfileHeaderSection extends ConsumerWidget {
                 width: 64,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.12),
+                  color: AppColors.coral.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Center(child: EmojiText(emoji: emoji, fontSize: 32)),
@@ -130,7 +130,7 @@ class ProfileHeaderSection extends ConsumerWidget {
             height: 24,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: AppColors.primary,
+              color: AppColors.coral,
             ),
           ),
         ),

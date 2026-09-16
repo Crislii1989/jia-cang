@@ -622,10 +622,10 @@ class _EmojiPickerPanel extends StatelessWidget {
           width: _cellSize,
           height: _cellSize,
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFFFF3CC) : Colors.white,
+            color: isSelected ? AppColors.coralSoft : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isSelected ? AppColors.accentGold : AppColors.border,
+              color: isSelected ? AppColors.coral : AppColors.border,
               width: isSelected ? 1.8 : 1,
             ),
           ),

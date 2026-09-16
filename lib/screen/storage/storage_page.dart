@@ -222,7 +222,9 @@ class _StoragePageState extends ConsumerState<StoragePage> {
   }) async {
     final ts = DateTime.now().millisecondsSinceEpoch;
     final id = '${level}_$ts';
-    const color = AppColors.primary;
+    // 新建空间的默认身份色：跟随 V2.6 珊瑚主色（旧值 AppColors.primary 是金色，
+    // 在暖粉白底上会突兀出「金色瓷砖」，与首页的 pastel 身份色语言不统一）。
+    const color = AppColors.coral;
 
     // 等写入真正完成后再关闭弹窗并提示。
     // 若数据库写入失败（连接异常等），用户能立刻看到失败原因，
@@ -339,7 +341,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               child: const Text('稍后'),
             ),
             TextButton(
-              style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+              style: TextButton.styleFrom(foregroundColor: AppColors.btnTextFg),
               onPressed: () => Navigator.pop(ctx, true),
               child: const Text('立即添加'),
             ),
@@ -393,7 +395,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
             ListTile(
               leading: const Icon(
                 Icons.edit_outlined,
-                color: Color(0xFFE5A500),
+                color: AppColors.btnTextFg,
               ),
               title: const Text('编辑房间'),
               onTap: () {
@@ -445,7 +447,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
             ListTile(
               leading: const Icon(
                 Icons.edit_outlined,
-                color: Color(0xFFE5A500),
+                color: AppColors.btnTextFg,
               ),
               title: const Text('编辑柜体'),
               onTap: () {
@@ -511,7 +513,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
             ListTile(
               leading: const Icon(
                 Icons.edit_outlined,
-                color: Color(0xFFE5A500),
+                color: AppColors.btnTextFg,
               ),
               title: const Text('编辑箱子'),
               onTap: () {
@@ -1094,7 +1096,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                   _buildTypeTabs(),
                   Expanded(
                     child: RefreshIndicator(
-                      color: AppColors.primary,
+                      color: AppColors.coral,
                       onRefresh: _onRefresh,
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -1155,7 +1157,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
             height: 150,
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.06),
+                color: AppColors.coral.withValues(alpha: 0.06),
                 shape: BoxShape.circle,
               ),
             ),
@@ -1245,19 +1247,18 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.warning],
-                ),
+                // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+                color: AppColors.btnPrimaryBg,
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.btnPrimaryShadow,
                     blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
-              child: const Icon(Icons.add, size: 20, color: Colors.white),
+              child: const Icon(Icons.add, size: 20, color: AppColors.btnPrimaryFg),
             ),
           ),
         ],
@@ -1283,19 +1284,12 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               duration: const Duration(milliseconds: 250),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
               decoration: BoxDecoration(
-                color: isActive ? null : AppColors.cardBg,
-                gradient: isActive
-                    ? const LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [AppColors.primary, AppColors.warning],
-                      )
-                    : null,
+                color: isActive ? AppColors.chipSelectedBg : AppColors.chipBg,
                 borderRadius: BorderRadius.circular(22),
                 boxShadow: [
                   BoxShadow(
                     color: isActive
-                        ? AppColors.primary.withValues(alpha: 0.3)
+                        ? AppColors.btnPrimaryShadow
                         : AppColors.textPrimary.withValues(alpha: 0.06),
                     blurRadius: isActive ? 14 : 10,
                     offset: const Offset(0, 2),
@@ -1307,7 +1301,9 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: isActive ? Colors.white : AppColors.textSecondary,
+                  color: isActive
+                      ? AppColors.chipSelectedFg
+                      : AppColors.chipFg,
                 ),
               ),
             ),
@@ -1537,7 +1533,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               _buildSectionLabel(
                 '柜体',
                 visibleCabinets.length,
-                AppColors.accentGold,
+                AppColors.coralDeep,
               ),
               for (var i = 0; i < visibleCabinets.length; i++)
                 Padding(
@@ -1698,7 +1694,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               _buildSectionLabel(
                 '箱子',
                 visibleSlots.length,
-                AppColors.accentGold,
+                AppColors.coralDeep,
               ),
               for (var i = 0; i < visibleSlots.length; i++)
                 Padding(
@@ -1850,7 +1846,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
     return const Padding(
       padding: EdgeInsets.all(48),
       child: Center(
-        child: CircularProgressIndicator(color: AppColors.accentGold),
+        child: CircularProgressIndicator(color: AppColors.coral),
       ),
     );
   }

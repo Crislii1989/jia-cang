@@ -74,7 +74,7 @@ class _MePageState extends ConsumerState<MePage> {
             height: 180,
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.06),
+                color: AppColors.coral.withValues(alpha: 0.06),
                 shape: BoxShape.circle,
               ),
             ),

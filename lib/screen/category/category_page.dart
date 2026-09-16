@@ -147,7 +147,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             const SizedBox(height: 16),
             _buildActionItem(
               icon: Icons.edit_outlined,
-              iconColor: AppColors.accentGold,
+              iconColor: AppColors.coralDeep,
               label: '编辑分类',
               onTap: () {
                 Navigator.pop(ctx);
@@ -279,7 +279,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             height: 140,
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.06),
+                color: AppColors.coral.withValues(alpha: 0.06),
                 shape: BoxShape.circle,
               ),
             ),
@@ -329,7 +329,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                     ),
                     decoration: BoxDecoration(
                       color: _isReordering
-                          ? AppColors.accentGold.withValues(alpha: 0.15)
+                          ? AppColors.coralSoft
                           : AppColors.background,
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -340,7 +340,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                           _isReordering ? Icons.check : Icons.drag_indicator,
                           size: 14,
                           color: _isReordering
-                              ? AppColors.accentGold
+                              ? AppColors.coralDeep
                               : AppColors.textHint,
                         ),
                         const SizedBox(width: 4),
@@ -350,7 +350,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: _isReordering
-                                ? AppColors.accentGold
+                                ? AppColors.coralDeep
                                 : AppColors.textHint,
                           ),
                         ),
@@ -417,19 +417,18 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.warning],
-                ),
+                // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+                color: AppColors.btnPrimaryBg,
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.btnPrimaryShadow,
                     blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    offset: Offset(0, 4),
                   ),
                 ],
               ),
-              child: const Icon(Icons.add, size: 20, color: Colors.white),
+              child: const Icon(Icons.add, size: 20, color: AppColors.btnPrimaryFg),
             ),
           ),
         ],
@@ -449,18 +448,18 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
+          // 主色横幅：珊瑚渐变（原金→橙渐变随全局主色一起收敛）
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFFFFD460), Color(0xFFFFB800), Color(0xFFFF9E40)],
-            stops: [0.0, 0.6, 1.0],
+            colors: [AppColors.coral, AppColors.coralDeep],
           ),
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: const Color(0x33FFB800),
+              color: AppColors.btnPrimaryShadow,
               blurRadius: 24,
-              offset: const Offset(0, 6),
+              offset: Offset(0, 6),
             ),
           ],
         ),
@@ -786,7 +785,7 @@ class _CategoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.06),
+              color: AppColors.coral.withValues(alpha: 0.06),
               blurRadius: 20,
               offset: const Offset(0, 4),
             ),

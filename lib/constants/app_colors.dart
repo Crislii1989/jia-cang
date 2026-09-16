@@ -1,9 +1,12 @@
 /// 统一颜色常量
 ///
-/// 应用主色调：
-/// - 金色 (#FFB800) 作为主色
-/// - 暖白 (#FFF8E7 / #FFE9B0) 作为背景
-/// - 深棕 (#3D2B1F) 作为文字主色
+/// 应用主色调（V2.6 水彩粉/珊瑚改版后）：
+/// - 珊瑚 (#F2705B) 作为主色，按钮/选中态/链接一律取「按钮色彩」那一段
+/// - 暖粉白 (#FBF3EE，即 [AppColors.blushBg]) 作为全局底色
+/// - 深暖棕 (#4A3733，即 [AppColors.blushInk]) 作为文字主色
+///
+/// 旧的金色系（#FFB800 / #E5A500 / #FF8C42）已不再用于任何按钮或页面底色，
+/// 仅保留在语义状态色与分类身份色里，见文件末尾说明。
 library;
 
 import 'package:flutter/material.dart';
@@ -13,7 +16,6 @@ class AppColors {
 
   // ── 主色 ──
   static const int _primaryInt = 0xFFFFB800;
-  static const int _bgInt = 0xFFFFF8E7;
   static const int _textInt = 0xFF3D2B1F;
 
   // ── 品牌色 ──
@@ -25,7 +27,12 @@ class AppColors {
   static const primaryDeep = Color(0xFFFF9E40);
 
   // ── 背景色 ──
-  static const background = Color(_bgInt);
+  //
+  // V2.6 起全局底色与首页统一：旧的奶黄 `#FFF8E7` 已废弃，改用暖粉白 [blushBg]。
+  // 子页面的 `Scaffold(backgroundColor: ...)`、表单填充、未选中项底色等
+  // 一律经这个令牌取值，改一处即可全局对齐。
+  static const background = blushBg;
+  /// 已废弃：旧版浅金底 (#FFE9B0)，随全局改版不再使用
   static const backgroundLight = Color(0xFFFFE9B0);
   static const cardBg = Colors.white;
 
@@ -229,4 +236,54 @@ class AppColors {
   static const reminderDanger = Color(0xFFD9534A);
   static const reminderWarn = Color(0xFFE0764F);
   static const reminderMuted = Color(0xFF9A817B);
+
+  // ── 按钮色彩（V2.6/V2.7 全局统一；**所有页面的按钮一律取这一段**） ──
+  //
+  // 依据高保真稿的 `.btn` 规范（docs/ui-hifi-mockups.html）：
+  //   .btn.primary { background: var(--gold); color: #fff;
+  //                  box-shadow: 0 3px 10px rgba(242,112,91,.35); }
+  //   .btn.ghost   { background: var(--card); color: var(--ink);
+  //                  border: 1.5px solid var(--line); }
+  // 稿子里的按钮**没有渐变**，所以旧版「金 → 橙」渐变主按钮一律收敛为
+  // **实心珊瑚**；旧的 `AppColors.primary`(金) / `warning`(橙) / `primaryDark`
+  // (深金) 不再用于任何按钮，只留给非按钮的装饰与图表色块。
+  // 分类/排序等「可选中标签（chip）」也走这一段，避免各页自己拼一套。
+
+  /// 主按钮底色：实心珊瑚
+  static const btnPrimaryBg = coral;
+  /// 主按钮文字/图标：白
+  static const btnPrimaryFg = Colors.white;
+
+  /// 幽灵（次要）按钮底色：白
+  static const btnGhostBg = cardBg;
+  /// 幽灵按钮描边：浅粉线（稿子 1.5px）
+  static const btnGhostBorder = blushLine;
+  /// 幽灵按钮描边宽度
+  static const btnGhostBorderWidth = 1.5;
+  /// 幽灵按钮文字/图标：深暖棕
+  static const btnGhostFg = blushInk;
+
+  /// 软性按钮底色（次级强调，不是主行动）
+  static const btnSoftBg = coralSoft;
+  /// 软性按钮文字/图标
+  static const btnSoftFg = coralDeep;
+
+  /// 文字按钮 / 链接型按钮前景色（TextButton 等）
+  static const btnTextFg = coralDeep;
+
+  /// 危险行动（删除、清空）：文字/描边用稿子的 `--red`
+  static const btnDangerFg = alertRed;
+  /// 危险行动的浅底（二次确认里的危险按钮）
+  static const btnDangerBg = alertRedBg;
+
+  /// 选中态标签（chip / 分段控件）底色：实心珊瑚
+  static const chipSelectedBg = coral;
+  /// 选中态标签文字/图标：白
+  static const chipSelectedFg = Colors.white;
+  /// 未选中标签底色：白
+  static const chipBg = cardBg;
+  /// 未选中标签描边
+  static const chipBorder = blushLine;
+  /// 未选中标签文字：次级暖棕
+  static const chipFg = blushInk2;
 }

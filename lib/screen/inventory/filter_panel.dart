@@ -126,7 +126,7 @@ class _FilterPanelState extends State<FilterPanel> {
                     '重置',
                     style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.accentGold,
+                      color: AppColors.btnTextFg,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -149,14 +149,18 @@ class _FilterPanelState extends State<FilterPanel> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [AppColors.primary, AppColors.warning],
-                  ),
+                  // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+                  color: AppColors.btnPrimaryBg,
                   borderRadius: BorderRadius.circular(
                     AppDimensions.borderRadiusExtraLarge,
                   ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: AppColors.btnPrimaryShadow,
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: const Center(
                   child: Text(
@@ -164,7 +168,7 @@ class _FilterPanelState extends State<FilterPanel> {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: AppColors.btnPrimaryFg,
                     ),
                   ),
                 ),
@@ -211,25 +215,21 @@ class _FilterPanelState extends State<FilterPanel> {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  // 选中态与「排序 chip」「确认筛选」统一为橙色渐变 + 白字。
-                  // 原先是浅金底 + 金字（对比度约 1.5:1），选项文字几乎看不清。
-                  gradient: isSelected
-                      ? const LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [AppColors.primary, AppColors.warning],
-                        )
-                      : null,
-                  color: isSelected ? null : AppColors.background,
+                  // 选中态：实心珊瑚 + 白字（所有页面 chip 统一走 AppColors.chip* 令牌）
+                  color: isSelected
+                      ? AppColors.chipSelectedBg
+                      : AppColors.chipBg,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isSelected ? AppColors.primary : AppColors.border,
+                    color: isSelected
+                        ? AppColors.chipSelectedBg
+                        : AppColors.chipBorder,
                     width: 1.5,
                   ),
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color: AppColors.btnPrimaryShadow,
                             blurRadius: 10,
                             offset: const Offset(0, 3),
                           ),
@@ -249,8 +249,8 @@ class _FilterPanelState extends State<FilterPanel> {
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: isSelected
-                          ? Colors.white
-                          : AppColors.textSecondary,
+                          ? AppColors.chipSelectedFg
+                          : AppColors.chipFg,
                       leadingDistribution: TextLeadingDistribution.even,
                     ),
                   ),

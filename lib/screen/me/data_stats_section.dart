@@ -17,25 +17,25 @@ class DataStatsSection extends ConsumerWidget {
       key: 'itemCount',
       icon: Icons.inventory_2_outlined,
       label: '物品总数',
-      color: AppColors.primary,
+      color: AppColors.statCoral,
     ),
     _StatEntry(
       key: 'categoryCount',
       icon: Icons.category_outlined,
       label: '分类数量',
-      color: AppColors.warning,
+      color: AppColors.statPeach,
     ),
     _StatEntry(
       key: 'roomCount',
       icon: Icons.meeting_room_outlined,
       label: '房间',
-      color: AppColors.success,
+      color: AppColors.statGreen,
     ),
     _StatEntry(
       key: 'storageAreaCount',
       icon: Icons.grid_view_outlined,
       label: '收纳区',
-      color: AppColors.info,
+      color: AppColors.statBlue,
     ),
   ];
 

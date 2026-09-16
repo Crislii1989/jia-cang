@@ -174,15 +174,14 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [AppColors.accentGold, AppColors.warning],
-                            ),
+                            // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+                            color: AppColors.btnPrimaryBg,
                             borderRadius: BorderRadius.circular(18),
-                            boxShadow: [
+                            boxShadow: const [
                               BoxShadow(
-                                color: const Color(0x40FFB800),
-                                blurRadius: 16,
-                                offset: const Offset(0, 4),
+                                color: AppColors.btnPrimaryShadow,
+                                blurRadius: 10,
+                                offset: Offset(0, 3),
                               ),
                             ],
                           ),
@@ -196,7 +195,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                                         height: 15,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          color: Colors.white,
+                                          color: AppColors.btnPrimaryFg,
                                         ),
                                       ),
                                       SizedBox(width: 8),
@@ -205,7 +204,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                                         style: TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w700,
-                                          color: Colors.white,
+                                          color: AppColors.btnPrimaryFg,
                                         ),
                                       ),
                                     ],
@@ -215,7 +214,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: AppColors.btnPrimaryFg,
                                     ),
                                   ),
                           ),
@@ -434,7 +433,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: highlight
-                    ? AppColors.accentGold
+                    ? AppColors.coralDeep
                     : AppColors.textSecondary,
               ),
             ),
@@ -443,7 +442,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                 ' · 已选定',
                 style: TextStyle(
                   fontSize: 10,
-                  color: AppColors.accentGold,
+                  color: AppColors.coralDeep,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -541,7 +540,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.accentGold, width: 1.5),
+          borderSide: const BorderSide(color: AppColors.coral, width: 1.5),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
@@ -579,7 +578,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                 height: 26,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.5,
-                  color: AppColors.accentGold,
+                  color: AppColors.coral,
                 ),
               ),
               SizedBox(height: 10),
@@ -744,7 +743,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
             ListTile(
               leading: const Icon(
                 Icons.photo_library,
-                color: AppColors.primary,
+                color: AppColors.btnTextFg,
               ),
               title: const Text('从相册选择'),
               onTap: () {
@@ -753,7 +752,10 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: AppColors.primary),
+              leading: const Icon(
+                Icons.camera_alt,
+                color: AppColors.btnTextFg,
+              ),
               title: const Text('拍照'),
               onTap: () {
                 Navigator.pop(ctx);

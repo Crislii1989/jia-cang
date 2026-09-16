@@ -99,7 +99,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
                   ),
                   loadingBuilder: (_, __) => const Center(
                     child: CircularProgressIndicator(
-                      color: AppColors.accentGold,
+                      color: AppColors.coral,
                       strokeWidth: 2,
                     ),
                   ),

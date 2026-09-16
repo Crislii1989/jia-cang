@@ -117,7 +117,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
           ),
           title: Row(
             children: [
-              Icon(Icons.system_update, color: AppColors.primary, size: 24),
+              Icon(Icons.system_update, color: AppColors.coral, size: 24),
               const SizedBox(width: 8),
               const Text('发现新版本'),
             ],
@@ -173,7 +173,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                 _downloadUpdate();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.coral,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -303,16 +303,13 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
             height: 88,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, AppColors.warning],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              boxShadow: [
+              // 应用图标：实心珊瑚（与底部导航中央添加钮同色系）
+              color: AppColors.btnPrimaryBg,
+              boxShadow: const [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.25),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
+                  color: AppColors.btnPrimaryShadow,
+                  blurRadius: 20,
+                  offset: Offset(0, 8),
                 ),
               ],
             ),
@@ -331,7 +328,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.primaryLight.withValues(alpha: 0.4),
+              color: AppColors.coralSoft,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -339,7 +336,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.primaryDark,
+                color: AppColors.coralDeep,
               ),
             ),
           ),
@@ -358,7 +355,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppColors.coral.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -435,7 +432,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                   child: child,
                 );
               },
-              child: Icon(Icons.sync, size: 28, color: AppColors.primary),
+              child: Icon(Icons.sync, size: 28, color: AppColors.coral),
             ),
           ),
         ),
@@ -511,13 +508,13 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.12),
+                color: AppColors.coral.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
                 Icons.new_releases,
                 size: 26,
-                color: AppColors.primary,
+                color: AppColors.coral,
               ),
             ),
             const SizedBox(width: 14),
@@ -530,7 +527,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.primaryDark,
+                      color: AppColors.coralDeep,
                     ),
                   ),
                   const SizedBox(height: 3),
@@ -547,7 +544,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: AppColors.primaryLight.withValues(alpha: 0.5),
+                color: AppColors.coralSoft,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Text(
@@ -555,7 +552,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.primaryDark,
+                  color: AppColors.coralDeep,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -615,14 +612,13 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            gradient: const LinearGradient(
-              colors: [AppColors.primary, AppColors.warning],
-            ),
-            boxShadow: [
+            // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+            color: AppColors.btnPrimaryBg,
+            boxShadow: const [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
+                color: AppColors.btnPrimaryShadow,
+                blurRadius: 10,
+                offset: Offset(0, 3),
               ),
             ],
           ),
@@ -632,7 +628,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: AppColors.btnPrimaryFg,
               ),
             ),
           ),
@@ -649,19 +645,15 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          gradient: isChecking
-              ? null
-              : const LinearGradient(
-                  colors: [AppColors.primary, AppColors.warning],
-                ),
-          color: isChecking ? AppColors.border : null,
+          // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）；检查中显示灰底
+          color: isChecking ? AppColors.border : AppColors.btnPrimaryBg,
           boxShadow: isChecking
               ? null
-              : [
+              : const [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 4),
+                    color: AppColors.btnPrimaryShadow,
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
                   ),
                 ],
         ),
@@ -671,7 +663,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: isChecking ? AppColors.textHint : Colors.white,
+              color: isChecking ? AppColors.textHint : AppColors.btnPrimaryFg,
             ),
           ),
         ),
@@ -693,7 +685,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppColors.coral.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -704,7 +696,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
         children: [
           Row(
             children: [
-              Icon(Icons.notes, size: 18, color: AppColors.primary),
+              Icon(Icons.notes, size: 18, color: AppColors.coral),
               const SizedBox(width: 8),
               const Text(
                 '更新内容',
@@ -744,7 +736,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                 fontSize: 13,
                 color: _state == _CheckState.checking
                     ? AppColors.textHint
-                    : AppColors.primary,
+                    : AppColors.btnTextFg,
                 fontWeight: FontWeight.w600,
               ),
             ),

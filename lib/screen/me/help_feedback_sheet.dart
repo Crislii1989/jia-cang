@@ -54,7 +54,7 @@ class HelpFeedbackSheet extends StatelessWidget {
           width: 64,
           height: 64,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.12),
+            color: AppColors.coral.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Center(child: EmojiText(emoji: '📦', fontSize: 32)),
@@ -143,15 +143,14 @@ class HelpFeedbackSheet extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.accentGold, AppColors.warning],
-          ),
+          // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+          color: AppColors.btnPrimaryBg,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: const Color(0x40FFB800),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
+              color: AppColors.btnPrimaryShadow,
+              blurRadius: 10,
+              offset: Offset(0, 3),
             ),
           ],
         ),
@@ -161,7 +160,7 @@ class HelpFeedbackSheet extends StatelessWidget {
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: AppColors.btnPrimaryFg,
             ),
           ),
         ),

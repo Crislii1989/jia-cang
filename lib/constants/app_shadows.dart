@@ -35,27 +35,27 @@ class AppShadows {
   // ── 添加按钮阴影 ──
   static const addButton = [
     BoxShadow(
-      color: Color(0x66FFB800),
+      color: AppColors.btnPrimaryShadow,
       blurRadius: 16,
       offset: Offset(0, 4),
     ),
   ];
 
   // ── Logo 阴影 ──
-  static final logo = [
+  static const logo = [
     BoxShadow(
-      color: AppColors.primary.withValues(alpha: 0.35),
+      color: AppColors.btnPrimaryShadow,
       blurRadius: 48,
-      offset: const Offset(0, 16),
+      offset: Offset(0, 16),
     ),
   ];
 
-  // ── 卡片金色阴影 ──
-  static final cardAccent = [
+  // ── 卡片主色阴影 ──
+  static const cardAccent = [
     BoxShadow(
-      color: AppColors.primary.withValues(alpha: 0.10),
+      color: AppColors.floatCardShadowStrong,
       blurRadius: 24,
-      offset: const Offset(0, 6),
+      offset: Offset(0, 6),
     ),
   ];
 

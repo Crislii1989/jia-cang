@@ -266,7 +266,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                     child: _isLoading
                         ? const Center(
                             child: CircularProgressIndicator(
-                              color: AppColors.primary,
+                              color: AppColors.coral,
                             ),
                           )
                         : ListView(
@@ -310,7 +310,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const CircularProgressIndicator(
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                   strokeWidth: 3,
                 ),
                 const SizedBox(height: 14),
@@ -346,7 +346,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
             height: 140,
             child: Container(
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.07),
+                color: AppColors.coral.withValues(alpha: 0.07),
                 shape: BoxShape.circle,
               ),
             ),
@@ -553,7 +553,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColors.accentGold),
+              borderSide: const BorderSide(color: AppColors.coral),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
@@ -574,14 +574,14 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: _isTesting
-              ? AppColors.textHint.withValues(alpha: 0.3)
-              : AppColors.info.withValues(alpha: 0.12),
+          // 次要按钮走稿子 `.btn.ghost`：白底 + 1.5px 浅粉线 + 深暖棕字
+          color: _isTesting ? AppColors.textHint.withValues(alpha: 0.12) : AppColors.btnGhostBg,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: _isTesting
                 ? AppColors.textHint.withValues(alpha: 0.2)
-                : AppColors.info.withValues(alpha: 0.3),
+                : AppColors.btnGhostBorder,
+            width: AppColors.btnGhostBorderWidth,
           ),
         ),
         child: Center(
@@ -591,7 +591,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                   height: 18,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: AppColors.info,
+                    color: AppColors.btnGhostFg,
                   ),
                 )
               : Text(
@@ -599,7 +599,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.info,
+                    color: AppColors.btnGhostFg,
                   ),
                 ),
         ),
@@ -630,13 +630,13 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.12),
+                  color: AppColors.coral.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.backup_outlined,
                   size: 20,
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                 ),
               ),
               const SizedBox(width: 10),
@@ -676,19 +676,17 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          gradient: enabled
-              ? const LinearGradient(
-                  colors: [AppColors.accentGold, AppColors.warning],
-                )
-              : null,
-          color: enabled ? null : AppColors.textHint.withValues(alpha: 0.2),
+          // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）；未连接时灰底不可点
+          color: enabled
+              ? AppColors.btnPrimaryBg
+              : AppColors.textHint.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(18),
           boxShadow: enabled
-              ? [
+              ? const [
                   BoxShadow(
-                    color: const Color(0x40FFB800),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
+                    color: AppColors.btnPrimaryShadow,
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
                   ),
                 ]
               : null,
@@ -700,7 +698,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: AppColors.btnPrimaryFg,
                   ),
                 )
               : Text(
@@ -708,7 +706,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: enabled ? Colors.white : AppColors.textHint,
+                    color: enabled ? AppColors.btnPrimaryFg : AppColors.textHint,
                   ),
                 ),
         ),
@@ -753,7 +751,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
               padding: EdgeInsets.all(20),
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: AppColors.primary,
+                color: AppColors.coral,
               ),
             ),
           )
@@ -845,7 +843,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.12),
+                            color: AppColors.coral.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -853,7 +851,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                             style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.primaryDark,
+                              color: AppColors.coralDeep,
                             ),
                           ),
                         ),

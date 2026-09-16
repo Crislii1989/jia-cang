@@ -401,7 +401,7 @@ class _LocationCell extends StatelessWidget {
             children: [
               Text(label, style: AppTextStyles.labelMedium),
               const SizedBox(width: 4),
-              const Icon(Icons.edit, size: 11, color: AppColors.accentGold),
+              const Icon(Icons.edit, size: 11, color: AppColors.coralDeep),
             ],
           ),
           const SizedBox(height: 3),
@@ -496,7 +496,7 @@ class _DetailLocationSheet extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(40),
                       child: CircularProgressIndicator(
-                        color: AppColors.accentGold,
+                        color: AppColors.coral,
                       ),
                     ),
                   )
@@ -535,12 +535,12 @@ class _DetailLocationSheet extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFFFFF8E7)
+                                ? AppColors.coralSoft
                                 : AppColors.background,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isSelected
-                                  ? AppColors.accentGold
+                                  ? AppColors.coral
                                   : AppColors.border,
                               width: isSelected ? 1.5 : 1,
                             ),
@@ -594,7 +594,7 @@ class _DetailLocationSheet extends StatelessWidget {
                               if (isSelected)
                                 const Icon(
                                   Icons.check_circle,
-                                  color: AppColors.accentGold,
+                                  color: AppColors.coral,
                                   size: 20,
                                 ),
                             ],

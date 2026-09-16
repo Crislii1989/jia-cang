@@ -206,7 +206,7 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: AppColors.accentGold,
+                color: AppColors.coral,
                 width: 1.5,
               ),
             ),
@@ -228,15 +228,14 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.accentGold, AppColors.warning],
-          ),
+          // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+          color: AppColors.btnPrimaryBg,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
-              color: const Color(0x40FFB800),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
+              color: AppColors.btnPrimaryShadow,
+              blurRadius: 10,
+              offset: Offset(0, 3),
             ),
           ],
         ),
@@ -246,7 +245,7 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: AppColors.btnPrimaryFg,
             ),
           ),
         ),

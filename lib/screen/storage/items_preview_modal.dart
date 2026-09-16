@@ -78,7 +78,7 @@ class ItemsPreviewModal extends StatelessWidget {
                         '已选 ${selectedItemIds.length} 项',
                         style: const TextStyle(
                           fontSize: 12,
-                          color: AppColors.accentGold,
+                          color: AppColors.coralDeep,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -126,17 +126,13 @@ class ItemsPreviewModal extends StatelessWidget {
                                   vertical: 13,
                                 ),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [AppColors.info, Color(0xFF7AB8FF)],
-                                  ),
+                                  // 次要按钮走稿子 `.btn.ghost`
+                                  color: AppColors.btnGhostBg,
                                   borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0x405B9BFF),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
+                                  border: Border.all(
+                                    color: AppColors.btnGhostBorder,
+                                    width: AppColors.btnGhostBorderWidth,
+                                  ),
                                 ),
                                 child: const Center(
                                   child: Text(
@@ -144,7 +140,7 @@ class ItemsPreviewModal extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: AppColors.btnGhostFg,
                                     ),
                                   ),
                                 ),
@@ -161,20 +157,15 @@ class ItemsPreviewModal extends StatelessWidget {
                                   vertical: 13,
                                 ),
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      AppColors.danger,
-                                      Color(0xFFE57373),
-                                    ],
-                                  ),
+                                  // 危险行动：稿子的 `--red-soft` 浅底 + `--red` 字
+                                  color: AppColors.btnDangerBg,
                                   borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0x40E57373),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 3),
+                                  border: Border.all(
+                                    color: AppColors.btnDangerFg.withValues(
+                                      alpha: 0.35,
                                     ),
-                                  ],
+                                    width: AppColors.btnGhostBorderWidth,
+                                  ),
                                 ),
                                 child: const Center(
                                   child: Text(
@@ -182,7 +173,7 @@ class ItemsPreviewModal extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: AppColors.btnDangerFg,
                                     ),
                                   ),
                                 ),
@@ -217,7 +208,7 @@ class ItemsPreviewModal extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF3CC),
+                color: AppColors.coralSoft,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(child: EmojiText(emoji: String.fromCharCode(0x1F4E6), fontSize: 20)),
@@ -252,17 +243,21 @@ class ItemsPreviewModal extends StatelessWidget {
               width: 22,
               height: 22,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.accentGold : null,
+                color: isSelected ? AppColors.chipSelectedBg : null,
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? AppColors.accentGold
+                      ? AppColors.chipSelectedBg
                       : const Color(0xFFF0E4D0),
                   width: 2,
                 ),
               ),
               child: isSelected
-                  ? const Icon(Icons.check, size: 12, color: Colors.white)
+                  ? const Icon(
+                      Icons.check,
+                      size: 12,
+                      color: AppColors.chipSelectedFg,
+                    )
                   : null,
             ),
           ],

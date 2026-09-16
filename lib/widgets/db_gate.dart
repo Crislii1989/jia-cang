@@ -103,7 +103,7 @@ class _DbGatePage extends ConsumerWidget {
                       height: 26,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5,
-                        color: AppColors.accentGold,
+                        color: AppColors.coral,
                       ),
                     ),
                   const SizedBox(height: 16),
@@ -206,20 +206,21 @@ class _GateButton extends StatelessWidget {
         width: 220,
         padding: const EdgeInsets.symmetric(vertical: 13),
         decoration: BoxDecoration(
-          gradient: filled
-              ? const LinearGradient(
-                  colors: [AppColors.accentGold, AppColors.warning],
-                )
-              : null,
-          color: filled ? null : AppColors.cardBg,
+          // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变），次要按钮 = 白底细粉线
+          color: filled ? AppColors.btnPrimaryBg : AppColors.btnGhostBg,
           borderRadius: BorderRadius.circular(16),
-          border: filled ? null : Border.all(color: AppColors.border),
+          border: filled
+              ? null
+              : Border.all(
+                  color: AppColors.btnGhostBorder,
+                  width: AppColors.btnGhostBorderWidth,
+                ),
           boxShadow: filled
               ? const [
                   BoxShadow(
-                    color: Color(0x40FFB800),
-                    blurRadius: 14,
-                    offset: Offset(0, 4),
+                    color: AppColors.btnPrimaryShadow,
+                    blurRadius: 10,
+                    offset: Offset(0, 3),
                   ),
                 ]
               : null,
@@ -230,7 +231,7 @@ class _GateButton extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: filled ? Colors.white : AppColors.textSecondary,
+              color: filled ? AppColors.btnPrimaryFg : AppColors.btnGhostFg,
             ),
           ),
         ),

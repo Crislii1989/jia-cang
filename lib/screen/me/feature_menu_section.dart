@@ -15,7 +15,7 @@ class FeatureMenuSection extends ConsumerWidget {
       icon: Icons.cloud_upload_outlined,
       title: '数据备份',
       subtitle: 'WebDAV 云端备份与恢复',
-      color: AppColors.primary,
+      color: AppColors.coral,
       route: '/data-backup',
     ),
     _MenuEntry(

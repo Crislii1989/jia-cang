@@ -55,6 +55,7 @@ class SortDropdown extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
+                    color: isActive ? AppColors.coralSoft : null,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -67,7 +68,7 @@ class SortDropdown extends StatelessWidget {
                           fontWeight:
                               isActive ? FontWeight.w700 : FontWeight.w500,
                           color: isActive
-                              ? AppColors.accentGold
+                              ? AppColors.coralDeep
                               : AppColors.textSecondary,
                         ),
                       ),
@@ -75,7 +76,7 @@ class SortDropdown extends StatelessWidget {
                         const Icon(
                           Icons.check,
                           size: 18,
-                          color: AppColors.accentGold,
+                          color: AppColors.coralDeep,
                         ),
                     ],
                   ),

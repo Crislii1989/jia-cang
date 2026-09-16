@@ -69,10 +69,11 @@ class AppTextStyles {
   );
 
   // ── 特殊样式 ──
+
   static const priceText = TextStyle(
     fontSize: 15,
     fontWeight: FontWeight.w700,
-    color: AppColors.primary,
+    color: AppColors.coralDeep,
   );
 
   static const subtitleText = TextStyle(
@@ -88,7 +89,7 @@ class AppTextStyles {
 
   static const seeAllText = TextStyle(
     fontSize: 13,
-    color: AppColors.primary,
+    color: AppColors.btnTextFg,
     fontWeight: FontWeight.w600,
   );
 
@@ -148,7 +149,7 @@ class AppTextStyles {
   static TextStyle infoValue({bool isAccent = false}) {
     return TextStyle(
       fontSize: 14,
-      color: isAccent ? AppColors.accentGold : AppColors.textPrimary,
+      color: isAccent ? AppColors.coralDeep : AppColors.textPrimary,
       fontWeight: FontWeight.w700,
     );
   }
@@ -217,7 +218,7 @@ class AppTextStyles {
   static const navLabelActive = TextStyle(
     fontSize: 11,
     fontWeight: FontWeight.w700,
-    color: AppColors.primary,
+    color: AppColors.navActive,
   );
 
   static const actionLabel = TextStyle(

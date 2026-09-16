@@ -60,7 +60,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
       body: SafeArea(
         child: configAsync.when(
           loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
+            child: CircularProgressIndicator(color: AppColors.coral),
           ),
           error: (e, _) => Center(child: Text('加载失败：$e')),
           data: (config) {
@@ -194,7 +194,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppColors.coral.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -237,12 +237,12 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                       ),
                       decoration: BoxDecoration(
                         color: selected
-                            ? AppColors.primary.withValues(alpha: 0.12)
+                            ? AppColors.coral.withValues(alpha: 0.12)
                             : AppColors.background,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: selected
-                              ? AppColors.primary
+                              ? AppColors.coral
                               : AppColors.border.withValues(alpha: 0.3),
                           width: selected ? 1.5 : 1,
                         ),
@@ -253,7 +253,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: selected
-                              ? AppColors.primary
+                              ? AppColors.coral
                               : AppColors.textSecondary,
                         ),
                       ),
@@ -276,7 +276,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppColors.coral.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -291,13 +291,13 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.coral.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.save_outlined,
                   size: 22,
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                 ),
               ),
               const SizedBox(width: 12),
@@ -336,7 +336,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: AppColors.primary,
+                    color: AppColors.coral,
                   ),
                 ),
               ),
@@ -383,19 +383,19 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isActive
-            ? AppColors.primary.withValues(alpha: 0.08)
+            ? AppColors.coral.withValues(alpha: 0.08)
             : isEditing
-            ? AppColors.primary.withValues(alpha: 0.04)
+            ? AppColors.coral.withValues(alpha: 0.04)
             : AppColors.background,
         borderRadius: BorderRadius.circular(14),
         border: isActive
             ? Border.all(
-                color: AppColors.primary.withValues(alpha: 0.4),
+                color: AppColors.coral.withValues(alpha: 0.4),
                 width: 1.5,
               )
             : isEditing
             ? Border.all(
-                color: AppColors.primary.withValues(alpha: 0.2),
+                color: AppColors.coral.withValues(alpha: 0.2),
                 width: 1,
               )
             : null,
@@ -409,8 +409,8 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                 height: 40,
                 decoration: BoxDecoration(
                   color: isActive
-                      ? AppColors.primary.withValues(alpha: 0.15)
-                      : AppColors.primary.withValues(alpha: 0.1),
+                      ? AppColors.coral.withValues(alpha: 0.15)
+                      : AppColors.coral.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -418,7 +418,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                       ? Icons.radio_button_checked
                       : Icons.smart_toy_outlined,
                   size: isActive ? 22 : 20,
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                 ),
               ),
               const SizedBox(width: 12),
@@ -435,7 +435,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: isActive
-                                  ? AppColors.primary
+                                  ? AppColors.coral
                                   : AppColors.textPrimary,
                             ),
                             maxLines: 1,
@@ -450,7 +450,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primary,
+                              color: AppColors.coral,
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: const Text(
@@ -492,8 +492,8 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
                       color: isActive
-                          ? AppColors.primary.withValues(alpha: 0.15)
-                          : AppColors.primary.withValues(alpha: 0.1),
+                          ? AppColors.coral.withValues(alpha: 0.15)
+                          : AppColors.coral.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: isSwitching
@@ -503,7 +503,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                               height: 14,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: AppColors.primary,
+                                color: AppColors.coral,
                               ),
                             ),
                           )
@@ -514,8 +514,8 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: isActive
-                                    ? AppColors.primary.withValues(alpha: 0.7)
-                                    : AppColors.primary,
+                                    ? AppColors.coral.withValues(alpha: 0.7)
+                                    : AppColors.coral,
                               ),
                             ),
                           ),
@@ -535,7 +535,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: isEditing
-                            ? AppColors.primary.withValues(alpha: 0.5)
+                            ? AppColors.coral.withValues(alpha: 0.5)
                             : AppColors.border.withValues(alpha: 0.4),
                       ),
                     ),
@@ -546,7 +546,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: isEditing
-                              ? AppColors.primary
+                              ? AppColors.coral
                               : AppColors.textSecondary,
                         ),
                       ),
@@ -576,7 +576,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                               height: 14,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: AppColors.primary,
+                                color: AppColors.coral,
                               ),
                             ),
                           )
@@ -765,7 +765,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppColors.coral.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -780,13 +780,13 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.coral.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   isEditing ? Icons.edit_outlined : Icons.add_circle_outline,
                   size: 22,
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                 ),
               ),
               const SizedBox(width: 12),
@@ -893,7 +893,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                 const Icon(
                   Icons.open_in_new,
                   size: 14,
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                 ),
                 const SizedBox(width: 4),
                 Expanded(
@@ -901,7 +901,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                     '前往 ${meta.displayName} 获取 API Key →',
                     style: const TextStyle(
                       fontSize: 12,
-                      color: AppColors.primary,
+                      color: AppColors.coral,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -964,7 +964,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: AppColors.primary,
+                color: AppColors.coral,
                 width: 1.5,
               ),
             ),
@@ -1015,9 +1015,9 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
         decoration: BoxDecoration(
           color: disabled
               ? (primary
-                    ? AppColors.primary.withValues(alpha: 0.5)
+                    ? AppColors.coral.withValues(alpha: 0.5)
                     : AppColors.cardBg.withValues(alpha: 0.6))
-              : (primary ? AppColors.primary : AppColors.cardBg),
+              : (primary ? AppColors.coral : AppColors.cardBg),
           borderRadius: BorderRadius.circular(14),
           border: primary
               ? null
@@ -1029,7 +1029,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
           boxShadow: primary && !disabled
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.coral.withValues(alpha: 0.3),
                     blurRadius: 16,
                     offset: const Offset(0, 4),
                   ),
@@ -1234,7 +1234,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppColors.coral.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -1249,13 +1249,13 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: AppColors.coral.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.history_rounded,
                   size: 22,
-                  color: AppColors.primary,
+                  color: AppColors.coral,
                 ),
               ),
               const SizedBox(width: 12),

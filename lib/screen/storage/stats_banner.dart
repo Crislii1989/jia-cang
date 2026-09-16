@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../constants/app_colors.dart';
+
 /// 收纳统计横幅 — 显示房间/柜体/物品总数
 class StorageStatsBanner extends StatelessWidget {
   final int roomCount;
@@ -18,18 +20,18 @@ class StorageStatsBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
+        // 主色横幅：珊瑚渐变（原金→橙渐变随全局主色一起收敛）
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFFD460), Color(0xFFFFB800), Color(0xFFFF9E40)],
-          stops: [0.0, 0.6, 1.0],
+          colors: [AppColors.coral, AppColors.coralDeep],
         ),
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: const Color(0x33FFB800),
+            color: AppColors.btnPrimaryShadow,
             blurRadius: 24,
-            offset: const Offset(0, 6),
+            offset: Offset(0, 6),
           ),
         ],
       ),

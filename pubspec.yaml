@@ -1,6 +1,6 @@
 name: jia_cang
 description: "家藏"
-version: 1.0.8+1
+version: 1.2.0+1
 
 environment:
   sdk: '>=3.11.0 <4.0.0'

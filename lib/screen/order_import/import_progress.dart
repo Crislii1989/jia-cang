@@ -89,7 +89,7 @@ class ImportProgressSection extends StatelessWidget {
                     color: importDone
                         ? AppColors.successLight
                         : isImporting
-                        ? AppColors.accentLight
+                        ? AppColors.coralSoft
                         : AppColors.dangerLight,
                   ),
                   child: Text(
@@ -104,7 +104,7 @@ class ImportProgressSection extends StatelessWidget {
                       color: importDone
                           ? AppColors.statusUsing
                           : isImporting
-                          ? AppColors.primaryDark
+                          ? AppColors.coralDeep
                           : AppColors.danger,
                     ),
                   ),
@@ -147,9 +147,7 @@ class ImportProgressSection extends StatelessWidget {
                     children: [
                       Container(
                         decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppColors.primary, AppColors.warning],
-                          ),
+                          color: AppColors.coral,
                         ),
                       ),
                       // Shimmer effect
@@ -276,7 +274,7 @@ class ImportProgressSection extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.primaryDark,
+                    color: AppColors.coralDeep,
                   ),
                 ),
                 const SizedBox(width: 8),

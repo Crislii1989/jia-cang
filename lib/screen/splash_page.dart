@@ -83,11 +83,7 @@ class _SplashPageState extends State<SplashPage> {
         duration: const Duration(milliseconds: 500),
         opacity: _isFading ? 0.0 : 1.0,
         child: GradientBackground(
-          colors: const [
-            AppColors.background,
-            AppColors.backgroundLight,
-            AppColors.primaryMid,
-          ],
+          // 不再传 colors：走 V2.6 统一背景（暖粉白底 + 右上角暖光晕）
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -122,14 +118,11 @@ class _SplashPageState extends State<SplashPage> {
             height: 130,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(40),
+              // 应用图标：珊瑚渐变（主色 → 加深），与全局主色一致
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primaryMid,
-                  AppColors.primary,
-                  AppColors.primaryDeep,
-                ],
+                colors: [AppColors.coral, AppColors.coralDeep],
               ),
               boxShadow: AppShadows.logo,
             ),
@@ -192,9 +185,7 @@ class _SplashPageState extends State<SplashPage> {
               height: 3,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(3),
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, AppColors.warning],
-                ),
+                color: AppColors.coral,
               ),
             ),
           ),
@@ -221,9 +212,7 @@ class _SplashPageState extends State<SplashPage> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.warning],
-                  ),
+                  color: AppColors.coral,
                 ),
               ),
             ),

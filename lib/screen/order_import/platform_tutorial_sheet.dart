@@ -85,14 +85,13 @@ class PlatformTutorialSheet extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.warning],
-                  ),
-                  boxShadow: [
+                  // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+                  color: AppColors.btnPrimaryBg,
+                  boxShadow: const [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
+                      color: AppColors.btnPrimaryShadow,
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
                     ),
                   ],
                 ),
@@ -102,7 +101,7 @@ class PlatformTutorialSheet extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: AppColors.btnPrimaryFg,
                     ),
                   ),
                 ),
@@ -166,9 +165,7 @@ class _TutorialStepWidget extends StatelessWidget {
                   height: 30,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [AppColors.primary, AppColors.warning],
-                    ),
+                    color: AppColors.btnPrimaryBg,
                   ),
                   child: Center(
                     child: Text(
@@ -176,7 +173,7 @@ class _TutorialStepWidget extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: AppColors.btnPrimaryFg,
                       ),
                     ),
                   ),

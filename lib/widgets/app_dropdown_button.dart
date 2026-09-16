@@ -121,7 +121,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
                         Icon(
                           isSelected ? Icons.check_rounded : null,
                           size: 16,
-                          color: AppColors.accentGold,
+                          color: AppColors.coralDeep,
                         ).visibility(visible: isSelected),
                         const SizedBox(width: 4),
                         Expanded(
@@ -133,7 +133,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
                                   ? FontWeight.w600
                                   : FontWeight.w400,
                               color: isSelected
-                                  ? AppColors.accentGold
+                                  ? AppColors.coralDeep
                                   : AppColors.textPrimary,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -198,7 +198,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
         ),
         menuItemStyleData: const MenuItemStyleData(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          overlayColor: WidgetStatePropertyAll<Color?>(AppColors.primaryLight),
+          overlayColor: WidgetStatePropertyAll<Color?>(AppColors.coralSoft),
         ),
       ),
     );

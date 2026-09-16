@@ -254,7 +254,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
               title: '${_selectedPlatform!.name}订单导入',
               meta: '${DateTime.now()} · 全部历史订单',
               count: _successCount,
-              iconBg: AppColors.primary,
+              iconBg: AppColors.coral,
             );
 
         setState(() {
@@ -296,8 +296,8 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
                       _buildHeroBanner(),
                       const SizedBox(height: 20),
                       _buildSectionTitle(
-                        iconBg: AppColors.primaryLight,
-                        iconColor: AppColors.primaryDark,
+                        iconBg: AppColors.coralSoft,
+                        iconColor: AppColors.coralDeep,
                         icon: Icons.grid_view,
                         title: '选择购物平台',
                       ),
@@ -421,16 +421,11 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            AppColors.gradientGold,
-            AppColors.primary,
-            AppColors.primaryDeep,
-          ],
-          stops: [0.0, 0.4, 1.0],
+          colors: [AppColors.coral, AppColors.coralDeep],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.25),
+            color: AppColors.coral.withValues(alpha: 0.25),
             blurRadius: 24,
             offset: const Offset(0, 6),
           ),
@@ -631,7 +626,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Import range
-              _buildConfigLabel('选择导入范围', AppColors.primary),
+              _buildConfigLabel('选择导入范围', AppColors.coral),
               const SizedBox(height: 10),
               _buildTimeChips(),
               // Custom date
@@ -641,7 +636,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
               ],
               const SizedBox(height: 18),
               // Import options
-              _buildConfigLabel('导入选项', AppColors.warning),
+              _buildConfigLabel('导入选项', AppColors.coral),
               const SizedBox(height: 10),
               _buildCheckboxRow(
                 label: '仅导入实物商品订单',
@@ -697,10 +692,10 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primaryLight : AppColors.background,
+              color: isSelected ? AppColors.coralSoft : AppColors.background,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: isSelected ? AppColors.primary : AppColors.border,
+                color: isSelected ? AppColors.coral : AppColors.border,
                 width: 1.5,
               ),
             ),
@@ -710,7 +705,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: isSelected
-                    ? AppColors.primaryDark
+                    ? AppColors.coralDeep
                     : AppColors.textSecondary,
               ),
             ),
@@ -781,7 +776,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
             child: Checkbox(
               value: value,
               onChanged: (v) => onChanged(v ?? false),
-              activeColor: AppColors.primary,
+              activeColor: AppColors.coral,
               visualDensity: VisualDensity.compact,
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
@@ -810,14 +805,13 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
           padding: const EdgeInsets.symmetric(vertical: 15),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            gradient: const LinearGradient(
-              colors: [AppColors.primary, AppColors.warning],
-            ),
-            boxShadow: [
+            // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+            color: AppColors.btnPrimaryBg,
+            boxShadow: const [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 4),
+                color: AppColors.btnPrimaryShadow,
+                blurRadius: 10,
+                offset: Offset(0, 3),
               ),
             ],
           ),
@@ -879,7 +873,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
         padding: EdgeInsets.all(16),
         child: Center(
           child: CircularProgressIndicator(
-            color: AppColors.primary,
+            color: AppColors.coral,
             strokeWidth: 2,
           ),
         ),
@@ -974,7 +968,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900,
-                                color: AppColors.primaryDark,
+                                color: AppColors.coralDeep,
                               ),
                             ),
                             const TextSpan(

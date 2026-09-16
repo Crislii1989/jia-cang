@@ -507,7 +507,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
             ListTile(
               leading: const Icon(
                 Icons.photo_library,
-                color: AppColors.primary,
+                color: AppColors.btnTextFg,
               ),
               title: const Text('从相册选择'),
               onTap: () {
@@ -516,7 +516,10 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
               },
             ),
             ListTile(
-              leading: const Icon(Icons.camera_alt, color: AppColors.primary),
+              leading: const Icon(
+                Icons.camera_alt,
+                color: AppColors.btnTextFg,
+              ),
               title: const Text('拍照'),
               onTap: () {
                 Navigator.pop(ctx);
@@ -864,7 +867,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
             Icon(
               Icons.photo_camera_outlined,
               size: 14,
-              color: AppColors.primaryDark,
+              color: AppColors.coralDeep,
             ),
             const SizedBox(width: 6),
             Text(
@@ -908,7 +911,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
                               height: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: AppColors.primary,
+                                color: AppColors.coral,
                               ),
                             ),
                           )
@@ -1155,14 +1158,13 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
                 ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.warning],
-                  ),
-                  boxShadow: [
+                  // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
+                  color: AppColors.btnPrimaryBg,
+                  boxShadow: const [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 4),
+                      color: AppColors.btnPrimaryShadow,
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
                     ),
                   ],
                 ),
@@ -1171,7 +1173,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: AppColors.btnPrimaryFg,
                   ),
                 ),
               ),
@@ -1320,7 +1322,7 @@ class _FormCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.08),
+            color: AppColors.coral.withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -1332,7 +1334,7 @@ class _FormCard extends StatelessWidget {
           // 标题
           Row(
             children: [
-              Icon(icon, size: 16, color: AppColors.primaryDark),
+              Icon(icon, size: 16, color: AppColors.coralDeep),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -1427,13 +1429,11 @@ class _PickerSheet extends StatelessWidget {
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFFFFF3CC)
+                          ? AppColors.coralSoft
                           : AppColors.background,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: isSelected
-                            ? AppColors.primary
-                            : Colors.transparent,
+                        color: isSelected ? AppColors.coral : Colors.transparent,
                         width: 1.5,
                       ),
                     ),
@@ -1448,7 +1448,7 @@ class _PickerSheet extends StatelessWidget {
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: isSelected
-                                ? AppColors.primaryDark
+                                ? AppColors.coralDeep
                                 : AppColors.textSecondary,
                           ),
                         ),
@@ -1541,7 +1541,7 @@ class _LocationPickerSheet extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(40),
                       child: CircularProgressIndicator(
-                        color: AppColors.accentGold,
+                        color: AppColors.coral,
                       ),
                     ),
                   )
@@ -1603,10 +1603,10 @@ class _LocationTile extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFFF8E7) : AppColors.background,
+          color: isSelected ? AppColors.coralSoft : AppColors.background,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.accentGold : AppColors.border,
+            color: isSelected ? AppColors.coral : AppColors.border,
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -1657,7 +1657,7 @@ class _LocationTile extends StatelessWidget {
             if (isSelected)
               const Icon(
                 Icons.check_circle,
-                color: AppColors.accentGold,
+                color: AppColors.coral,
                 size: 20,
               ),
           ],
@@ -1775,9 +1775,7 @@ class _PhotoThumb extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppColors.primary, AppColors.warning],
-                  ),
+                  color: AppColors.btnPrimaryBg,
                 ),
                 child: const Text(
                   '封面',
@@ -1785,7 +1783,7 @@ class _PhotoThumb extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: AppColors.btnPrimaryFg,
                   ),
                 ),
               ),
