@@ -1,0 +1,52 @@
+name: Deploy Web (PWA)
+
+# push 到 main 自动构建 Web 版并发布到 GitHub Pages。
+# 首次启用：仓库 Settings → Pages → Build and deployment →
+# Source 选「GitHub Actions」，之后每次 push 自动更新线上版本。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # 允许在 Actions 页手动触发
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # .env 不入库；CI 从模板复制（当前只有 Bugsnag Key，可留空占位）
+      - name: Prepare .env
+        run: cp .env.example .env
+
+      - name: Pub get
+        run: flutter pub get
+
+      # 不带 --pwa-strategy=none：生成 Service Worker（离线可用 + 可安装 PWA）。
+      # GitHub Pages 项目站挂在 /jia-cang/ 子路径下，必须设置 base-href。
+      - name: Build web (PWA)
+        run: flutter build web --release --base-href=/jia-cang/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
