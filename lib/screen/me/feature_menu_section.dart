@@ -163,27 +163,35 @@ class _Cell extends StatelessWidget {
               child: EmojiText(emoji: emoji, fontSize: 13 * k),
             ),
             SizedBox(width: 10 * k),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12.5 * k,
-                fontWeight: FontWeight.w600,
-                color: AppColors.blushInk,
-              ),
-            ),
-            const Spacer(),
-            if (value != null)
-              Flexible(
-                child: Text(
-                  value!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11.5 * k,
-                    color: AppColors.blushInk3,
-                  ),
+            // 标题占满剩余宽度：值 + 箭头始终贴行右缘，不再随值长度
+            // 左右漂移（2026-09-17 反馈「箭头会往前移」——旧写法是
+            // Spacer + Flexible(value) 双弹性，剩余空间被平分，箭头
+            // 跟着值文本走，与无值行的箭头位置对不齐）。
+            Expanded(
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12.5 * k,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.blushInk,
                 ),
               ),
+            ),
+            if (value != null) ...[
+              SizedBox(width: 8 * k),
+              Text(
+                value!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 11.5 * k,
+                  color: AppColors.blushInk3,
+                ),
+              ),
+            ],
             SizedBox(width: 4 * k),
             Icon(
               Icons.chevron_right,
