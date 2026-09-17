@@ -1,0 +1,5 @@
+﻿src size: (1024, 1024)
+saved D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\assets\icon\jia_cang_icon_1024.png (1024, 1024)
+saved D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\web\icons/Icon-192.png
+saved D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\web\icons/Icon-512.png
+saved D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\web\favicon.png

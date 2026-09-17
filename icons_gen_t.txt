@@ -1,0 +1,5 @@
+﻿鈥?Creating default icons Android
+鈥?Adding a new Android launcher icon
+Creating Icons for Windows...
+
+鉁?Successfully generated launcher icons
