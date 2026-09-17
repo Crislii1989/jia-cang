@@ -21,9 +21,6 @@ class ImportHistoryDao extends DatabaseAccessor<AppDatabase>
   Future<int> insert(ImportHistoryCompanion record) =>
       into(importHistory).insert(record);
 
-  Future<int> deleteRecord(int id) =>
-      (delete(importHistory)..where((t) => t.id.equals(id))).go();
-
   /// 统计总导入次数
   Future<int> totalCount() async {
     final result = await customSelect(

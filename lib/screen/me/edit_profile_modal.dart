@@ -158,14 +158,14 @@ class _EditProfileModalState extends State<EditProfileModal> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Color(0xFFF0E4D0),
+                color: AppColors.border,
                 width: 1.5,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
-                color: Color(0xFFF0E4D0),
+                color: AppColors.border,
                 width: 1.5,
               ),
             ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jia_cang/constants/app_colors.dart';
+import 'package:jia_cang/widgets/floating_bar.dart';
 
 /// 弹窗统一圆角半径。
 ///
@@ -194,6 +196,86 @@ class CenterModalShell extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 统一确认弹窗（2026-09-17 UI 统一规则）。
+///
+/// 全库的「确认/提示」类对话框一律走这里，**不再手写 `AlertDialog`**：
+/// 居中四角圆角 24（[kCenterSheetRadius]）+ 标题/说明居中 +
+/// 底部一排 [FloatingBarButton] 胶囊（取消 ghost，确认 primary，
+/// `danger` 时确认用警示红）。以前散在各页的 12 处 AlertDialog 已全部迁入。
+///
+/// 返回值：确认 → [result]（默认 true）；取消/点遮罩 → null。
+class CenterSheetConfirm {
+  CenterSheetConfirm._();
+
+  static Future<T?> show<T>({
+    required BuildContext context,
+    required String title,
+    String? message,
+    String confirmLabel = '确定',
+    String? cancelLabel = '取消',
+    bool danger = false,
+    T? result,
+  }) {
+    return showCenterSheet<T>(
+      context: context,
+      builder: (ctx) => CenterSheetSurface(
+        padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            if (message != null && message.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 13,
+                  height: 1.5,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                if (cancelLabel != null) ...[
+                  Expanded(
+                    child: FloatingBarButton(
+                      label: cancelLabel,
+                      tone: FloatingBarTone.ghost,
+                      onTap: () => Navigator.pop(ctx),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                ],
+                Expanded(
+                  child: FloatingBarButton(
+                    label: confirmLabel,
+                    tone: danger
+                        ? FloatingBarTone.danger
+                        : FloatingBarTone.primary,
+                    onTap: () => Navigator.pop<T>(ctx, result),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

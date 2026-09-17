@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jia_cang/models/category.dart';
 import 'package:jia_cang/providers/category_provider.dart';
 import 'package:jia_cang/providers/item_providers.dart';
-import 'package:jia_cang/screen/home_page.dart';
+import 'package:jia_cang/screen/home/home_page.dart';
 
 void main() {
   testWidgets('HomePage renders correctly', (tester) async {

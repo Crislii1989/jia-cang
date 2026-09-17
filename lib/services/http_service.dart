@@ -39,15 +39,6 @@ class ApiException implements Exception {
   String toString() => 'ApiException($code): $message';
 }
 
-/// 网络错误类型
-enum NetErrorType {
-  network, // 无网络 / 超时 / DNS 失败
-  badResponse, // HTTP 状态码非 2xx
-  business, // 业务 code 非 0
-  cancel, // 请求被取消
-  unknown,
-}
-
 /// HTTP 服务封装（单例）
 ///
 /// 使用方式：

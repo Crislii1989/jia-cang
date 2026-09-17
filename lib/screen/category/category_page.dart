@@ -71,44 +71,13 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
     if (!mounted) return;
 
     if (count > 0) {
-      final shouldDelete = await showDialog<bool>(
+      final shouldDelete = await CenterSheetConfirm.show<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: Text(
-            '删除「${cat.label}」？',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          content: Text(
-            '该分类下有 $count 件物品，删除后物品将变为「未分类」。',
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text(
-                '取消',
-                style: TextStyle(color: AppColors.textHint),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text(
-                '确认删除',
-                style: TextStyle(color: AppColors.danger),
-              ),
-            ),
-          ],
-        ),
+        title: '删除「${cat.label}」？',
+        message: '该分类下有 $count 件物品，删除后物品将变为「未分类」。',
+        confirmLabel: '确认删除',
+        danger: true,
+        result: true,
       );
       if (shouldDelete != true) return;
     }
@@ -193,7 +162,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
         decoration: const BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: Color(0xFFF0E4D0), width: 0.5),
+            bottom: BorderSide(color: AppColors.border, width: 0.5),
           ),
         ),
         child: Row(
@@ -265,10 +234,6 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
         ),
       ),
     );
-  }
-
-  Widget _buildBackgroundDecoration() {
-    return const SizedBox.shrink();
   }
 
   Widget _buildContent(List<CategoryItem> categories) {
@@ -490,7 +455,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             style: const TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w500,
-              color: Color(0xBFFFFFFF),
+              color: AppColors.floatHairlineSoft,
             ),
           ),
         ],

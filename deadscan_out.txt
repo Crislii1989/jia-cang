@@ -1,0 +1,9 @@
+﻿8 zero-reference symbols
+function  slotCount                                lib/daos/cabinet_dao.dart:36
+function  deleteRecord                             lib/daos/import_history_dao.dart:24
+function  countAll                                 lib/daos/item_dao.dart:66
+function  getConfigById                            lib/providers/profile_provider.dart:360
+function  _buildBackgroundDecoration               lib/screen/category/category_page.dart:270
+enum      NetErrorType                             lib/services/http_service.dart:43
+function  clearCache                               lib/services/prompt_service.dart:28
+extension _IconVisibility                          lib/widgets/app_dropdown_button.dart:210

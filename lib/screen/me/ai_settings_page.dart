@@ -5,6 +5,7 @@ import 'package:jia_cang/providers/profile_provider.dart';
 import 'package:jia_cang/services/ai/ai_models.dart';
 import 'package:jia_cang/services/ai/ai_provider_registry.dart';
 import 'package:jia_cang/services/ai/ai_provider_type.dart';
+import 'package:jia_cang/widgets/center_sheet.dart';
 import 'package:jia_cang/widgets/toast_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -700,40 +701,15 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
 
   Future<void> _deleteSavedModel(AiProviderConfig config) async {
     final isActive = config.id == _activeModelId;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await CenterSheetConfirm.show<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.cardBg,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          '删除 ${config.effectiveDisplayName}？',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        content: Text(
-          isActive ? '该模型当前正在使用，删除后将自动切换到其他可用模型。' : '删除后该模型配置将被永久清除。',
-          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text(
-              '取消',
-              style: TextStyle(color: AppColors.textSecondary),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              '删除',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-      ),
+      title: '删除 ${config.effectiveDisplayName}？',
+      message: isActive
+          ? '该模型当前正在使用，删除后将自动切换到其他可用模型。'
+          : '删除后该模型配置将被永久清除。',
+      confirmLabel: '删除',
+      danger: true,
+      result: true,
     );
 
     if (confirmed == true) {

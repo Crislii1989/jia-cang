@@ -24,8 +24,4 @@ class PromptService {
     } catch (_) {}
     return kAiVisionPrompt;
   }
-
-  void clearCache() {
-    _cachedPrompt = null;
-  }
 }

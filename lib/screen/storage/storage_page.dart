@@ -718,32 +718,21 @@ class _StoragePageState extends ConsumerState<StoragePage> {
       _showDeleteBlockedDialog(blocker);
       return;
     }
-    showDialog(
+    final confirmed = await CenterSheetConfirm.show(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('删除房间'),
-        content: Text('确定删除「${room.name}」？此操作不可撤销。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref.read(roomActionsProvider.notifier).deleteRoom(room.id);
-              ToastUtils.show(context, '「${room.name}」已删除');
-              // 删除的正是当前浏览的房间 → 回到房间列表
-              if (_currentRoomId == room.id) {
-                _onTabTap(0);
-              }
-            },
-            child: const Text('删除'),
-          ),
-        ],
-      ),
+      title: '删除房间',
+      message: '确定删除「${room.name}」？此操作不可撤销。',
+      confirmLabel: '删除',
+      danger: true,
     );
+    if (!mounted) return;
+    if (confirmed != true) return;
+    ref.read(roomActionsProvider.notifier).deleteRoom(room.id);
+    ToastUtils.show(context, '「${room.name}」已删除');
+    // 删除的正是当前浏览的房间 → 回到房间列表
+    if (_currentRoomId == room.id) {
+      _onTabTap(0);
+    }
   }
 
   Future<void> _confirmDeleteCabinet(Cabinet cabinet, String roomId) async {
@@ -761,38 +750,27 @@ class _StoragePageState extends ConsumerState<StoragePage> {
       _showDeleteBlockedDialog(blocker);
       return;
     }
-    showDialog(
+    final confirmed = await CenterSheetConfirm.show(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('删除柜体'),
-        content: Text('确定删除「${cabinet.name}」？此操作不可撤销。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref
-                  .read(cabinetActionsProvider.notifier)
-                  .deleteCabinet(cabinet.id, roomId);
-              ToastUtils.show(context, '「${cabinet.name}」已删除');
-              // 删除的正是当前浏览的柜体 → 退回该房间的柜体视图
-              if (_currentCabinetId == cabinet.id) {
-                setState(() {
-                  _tab = 1;
-                  _currentCabinetId = null;
-                  _currentCabinetName = '';
-                });
-              }
-            },
-            child: const Text('删除'),
-          ),
-        ],
-      ),
+      title: '删除柜体',
+      message: '确定删除「${cabinet.name}」？此操作不可撤销。',
+      confirmLabel: '删除',
+      danger: true,
     );
+    if (!mounted) return;
+    if (confirmed != true) return;
+    ref
+        .read(cabinetActionsProvider.notifier)
+        .deleteCabinet(cabinet.id, roomId);
+    ToastUtils.show(context, '「${cabinet.name}」已删除');
+    // 删除的正是当前浏览的柜体 → 退回该房间的柜体视图
+    if (_currentCabinetId == cabinet.id) {
+      setState(() {
+        _tab = 1;
+        _currentCabinetId = null;
+        _currentCabinetName = '';
+      });
+    }
   }
 
   Future<void> _confirmDeleteSlot(Slot slot, String cabinetId) async {
@@ -810,48 +788,30 @@ class _StoragePageState extends ConsumerState<StoragePage> {
       _showDeleteBlockedDialog(blocker);
       return;
     }
-    showDialog(
+    final confirmed = await CenterSheetConfirm.show(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('删除箱子'),
-        content: Text('确定删除「${slot.name}」？此操作不可撤销。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            onPressed: () {
-              Navigator.pop(ctx);
-              ref
-                  .read(slotActionsProvider.notifier)
-                  .deleteSlot(slot.id, cabinetId);
-              ToastUtils.show(context, '「${slot.name}」已删除');
-            },
-            child: const Text('删除'),
-          ),
-        ],
-      ),
+      title: '删除箱子',
+      message: '确定删除「${slot.name}」？此操作不可撤销。',
+      confirmLabel: '删除',
+      danger: true,
     );
+    if (!mounted) return;
+    if (confirmed != true) return;
+    ref
+        .read(slotActionsProvider.notifier)
+        .deleteSlot(slot.id, cabinetId);
+    ToastUtils.show(context, '「${slot.name}」已删除');
   }
 
   /// 删除被阻止时的提示对话框：指明具体子单元路径与物品数
-  void _showDeleteBlockedDialog(DeletionBlocker blocker) {
-    showDialog(
+  Future<void> _showDeleteBlockedDialog(DeletionBlocker blocker) {
+    return CenterSheetConfirm.show(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('无法删除'),
-        content: Text(
+      title: '无法删除',
+      message:
           '「${blocker.path}」中存在 ${blocker.count} 件物品，请先将物品迁移至其他收纳位置后再删除。',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('我知道了'),
-          ),
-        ],
-      ),
+      confirmLabel: '我知道了',
+      cancelLabel: null,
     );
   }
 
@@ -1038,23 +998,12 @@ class _StoragePageState extends ConsumerState<StoragePage> {
     if (_selectedItemIds.isEmpty) return;
     if (_itemsModalSlotId.isEmpty) return;
 
-    final confirmed = await showDialog<bool>(
+    final confirmed = await CenterSheetConfirm.show(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('批量删除'),
-        content: Text('确定删除选中的 ${_selectedItemIds.length} 件物品？此操作不可撤销。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('删除'),
-          ),
-        ],
-      ),
+      title: '批量删除',
+      message: '确定删除选中的 ${_selectedItemIds.length} 件物品？此操作不可撤销。',
+      confirmLabel: '删除',
+      danger: true,
     );
     if (confirmed != true) return;
 

@@ -1,0 +1,25 @@
+﻿{
+  "ok": true,
+  "log": [
+    "wait:14000",
+    "shot:r7_home.png -> C:\\Users\\o\\shiwuji_build\\.workbuddy\\verify\\2026-09-17\\r7_home.png",
+    "click:292,890",
+    "wait:2500",
+    "shot:r7_storage.png -> C:\\Users\\o\\shiwuji_build\\.workbuddy\\verify\\2026-09-17\\r7_storage.png",
+    "click:391,890",
+    "wait:2500",
+    "shot:r7_me.png -> C:\\Users\\o\\shiwuji_build\\.workbuddy\\verify\\2026-09-17\\r7_me.png",
+    "click:37,890",
+    "wait:2000",
+    "click:63,401",
+    "wait:2500",
+    "shot:r7_category.png -> C:\\Users\\o\\shiwuji_build\\.workbuddy\\verify\\2026-09-17\\r7_category.png",
+    "click:40,60",
+    "wait:2000",
+    "click:215,890",
+    "wait:2500",
+    "shot:r7_add.png -> C:\\Users\\o\\shiwuji_build\\.workbuddy\\verify\\2026-09-17\\r7_add.png"
+  ],
+  "pageErrors": [],
+  "consoleErrors": []
+}

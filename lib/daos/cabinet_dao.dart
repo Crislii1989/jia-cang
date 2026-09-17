@@ -32,15 +32,6 @@ class CabinetDao extends DatabaseAccessor<AppDatabase>
   Future<int> deleteCabinet(String id) =>
       (delete(cabinets)..where((t) => t.id.equals(id))).go();
 
-  /// 统计某个柜子下的格位数量
-  Future<int> slotCount(String cabinetId) async {
-    final result = await customSelect(
-      'SELECT COUNT(*) AS total FROM slots WHERE cabinet_id = ?',
-      variables: [Variable.withString(cabinetId)],
-    ).get();
-    return result.first.read<int>('total');
-  }
-
   /// 统计某个柜子下的物品数量（主物品 items）
   Future<int> itemCount(String cabinetId) async {
     final result = await customSelect(

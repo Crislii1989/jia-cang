@@ -1,0 +1,50 @@
+[
+ {
+  "name": "slotCount",
+  "kind": "function",
+  "file": "lib/daos/cabinet_dao.dart",
+  "line": 36
+ },
+ {
+  "name": "deleteRecord",
+  "kind": "function",
+  "file": "lib/daos/import_history_dao.dart",
+  "line": 24
+ },
+ {
+  "name": "countAll",
+  "kind": "function",
+  "file": "lib/daos/item_dao.dart",
+  "line": 66
+ },
+ {
+  "name": "getConfigById",
+  "kind": "function",
+  "file": "lib/providers/profile_provider.dart",
+  "line": 360
+ },
+ {
+  "name": "_buildBackgroundDecoration",
+  "kind": "function",
+  "file": "lib/screen/category/category_page.dart",
+  "line": 270
+ },
+ {
+  "name": "NetErrorType",
+  "kind": "enum",
+  "file": "lib/services/http_service.dart",
+  "line": 43
+ },
+ {
+  "name": "clearCache",
+  "kind": "function",
+  "file": "lib/services/prompt_service.dart",
+  "line": 28
+ },
+ {
+  "name": "_IconVisibility",
+  "kind": "extension",
+  "file": "lib/widgets/app_dropdown_button.dart",
+  "line": 210
+ }
+]

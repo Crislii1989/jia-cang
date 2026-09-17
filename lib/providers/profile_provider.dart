@@ -356,11 +356,6 @@ class AiConfigManager extends _$AiConfigManager {
     }
   }
 
-  /// 根据ID获取配置
-  Future<AiProviderConfig?> getConfigById(String id) async {
-    return _loadConfigById(_dao, id);
-  }
-
   /// 获取所有已保存的模型配置
   Future<List<AiProviderConfig>> loadAllSavedConfigs() async {
     final dao = _dao;

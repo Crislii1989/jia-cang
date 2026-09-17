@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:jia_cang/constants/app_colors.dart';
 import 'package:jia_cang/services/update_service.dart';
+import 'package:jia_cang/widgets/center_sheet.dart';
 import 'package:jia_cang/widgets/emoji_text.dart';
+import 'package:jia_cang/widgets/floating_bar.dart';
 import 'package:jia_cang/widgets/toast_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -105,83 +107,95 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
     }
   }
 
-  /// 弹出更新提示对话框（支持取消）
+  /// 弹出更新提示对话框（支持取消）。
+  /// 外壳走 [showCenterSheet]（UI 统一规则：不再手写 AlertDialog 圆角）。
   void _showUpdateDialog() {
-    showDialog<void>(
+    showCenterSheet<void>(
       context: context,
-      barrierDismissible: true,
       builder: (ctx) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: Row(
+        return CenterSheetSurface(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(Icons.system_update, color: AppColors.coral, size: 24),
-              const SizedBox(width: 8),
-              const Text('发现新版本'),
-            ],
-          ),
-          content: ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 320),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+              Row(
                 children: [
-                  Text(
-                    'v$_currentVersion → v$_latestVersion',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
+                  Icon(Icons.system_update, color: AppColors.coral, size: 24),
+                  const SizedBox(width: 8),
                   const Text(
-                    '更新内容：',
+                    '发现新版本',
                     style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    _releaseNotes.isEmpty ? '暂无更新说明' : _releaseNotes,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textSecondary,
-                      height: 1.6,
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text(
-                '稍后再说',
-                style: TextStyle(color: AppColors.textHint),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-                _downloadUpdate();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.coral,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 12),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 320),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'v$_currentVersion → v$_latestVersion',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        '更新内容：',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        _releaseNotes.isEmpty ? '暂无更新说明' : _releaseNotes,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                          height: 1.6,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: const Text('去更新'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: FloatingBarButton(
+                      label: '稍后再说',
+                      tone: FloatingBarTone.ghost,
+                      onTap: () => Navigator.of(ctx).pop(),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: FloatingBarButton(
+                      label: '去更新',
+                      tone: FloatingBarTone.primary,
+                      onTap: () {
+                        Navigator.of(ctx).pop();
+                        _downloadUpdate();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );

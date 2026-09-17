@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jia_cang/constants/app_colors.dart';
+import 'package:jia_cang/widgets/center_sheet.dart';
 import 'package:jia_cang/widgets/gradient_background.dart';
 import 'package:jia_cang/widgets/toast_utils.dart';
 import 'package:jia_cang/providers/database_provider.dart';
@@ -160,30 +161,15 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
   Future<void> _doRestore(BackupFileInfo info) async {
     final timeStr = _formatTime(info.time);
     final countStr = info.itemCount != null ? '（含 ${info.itemCount} 件物品）' : '';
-    final confirmed = await showDialog<bool>(
+    final confirmed = await CenterSheetConfirm.show<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text(
-          '确认恢复',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: Text(
+      title: '确认恢复',
+      message:
           '将从 $timeStr 的备份$countStr 恢复所有数据，'
           '当前数据会被覆盖。确定继续？',
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: const Text('确定恢复'),
-          ),
-        ],
-      ),
+      confirmLabel: '确定恢复',
+      danger: true,
+      result: true,
     );
 
     if (confirmed != true) return;
@@ -215,27 +201,13 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
 
 
   Future<void> _deleteBackup(BackupFileInfo info) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await CenterSheetConfirm.show<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text(
-          '删除备份',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: Text('确定删除「${info.name}」？此操作不可恢复。'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: const Text('删除'),
-          ),
-        ],
-      ),
+      title: '删除备份',
+      message: '确定删除「${info.name}」？此操作不可恢复。',
+      confirmLabel: '删除',
+      danger: true,
+      result: true,
     );
 
     if (confirmed != true) return;
@@ -511,11 +483,11 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
             fillColor: AppColors.background,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFF0E4D0)),
+              borderSide: const BorderSide(color: AppColors.border),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFF0E4D0)),
+              borderSide: const BorderSide(color: AppColors.border),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

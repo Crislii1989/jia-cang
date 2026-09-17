@@ -199,7 +199,7 @@ class ItemsPreviewModal extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: const BoxDecoration(
           border: Border(
-            bottom: BorderSide(color: Color(0xFFF0E4D0), width: 1),
+            bottom: BorderSide(color: AppColors.border, width: 1),
           ),
         ),
         child: Row(
@@ -248,7 +248,7 @@ class ItemsPreviewModal extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? AppColors.chipSelectedBg
-                      : const Color(0xFFF0E4D0),
+                      : AppColors.border,
                   width: 2,
                 ),
               ),

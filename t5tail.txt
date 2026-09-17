@@ -1,0 +1,20 @@
+﻿00:12 +121: C:/Users/o/shiwuji_build/test/services/update_service_test.dart: UpdateService.parseGitHubRelease assets 涓?.APK 澶у啓鍚庣紑涔熻兘璇嗗埆
+00:12 +122: C:/Users/o/shiwuji_build/test/services/update_service_test.dart: UpdateService.parseGitHubRelease assets 瀛楁绫诲瀷寮傚父鏃朵笉鎶涘紓甯?00:12 +123: C:/Users/o/shiwuji_build/test/services/update_service_test.dart: UpdateService.check - 缃戠粶寮傚父鍦烘櫙 check 鏂规硶瀛樺湪涓旇繑鍥?CheckUpdateOutcome
+00:12 +124: C:/Users/o/shiwuji_build/test/services/update_service_test.dart: CheckUpdateOutcome upToDate 缁撴灉鏋勯€?00:12 +125: C:/Users/o/shiwuji_build/test/services/update_service_test.dart: CheckUpdateOutcome newVersion 缁撴灉甯?info
+00:12 +126: C:/Users/o/shiwuji_build/test/services/update_service_test.dart: CheckUpdateOutcome error 缁撴灉甯?errorMessage
+00:12 +127: C:/Users/o/shiwuji_build/test/services/update_service_test.dart: UpdateInfo forceUpdate 榛樿 false
+00:12 +128: C:/Users/o/shiwuji_build/test/services/update_service_test.dart: UpdateInfo toString 鍖呭惈鍏抽敭淇℃伅
+00:12 +129: loading C:/Users/o/shiwuji_build/test/widgets/emoji_picker_field_test.dart
+00:13 +129: C:/Users/o/shiwuji_build/test/widgets/emoji_picker_field_test.dart: 鏀惰捣鏃舵槸绱у噾涓嬫媺瀛楁锛屼笉閾哄紑鍊欓€夊鏍?00:13 +130: C:/Users/o/shiwuji_build/test/widgets/emoji_picker_field_test.dart: 鐐瑰瓧娈靛脊鍑洪潰鏉匡紝鐐归€夊浘鏍囧洖璋冨苟鏀惰捣
+00:13 +131: C:/Users/o/shiwuji_build/test/widgets/emoji_picker_field_test.dart: 鍊欓€夊簱宸叉墿瀹逛笖姣忎釜搴撳唴閮ㄦ棤閲嶅
+00:13 +132: C:/Users/o/shiwuji_build/test/widgets/emoji_picker_field_test.dart: 鍘嗗彶閬楃暀鍥炬爣锛堜笉鍦ㄥ€欓€夊簱閲岋級浣滀负銆屽綋鍓嶄娇鐢ㄣ€嶇疆椤?00:13 +133: loading C:/Users/o/shiwuji_build/test/widgets/overview_stat_card_test.dart
+00:14 +133: C:/Users/o/shiwuji_build/test/widgets/overview_stat_card_test.dart: OverviewStatCard锛堢粺璁℃瑙堝崱锛?娓叉煋鏁板瓧/鍗曚綅/鏍囩涓庡浘鏍?00:14 +134: C:/Users/o/shiwuji_build/test/widgets/overview_stat_card_test.dart: OverviewStatCard锛堢粺璁℃瑙堝崱锛?榛樿鎬佷负鐧藉簳銆乭ot 鎬佷负娴呴噾搴?00:14 +135: C:/Users/o/shiwuji_build/test/widgets/overview_stat_card_test.dart: OverviewStatCard锛堢粺璁℃瑙堝崱锛?鐐瑰嚮瑙﹀彂 onTap
+00:14 +136: C:/Users/o/shiwuji_build/test/widgets/overview_stat_card_test.dart: StatusBadge锛堢姸鎬佸窘鏍囷級 娓叉煋鏂囨湰涓斿悇绫诲瀷浣跨敤瀵瑰簲鐘舵€佽壊
+00:14 +137: loading C:/Users/o/shiwuji_build/test/widgets/pill_content_test.dart
+00:14 +137: C:/Users/o/shiwuji_build/test/widgets/pill_content_test.dart: PillContent 鍐呭缁勶紙鍥炬爣+鏂囧瓧锛夋暣浣撳眳涓?鏃犲浘鏍囷細鏂囧瓧灞呬腑
+00:15 +138: C:/Users/o/shiwuji_build/test/widgets/pill_content_test.dart: PillContent 鍐呭缁勶紙鍥炬爣+鏂囧瓧锛夋暣浣撳眳涓?鍙湁鍓嶇疆鍥炬爣锛氬唴瀹圭粍灞呬腑锛堟枃瀛楁寜缁勮鍒欏彸绉诲崐涓浘鏍囦綅锛?00:15 +139: C:/Users/o/shiwuji_build/test/widgets/pill_content_test.dart: PillContent 鍐呭缁勶紙鍥炬爣+鏂囧瓧锛夋暣浣撳眳涓?鍙湁鍚庣疆鍥炬爣锛氬唴瀹圭粍灞呬腑锛堟枃瀛楁寜缁勮鍒欏乏绉诲崐涓浘鏍囦綅锛?00:15 +140: C:/Users/o/shiwuji_build/test/widgets/pill_content_test.dart: PillContent 鍐呭缁勶紙鍥炬爣+鏂囧瓧锛夋暣浣撳眳涓?鍓嶅悗閮芥湁鍥炬爣锛氬ぉ鐒跺绉帮紝鏂囧瓧灞呬腑
+00:15 +141: C:/Users/o/shiwuji_build/test/widgets/pill_content_test.dart: PillContent 鍐呭缁勶紙鍥炬爣+鏂囧瓧锛夋暣浣撳眳涓?鏂囧瓧鍨傜洿鏂瑰悜灞呬腑
+00:15 +142: C:/Users/o/shiwuji_build/test/widgets/pill_content_test.dart: PillContent 鍐呭缁勶紙鍥炬爣+鏂囧瓧锛夋暣浣撳眳涓?鏂囧瓧鏃笉琚浘鏍囧帇浣忥紝涔熶笉浼氳创鍒拌兌鍥婂
+00:15 +143: loading C:/Users/o/shiwuji_build/test/widget_test.dart
+00:15 +143: C:/Users/o/shiwuji_build/test/widget_test.dart: HomePage renders correctly
+00:16 +144: All tests passed!

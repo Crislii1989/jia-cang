@@ -1,0 +1,53 @@
+﻿
+an7.txt:3:warning - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\category\category_
+page.dart:270:10 - The declaration '_buildBackgroundDecoration' isn't reference
+d. Try removing the declaration of '_buildBackgroundDecoration'. - unused_eleme
+nt
+an7.txt:4:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\add_item_page.dart
+:941:33 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary
+_underscores
+an7.txt:5:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\add_item_page.dart
+:1714:31 - Unnecessary use of multiple underscores. Try using '_'. - unnecessar
+y_underscores
+an7.txt:6:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\add_item_page.dart
+:1714:35 - Unnecessary use of multiple underscores. Try using '_'. - unnecessar
+y_underscores
+an7.txt:7:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\category\category_
+page.dart:537:11 - Use the null-aware marker '?' rather than a null check via a
+n 'if'. Try using '?'. - use_null_aware_elements
+an7.txt:8:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\inventory\inventor
+y_page.dart:932:29 - Unnecessary use of multiple underscores. Try using '_'. - 
+unnecessary_underscores
+an7.txt:9:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\inventory\inventor
+y_page.dart:932:33 - Unnecessary use of multiple underscores. Try using '_'. - 
+unnecessary_underscores
+an7.txt:10:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\me\data_stats_sec
+tion.dart:39:18 - Unnecessary use of multiple underscores. Try using '_'. - unn
+ecessary_underscores
+an7.txt:11:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\me\profile_header
+_section.dart:26:18 - Unnecessary use of multiple underscores. Try using '_'. -
+ unnecessary_underscores
+an7.txt:12:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\order-import-page
+.dart:1:1 - The file name 'order-import-page.dart' isn't a lower_case_with_unde
+rscores identifier. Try changing the name to follow the lower_case_with_undersc
+ores style. - file_names
+an7.txt:13:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\widgets\list_item_card.d
+art:227:41 - Unnecessary use of multiple underscores. Try using '_'. - unnecess
+ary_underscores
+an7.txt:14:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\widgets\list_item_card.d
+art:227:45 - Unnecessary use of multiple underscores. Try using '_'. - unnecess
+ary_underscores
+an7.txt:15:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\widgets\photo_carousel.d
+art:113:36 - Unnecessary use of multiple underscores. Try using '_'. - unnecess
+ary_underscores
+an7.txt:16:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\widgets\photo_carousel.d
+art:113:40 - Unnecessary use of multiple underscores. Try using '_'. - unnecess
+ary_underscores
+an7.txt:17:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\widgets\photo_carousel.d
+art:119:39 - Unnecessary use of multiple underscores. Try using '_'. - unnecess
+ary_underscores
+an7.txt:18:   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\widgets\photo_carousel.d
+art:386:33 - Unnecessary use of multiple underscores. Try using '_'. - unnecess
+ary_underscores
+
+

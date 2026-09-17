@@ -7,7 +7,7 @@ import 'package:jia_cang/models/category_item.dart';
 import 'package:jia_cang/models/item.dart';
 import 'package:jia_cang/providers/category_provider.dart';
 import 'package:jia_cang/providers/item_providers.dart';
-import 'package:jia_cang/screen/home_page.dart';
+import 'package:jia_cang/screen/home/home_page.dart';
 import 'package:jia_cang/widgets/app_canvas.dart';
 
 /// 首页版式等比缩放 / 宽视口限宽 的回归测试（2026-09-16）。

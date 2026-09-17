@@ -63,10 +63,4 @@ class ItemDao extends DatabaseAccessor<AppDatabase> with _$ItemDaoMixin {
     }
   }
 
-  Future<int> countAll() async {
-    final result = await customSelect(
-      'SELECT COUNT(*) AS total FROM items',
-    ).get();
-    return result.first.read<int>('total');
-  }
 }

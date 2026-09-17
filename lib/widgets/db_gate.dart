@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/app_colors.dart';
 import '../providers/database_provider.dart';
 import '../utils/local_database_reset.dart' as reset;
+import 'center_sheet.dart';
 import 'gradient_background.dart';
 
 /// 启动闸门：进入应用之前先确认本地数据库真的能用。
@@ -157,27 +158,16 @@ class _DbGatePage extends ConsumerWidget {
   }
 
   Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
-    final ok = await showDialog<bool>(
+    final ok = await CenterSheetConfirm.show<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('清理本地数据'),
-        content: const Text(
+      title: '清理本地数据',
+      message:
           '将删除浏览器中保存的全部本地数据（房间、柜体、物品等），'
           '然后重新载入应用。此操作不可撤销。\n\n'
           '仅在「重试」也打不开数据库时才需要这样做。',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('确认清理'),
-          ),
-        ],
-      ),
+      confirmLabel: '确认清理',
+      danger: true,
+      result: true,
     );
     if (ok != true) return;
 

@@ -532,11 +532,11 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
         fillColor: AppColors.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFF0E4D0), width: 1.5),
+          borderSide: const BorderSide(color: AppColors.border, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFF0E4D0), width: 1.5),
+          borderSide: const BorderSide(color: AppColors.border, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -567,7 +567,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
         decoration: BoxDecoration(
           color: AppColors.background,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFFF0E4D0), width: 2),
+          border: Border.all(color: AppColors.border, width: 2),
         ),
         child: const Center(
           child: Column(
@@ -690,7 +690,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
       child: Container(
         height: 100,
         decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFFF0E4D0), width: 2),
+          border: Border.all(color: AppColors.border, width: 2),
           borderRadius: BorderRadius.circular(18),
         ),
         child: const Column(
