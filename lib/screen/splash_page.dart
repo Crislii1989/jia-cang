@@ -84,21 +84,31 @@ class _SplashPageState extends State<SplashPage> {
         opacity: _isFading ? 0.0 : 1.0,
         child: GradientBackground(
           // 不再传 colors：走 V2.6 统一背景（暖粉白底 + 右上角暖光晕）
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildLogo(),
-                const SizedBox(height: 28),
-                _buildTitle(),
-                const SizedBox(height: 10),
-                _buildSubtitle(),
-                const SizedBox(height: 20),
-                _buildLine(),
-                const SizedBox(height: 80),
-                _buildProgress(),
-              ],
-            ),
+          child: Column(
+            children: [
+              // 中部弹性区：logo 组（logo/标题/副标题/装饰线）整体落在屏幕正中
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildLogo(),
+                      const SizedBox(height: 32),
+                      _buildTitle(),
+                      const SizedBox(height: 10),
+                      _buildSubtitle(),
+                      const SizedBox(height: 20),
+                      _buildLine(),
+                    ],
+                  ),
+                ),
+              ),
+              // 进度条固定在底部，不挤占 logo 组的居中位置
+              Padding(
+                padding: const EdgeInsets.only(left: 48, right: 48, bottom: 56),
+                child: _buildProgress(),
+              ),
+            ],
           ),
         ),
       ),
@@ -114,16 +124,16 @@ class _SplashPageState extends State<SplashPage> {
         return Transform.scale(
           scale: scale,
           child: Container(
-            width: 130,
-            height: 130,
+            width: 170,
+            height: 170,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40),
+              borderRadius: BorderRadius.circular(52),
               boxShadow: AppShadows.logo,
             ),
             // 2026-09-17 品牌升级：应用图标改为真实 logo 资产
             //（assets/icon/jia_cang_icon_1024.png，与桌面/安装图标同源）
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(40),
+              borderRadius: BorderRadius.circular(52),
               child: Image.asset(
                 'assets/icon/jia_cang_icon_1024.png',
                 fit: BoxFit.cover,
