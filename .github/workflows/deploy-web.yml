@@ -1,8 +1,9 @@
 name: Deploy Web (PWA)
 
 # push 到 main 自动构建 Web 版并发布到 GitHub Pages。
-# 首次启用：仓库 Settings → Pages → Build and deployment →
-# Source 选「GitHub Actions」，之后每次 push 自动更新线上版本。
+# Pages 未启用时由 configure-pages 的 enablement 自动创建站点（Source=GitHub Actions），
+# 无需手工去 Settings 点选；若自动启用被仓库策略拦住，再手工去
+# 仓库 Settings → Pages → Build and deployment → Source 选「GitHub Actions」。
 on:
   push:
     branches: [main]
@@ -42,6 +43,9 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # Pages 站点尚未创建时自动创建（否则该步直接报 Get Pages site failed）
+          enablement: true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
