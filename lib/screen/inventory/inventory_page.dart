@@ -1288,6 +1288,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   Widget _buildBatchBar() {
     // 2026-09-17 反馈：与详情页底部操作条统一成同一套悬浮条语言
     //（FloatingBar + 40pt 胶囊按钮，字号 13/700），不再是自绘的小字信息栏。
+    // 移动 / 导出按同日反馈加回（原占位行为保持：真功能后续单独排期）。
     return FloatingBar(
       background: AppColors.actionBarBg,
       child: Row(
@@ -1321,6 +1322,22 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               label: '标记已用',
               tone: FloatingBarTone.ghost,
               onTap: _markSelectedUsed,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: FloatingBarButton(
+              label: '移动',
+              tone: FloatingBarTone.ghost,
+              onTap: () => ToastUtils.show(context, '移动'),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: FloatingBarButton(
+              label: '导出',
+              tone: FloatingBarTone.ghost,
+              onTap: () => ToastUtils.show(context, '导出'),
             ),
           ),
           const SizedBox(width: 8),

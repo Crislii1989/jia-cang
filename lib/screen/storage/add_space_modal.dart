@@ -688,7 +688,8 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
     return GestureDetector(
       onTap: _isPicking ? null : _showPhotoSourceSheet,
       child: Container(
-        height: 100,
+        // 100 → 116：格式提示拆成两行后需要多一行的空间
+        height: 116,
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.border, width: 2),
           borderRadius: BorderRadius.circular(18),
@@ -710,9 +711,15 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                 color: AppColors.textHint,
               ),
             ),
+            SizedBox(height: 4),
+            Text(
+              // 单行太拥挤（2026-09-17 反馈）：格式与大小限制分两行展示
+              '支持 JPG / PNG',
+              style: TextStyle(fontSize: 10, color: AppColors.textHint),
+            ),
             SizedBox(height: 2),
             Text(
-              '支持 JPG / PNG，单张 ≤ 5MB',
+              '单张 ≤ 5MB',
               style: TextStyle(fontSize: 10, color: AppColors.textHint),
             ),
           ],

@@ -1,0 +1,15 @@
+﻿{
+  "ok": true,
+  "log": [
+    "wait:14000",
+    "click:292,890",
+    "wait:2500",
+    "click:215,246",
+    "wait:2000",
+    "click:365,27",
+    "wait:2000",
+    "shot:r10_addmodal2.png -> C:\\Users\\o\\shiwuji_build\\.workbuddy\\verify\\2026-09-17\\r10_addmodal2.png"
+  ],
+  "pageErrors": [],
+  "consoleErrors": []
+}

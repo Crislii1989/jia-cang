@@ -1,0 +1,6 @@
+﻿Analyzing inventory_page.dart, add_space_modal.dart...
+
+   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\inventory\inventory_page.dart:971:29 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
+   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\screen\inventory\inventory_page.dart:971:33 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
+
+2 issues found.
