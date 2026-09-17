@@ -40,8 +40,8 @@ class WebDavService {
 
   static const _filenamePrefix = 'jiacang_backup_';
 
-  /// 品牌更名（家藏 → 家藏）前的历史备份目录 / 前缀。
-  /// 列出备份时仍会扫描，保证老用户的云端旧备份不会「消失」。
+  /// 历史遗留的备份目录 / 文件名前缀。
+  /// 列出备份时仍会扫描，保证老用户的云端旧备份不会「消失」；勿改。
   static const _legacyBackupDir = '/shiwuji_backups';
   static const _legacyFilenamePrefix = 'shiwuji_backup_';
 
@@ -153,7 +153,7 @@ class WebDavService {
 
   /// 列出备份历史
   ///
-  /// 同时扫描新目录（/jiacang_backups）与更名前的历史目录
+  /// 同时扫描当前目录（/jiacang_backups）与历史目录
   /// （/shiwuji_backups），老用户的旧云端备份继续可见、可恢复。
   Future<List<BackupFileInfo>> listBackups() async {
     if (_client == null) throw Exception('WebDAV 未配置');
@@ -501,7 +501,7 @@ class WebDavService {
   /// - jiacang_backup_20260917_143000_n42.zip
   /// - jiacang_backup_20260917_143000.zip
   /// - jiacang_backup_20260917_143000.json（旧版格式）
-  /// - shiwuji_backup_20260627_143000.zip（更名前历史备份）
+  /// - shiwuji_backup_20260627_143000.zip（历史备份）
   static DateTime? _parseFilenameTime(String name) {
     try {
       var base = _stripExtension(name);

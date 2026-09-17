@@ -38,12 +38,10 @@ class AppDatabase extends _$AppDatabase {
 
   /// 本地数据库名。Web 端 drift 会以这个名字在 OPFS / IndexedDB 中保存
   /// 数据库文件，名字不一致会导致「清理本地数据」清错对象，因此统一在这里声明。
-  ///
-  /// 品牌更名（家藏 → 家藏）时同步改名；旧名的存量数据由
-  /// [migrateLegacyDatabaseStorage] 在 drift 打开新库之前自动搬迁一次。
   static const String databaseName = 'jiacang';
 
-  /// 更名前的历史存储名（旧版本安装遗留）。
+  /// 历史版本用过的存储名。存量数据由 [migrateLegacyDatabaseStorage]
+  /// 在 drift 打开新库之前自动搬迁一次，为避免老数据失联，勿改。
   static const String legacyDatabaseName = 'shiwuji';
 
   /// 首版种子数据自动创建的柜体 id（v5 起不再写入，并在 v5 迁移里清理历史库残留）。

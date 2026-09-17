@@ -48,7 +48,7 @@
 - **📊 数据概览**：首页展示物品总数、即将到期、出借中、长期闲置四项；「我的」页汇总物品 / 分类 / 房间 / 收纳区数量。
 - **☁️ WebDAV 备份**：连接任意 WebDAV 服务（坚果云、Nextcloud 等），备份和恢复数据库。
 - **🔄 更新检查**：从 GitHub Releases 拉取最新版本信息，App 内提示更新。
-- **🔒 数据加密**：基于 PBKDF2 + AES 的数据库加密。
+- **🔒 密钥加密存储**：AI 服务商的 API Key / Secret 等敏感配置，以 PBKDF2（60 万次迭代）+ AES-256-GCM 加密后落库，不以明文保存。
 - **🌐 Web 版**：一套代码编译为 Web 应用，数据存于浏览器 IndexedDB（drift + SQLite WASM + Web Worker），照片以 data URL 内联存储，支持页面内一键重置本地数据库。
 - **📱 多平台**：Android / iOS / Windows / macOS / Linux / Web 六端。
 
@@ -77,7 +77,7 @@
 | **电商订单导入** | ✅ 7 平台引导 | ❌ | ❌ | ❌ |
 | **到期日追踪** | ✅ | ⚠️ 需公式 | ⚠️ 部分支持 | ⚠️ 需公式 |
 | **WebDAV 云备份** | ✅ | ✅ | ⚠️ 部分支持 | ❌ |
-| **数据加密** | ✅ PBKDF2+AES | ⚠️ 部分支持 | ⚠️ 部分支持 | ❌ |
+| **密钥加密存储** | ✅ PBKDF2+AES-256-GCM | ⚠️ 部分支持 | ⚠️ 部分支持 | ❌ |
 | **多平台** | ✅ 6 端 | ✅ | ⚠️ 部分支持 | ✅ |
 | **开源** | ✅ MIT | ❌ | ❌ | ✅ |
 | **学习成本** | 低 — 打开即用 | 中 — 需搭建模板 | 低 | 中 — 需公式 |
@@ -94,7 +94,7 @@
 - [x] AI 拍照识别（18 家服务商 + 自定义 OpenAI 兼容接口）
 - [x] 电商订单批量导入（7 平台引导）
 - [x] WebDAV 云备份 / 恢复
-- [x] 数据库加密（PBKDF2 + AES）
+- [x] 敏感配置加密存储（PBKDF2 + AES-256-GCM）
 - [x] Web 版（IndexedDB + SQLite WASM，照片内联存储）
 - [x] 多平台：Android / iOS / Windows / macOS / Linux / Web
 
@@ -127,11 +127,11 @@ flutter run
 
 > `.env` 会被打包进应用资源，缺少它应用会启动失败（白屏），仓库内已提供 `.env.example` 模板。
 
-#### 命名约定（v1.2 品牌更名）
+#### 命名约定
 
 - **Dart 包名**：`jia_cang`（import 路径为 `package:jia_cang/...`）。
-- **本地数据库存储名**：`jiacang`。旧版本（更名前）的存量数据会在新版首次启动时自动搬迁到新名下，旧库保留作兜底、不删除；「清理本地数据」会同时清掉新旧两个名字的库。
-- **WebDAV 备份**：新备份上传到 `/jiacang_backups`（文件名前缀 `jiacang_backup_`）；列出备份时仍会扫描更名前的 `/shiwuji_backups`，老用户的云端旧备份不受影响。
+- **本地数据库存储名**：`jiacang`。历史安装留下的旧库会在首次启动时自动搬迁到当前名字下，旧库保留作兜底、不删除；「清理本地数据」会同时清掉新旧两个名字的库。
+- **WebDAV 备份**：备份上传到 `/jiacang_backups`（文件名前缀 `jiacang_backup_`）；列出备份时也会扫描历史目录 `/shiwuji_backups`，老用户的云端旧备份不受影响。
 
 ### 代码生成
 
@@ -193,7 +193,7 @@ Web 端依赖仓库内的 `web/sqlite3.wasm` 与 `web/drift_worker.js`（已随�
 | 网络请求 | dio | HTTP 请求 |
 | 云备份 | webdav_client + archive | WebDAV 备份 / 恢复（压缩包） |
 | 数据模型 | freezed + json_serializable | 不可变数据模型 |
-| 加密 | crypto + cryptography (PBKDF2 + AES) | 数据库加密 |
+| 加密 | crypto + cryptography (PBKDF2 + AES-256-GCM) | AI Key 等敏感配置加密 |
 | 图片 | image_picker + photo_view | 拍照 / 相册 / 图片浏览 |
 | 配置 | flutter_dotenv | `.env` 应用配置 |
 | 崩溃收集 | bugsnag_flutter | 线上异常上报 |
@@ -207,43 +207,58 @@ Web 端依赖仓库内的 `web/sqlite3.wasm` 与 `web/drift_worker.js`（已随�
 ## 📁 项目结构
 
 ```
-lib/
-├── main.dart                     # 应用入口（加载 .env、初始化 Bugsnag、数据库就绪门控）
-├── app_router.dart               # 路由配置（底部导航 + 详情/编辑子路由）
-├── constants/                    # 主题色、字号、阴影、输入样式
-├── database/                     # drift 数据库定义
-│   ├── database.dart             # 数据库实例、迁移策略（当前 schema v9）
-│   ├── seed_data.dart            # 首次安装种子数据（14 内置分类 / 默认房间 / 设置）
-│   └── tables/                   # 7 张表：items / rooms / cabinets / slots /
-│                                 #        import_history / categories / settings
-├── daos/                         # 数据访问层
-├── models/                       # freezed 数据模型 + 枚举（SortType / TabType 等）
-├── providers/                    # Riverpod 状态管理（codegen）
-├── services/                     # 业务服务
-│   ├── ai/                       # AI 识别服务（18 家服务商 + 自定义 OpenAI 兼容）
-│   ├── http_service.dart         # dio 封装
-│   ├── update_service.dart       # GitHub Releases 版本检查
-│   ├── webdav_service.dart       # WebDAV 备份/恢复
-│   ├── encryption_service.dart   # PBKDF2 + AES 加密
-│   ├── photo_service.dart        # 相机/相册选图、校验、落盘/内联（含平台异常兜底）
-│   └── prompt_service.dart       # AI 提示词管理
-├── screen/                       # 页面
-│   ├── home/                     # 首页（统计高卡 / 分类大圆 / 提醒卡组）
-│   ├── inventory/                # 物品清单（多行分类标签、筛选、排序、批量操作）
-│   ├── storage/                  # 空间管理（房间 / 柜体 / 箱子）
-│   ├── category/                 # 分类管理（卡片式，支持自定义分类）
-│   ├── me/                       # 个人中心（备份、AI 设置、数据统计、更新检查）
-│   ├── scan/                     # AI 拍照识别
-│   ├── order_import/             # 电商订单导入（7 平台引导）
-│   └── item_detail_page.dart     # 物品详情（照片轮播、到期倒计时）
-├── utils/                        # 平台条件导入工具（Web/IO 本地数据库重置等）
-└── widgets/                      # 可复用 UI 组件
-    ├── center_sheet.dart         # 统一居中弹窗底座
-    ├── floating_bar.dart         # 悬浮圆角白条（底部导航 / 详情与添加页操作条）
-    ├── emoji_picker_field.dart   # 图标下拉选择器
-    ├── pill_content.dart         # 胶囊按钮「图标+文字」内容组
-    ├── photo_image.dart          # 照片统一渲染（文件路径 / data URL 双形态）
-    └── db_gate.dart              # 数据库就绪前的启动门控
+家藏/
+├── lib/                              # 应用源码
+│   ├── main.dart                     # 应用入口（加载 .env、初始化 Bugsnag、数据库就绪门控）
+│   ├── app_router.dart               # 路由配置（底部导航 + 详情/编辑/设置子路由）
+│   ├── constants/                    # 设计令牌：配色、字号、阴影、尺寸、皮肤、比例缩放
+│   ├── database/                     # drift 数据库定义
+│   │   ├── database.dart             # 数据库实例、迁移策略（当前 schema v9）
+│   │   ├── seed_data.dart            # 首次安装种子数据（14 内置分类 / 默认房间 / 设置）
+│   │   └── tables/                   # 7 张表：items / rooms / cabinets / slots /
+│   │                                 #        categories / import_history / settings
+│   ├── daos/                         # 数据访问层（每张表一个 DAO）
+│   ├── models/                       # freezed 数据模型；enums/ 放 SortType、TabType 等枚举
+│   ├── providers/                    # Riverpod 状态管理（codegen）
+│   ├── services/                     # 业务服务
+│   │   ├── ai/                       # AI 识别（接口 + 服务商注册表 + 18 家实现）
+│   │   ├── encryption_service.dart   # PBKDF2 + AES-256-GCM 加解密
+│   │   ├── first_run_service.dart    # 首次启动引导标记
+│   │   ├── http_service.dart         # dio 封装
+│   │   ├── photo_service.dart        # 相机/相册选图、校验、落盘/内联（含平台异常兜底）
+│   │   ├── prompt_service.dart       # AI 提示词加载
+│   │   ├── skin_store.dart           # 皮肤 / 外观持久化
+│   │   ├── update_service.dart       # GitHub Releases 版本检查
+│   │   └── webdav_service.dart       # WebDAV 备份 / 恢复
+│   ├── screen/                       # 页面
+│   │   ├── splash_page.dart          # 启动页
+│   │   ├── home/                     # 首页（统计高卡 / 分类大圆 / 提醒卡组）
+│   │   ├── inventory/                # 物品清单（分类标签、筛选面板、排序、批量操作）
+│   │   ├── storage/                  # 空间管理（房间 / 柜体 / 箱子）
+│   │   ├── category/                 # 分类管理（卡片式，支持自定义分类）
+│   │   ├── me/                       # 个人中心（资料、统计、备份、AI 设置、外观、更新检查）
+│   │   ├── scan/                     # AI 拍照识别
+│   │   ├── order_import/             # 电商订单导入（7 平台引导）
+│   │   ├── add_item_page.dart        # 新增 / 编辑物品
+│   │   └── item_detail_page.dart     # 物品详情（照片轮播、到期倒计时）
+│   ├── utils/                        # 平台条件导入工具，IO / Web 双实现
+│   │                                 #（存储名搬迁、本地库重置、包信息）
+│   └── widgets/                      # 可复用 UI 组件
+│       ├── center_sheet.dart         # 统一居中弹窗底座
+│       ├── floating_bar.dart         # 悬浮圆角白条（底部导航 / 详情与添加页操作条）
+│       ├── emoji_picker_field.dart   # 图标下拉选择器
+│       ├── pill_content.dart         # 胶囊按钮「图标+文字」内容组
+│       ├── photo_image.dart          # 照片统一渲染（文件路径 / data URL 双形态）
+│       ├── gradient_background.dart  # 页面统一背景（右上暖光晕）
+│       └── db_gate.dart              # 数据库就绪前的启动门控
+├── test/                             # 测试：services / providers / pages / widgets / models / daos
+├── assets/                           # 彩色 emoji 字体、应用图标、AI 提示词、README 截图
+├── web/                              # Web 壳（index.html / manifest / sqlite3.wasm / drift_worker.js）
+├── docs/                             # 设计稿（线框 + 高保真）、UI 一致性规则、分类设计、部署指南
+├── tool/                             # 开发脚本：死代码扫描、孤儿文件扫描、配色替换、尺寸测量
+├── design_source/                    # 设计源文件（背景图）
+├── .github/workflows/                # CI：Web 部署（PWA）、Android APK 构建
+└── android/ ios/ macos/ linux/ windows/   # 六端平台工程
 ```
 
 ---
