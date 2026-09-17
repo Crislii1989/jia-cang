@@ -99,7 +99,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  /// 搜索条胶囊（2026-09-17 反馈太大，由 46*k 降到 40*k）：
+  /// 搜索条胶囊。高度与物品库搜索框**同步为固定 38**（2026-09-17 反馈
+  /// 「首页的搜索栏高度与物品栏搜索的高度同步」——旧值 40*k 在 430 视口
+  /// 下约 53px，比物品库的固定 38 高出一大截）。内部图标/字号也照物品库对齐。
   /// 点击进物品库并自动聚焦搜索框（经 [PendingSearchFocus] 传递，物品库消费后自清）。
   Widget _buildSearchBar(double k) {
     return Padding(
@@ -111,8 +113,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           context.go('/inventory');
         },
         child: Container(
-          height: 40 * k,
-          padding: EdgeInsets.symmetric(horizontal: 14 * k),
+          height: 38,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
             color: AppColors.cardBg,
             borderRadius: BorderRadius.circular(999),
@@ -120,18 +122,18 @@ class _HomePageState extends ConsumerState<HomePage> {
             boxShadow: [
               BoxShadow(
                 color: AppColors.floatCardShadow,
-                blurRadius: 10 * k,
-                offset: Offset(0, 3 * k),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-          child: Row(
+          child: const Row(
             children: [
-              Icon(Icons.search, size: 16 * k, color: AppColors.blushInk3),
-              SizedBox(width: 8 * k),
+              Icon(Icons.search, size: 18, color: AppColors.blushInk3),
+              SizedBox(width: 8),
               Text(
                 '搜索物品名称 / 位置',
-                style: TextStyle(fontSize: 12 * k, color: AppColors.blushInk3),
+                style: TextStyle(fontSize: 14, color: AppColors.blushInk3),
               ),
             ],
           ),
