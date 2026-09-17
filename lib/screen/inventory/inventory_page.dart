@@ -582,24 +582,29 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         children: [
           Expanded(
             child: _categoryExpanded
-                ? Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final cat in tabs) _buildCategoryChip(cat),
-                    ],
-                  )
-                : SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    child: Row(
-                      children: [
-                        for (final cat in tabs)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: _buildCategoryChip(cat),
-                          ),
-                      ],
+                ? _buildCategoryGrid(tabs)
+                // 折叠态：右端 12% 渐隐遮罩——被裁的 chip 淡出，
+                // 不再出现「切一半的按钮」硬边（2026-09-17 反馈）
+                : ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [Colors.white, Colors.white, Colors.transparent],
+                      stops: [0.0, 0.88, 1.0],
+                    ).createShader(bounds),
+                    blendMode: BlendMode.dstIn,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                        children: [
+                          for (final cat in tabs)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: _buildCategoryChip(cat),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
           ),
@@ -628,31 +633,65 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     );
   }
 
-  Widget _buildCategoryChip(Category cat) {
+  /// 展开态：**3 列等宽网格**（2026-09-17 反馈 Wrap 流式布局右侧
+  /// 空白太多）。每行固定 3 格、格子撑满行宽，任何一行都不会
+  /// 在右边留下一大片随机空白；不足一行的位置用空占位补齐。
+  Widget _buildCategoryGrid(List<Category> tabs) {
+    const cols = 3;
+    const gap = 8.0;
+    final rows = <Widget>[];
+    for (var i = 0; i < tabs.length; i += cols) {
+      final cells = <Widget>[];
+      for (var j = i; j < i + cols; j++) {
+        if (j < tabs.length) {
+          cells.add(
+            Expanded(
+              child: _buildCategoryChip(
+                tabs[j],
+                centered: true,
+              ),
+            ),
+          );
+        } else {
+          cells.add(const Expanded(child: SizedBox.shrink()));
+        }
+      }
+      // 格与格之间留 8px 缝：在 Expanded 之间插固定宽 SizedBox
+      final spaced = <Widget>[];
+      for (var c = 0; c < cells.length; c++) {
+        if (c > 0) spaced.add(const SizedBox(width: gap));
+        spaced.add(cells[c]);
+      }
+      rows.add(Row(children: spaced));
+      if (i + cols < tabs.length) {
+        rows.add(const SizedBox(height: gap));
+      }
+    }
+    return Column(children: rows);
+  }
+
+  Widget _buildCategoryChip(Category cat, {bool centered = false}) {
     final isActive = _activeCategory == cat.key;
     return GestureDetector(
       onTap: () => _onCategoryChanged(cat.key),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
+        // 展开态网格里 chip 撑满等宽格子，文字需显式居中
+        alignment: centered ? Alignment.center : null,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
         decoration: BoxDecoration(
           color: isActive ? AppColors.chipSelectedBg : AppColors.chipBg,
           borderRadius: BorderRadius.circular(22),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: AppColors.btnPrimaryShadow,
-                    blurRadius: 14,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: AppColors.textPrimary.withValues(alpha: 0.06),
-                    blurRadius: 10,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+          // 激活态不再叠珊瑚辉光：小尺寸 chip 上 blur14 的光晕
+          // 会在浅底上晕出一团突兀的橙色渐变（2026-09-17 反馈
+          // 「颜色过渡不对」），实心珊瑚本身已足够突出。
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textPrimary.withValues(alpha: 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Transform.translate(
           // Web 端 CJK 文字墨水偏下，与 filter_panel 的胶囊文字同一光学补偿
