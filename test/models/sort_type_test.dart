@@ -25,5 +25,15 @@ void main() {
         );
       }
     });
+
+    test('下拉顺序：名称固定在最后（2026-09-17 反馈）', () {
+      expect(SortType.values.last, SortType.nameAsc);
+    });
+
+    test('文案：新增时间已改称登记时间（2026-09-17 反馈）', () {
+      expect(kSortLabels[SortType.newest], '登记时间');
+      expect(kSortFullLabels[SortType.newest], '登记时间（最新优先）');
+      expect(kSortFullLabels[SortType.oldest], '登记时间（最早优先）');
+    });
   });
 }

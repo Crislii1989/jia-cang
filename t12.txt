@@ -1,0 +1,15 @@
+﻿D:\flutter\bin\flutter.bat : Flutter assets will be downloaded from https://sto
+rage.flutter-io.cn. Make sure you trust this source!
+所在位置 行:445 字符: 163
++ ... 0.0.1,::1'; D:\flutter\bin\flutter.bat test test/models/sort_type_tes ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Flutter assets ...st this source! 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+00:00 +0: loading C:/Users/o/shiwuji_build/test/models/sort_type_test.dart
+00:00 +0: C:/Users/o/shiwuji_build/test/models/sort_type_test.dart: sortTypeFromName 鎸佷箙鍖栬В鏋?鍏ㄩ儴鏋氫妇鍊奸兘鑳芥寜 name 寰€杩旇В鏋?00:00 +1: C:/Users/o/shiwuji_build/test/models/sort_type_test.dart: sortTypeFromName 鎸佷箙鍖栬В鏋?鏈煡 / 绌哄€煎洖閫€ newest
+00:00 +2: C:/Users/o/shiwuji_build/test/models/sort_type_test.dart: sortTypeFromName 鎸佷箙鍖栬В鏋?鏍囩鏄犲皠瑕嗙洊鍏ㄩ儴鏋氫妇鍊硷紙涓嬫媺涓?chip 涓嶇己椤癸級
+00:00 +3: C:/Users/o/shiwuji_build/test/models/sort_type_test.dart: sortTypeFromName 鎸佷箙鍖栬В鏋?涓嬫媺椤哄簭锛氬悕绉板浐瀹氬湪鏈€鍚庯紙2026-09-17 鍙嶉锛?00:00 +4: C:/Users/o/shiwuji_build/test/models/sort_type_test.dart: sortTypeFromName 鎸佷箙鍖栬В鏋?鏂囨锛氭柊澧炴椂闂村凡鏀圭О鐧昏鏃堕棿锛?026-09-17 鍙嶉锛?00:00 +5: loading C:/Users/o/shiwuji_build/test/pages/filter_bar_centering_test.dart
+00:00 +5: C:/Users/o/shiwuji_build/test/pages/filter_bar_centering_test.dart: 鐗╁搧搴擄細鎺掑簭 / 绛涢€夎兌鍥婄殑銆屽浘鏍?鏂囧瓧銆嶅唴瀹圭粍鏁翠綋灞呬腑
+00:01 +6: All tests passed!

@@ -1,0 +1,2 @@
+﻿00:00 +5: C:/Users/o/shiwuji_build/test/pages/filter_bar_centering_test.dart: 鐗╁搧搴擄細鎺掑簭 / 绛涢€夎兌鍥婄殑銆屽浘鏍?鏂囧瓧銆嶅唴瀹圭粍鏁翠綋灞呬腑
+00:01 +6: All tests passed!
