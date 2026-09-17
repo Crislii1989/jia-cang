@@ -1,6 +1,0 @@
-﻿UNREFERENCED: assets\icon\background.jpg
-UNREFERENCED: assets\icon\jia_cang_icon_1024.png
-UNREFERENCED: assets\readme\2.jpg
-UNREFERENCED: assets\readme\3.jpg
-UNREFERENCED: assets\readme\4.jpg
-UNREFERENCED: assets\readme\5.jpg

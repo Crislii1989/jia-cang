@@ -1,3 +1,0 @@
-﻿   info - D:\宸ヤ綔鏂囦欢\鏁蹭唬鐮乗瀹朵腑鏈夋暟\shiwuji\lib\widgets\photo_carousel.dart:386:33 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
-
-12 issues found.

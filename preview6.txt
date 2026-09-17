@@ -1,3 +1,0 @@
-﻿serving C:\Users\o\shiwuji_build\build\web
-  http://127.0.0.1:5173/
-  http://127.0.0.1:5173/__reset   娓?SW/缂撳瓨锛?db=1 杩炴湰鍦板簱涓€璧锋竻锛?

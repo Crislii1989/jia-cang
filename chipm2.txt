@@ -1,2 +1,0 @@
-﻿collapsed: bbox x 40-164 y 150-319  h=170px css=85.0 w=125px css=62.5
-expanded: bbox x 40-263 y 150-181  h=32px css=16.0 w=224px css=112.0

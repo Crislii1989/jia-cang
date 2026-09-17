@@ -1,4 +1,0 @@
-﻿
-C:\Users\o\shiwuji_build\t5.txt:6133:00:16 +144: All tests passed!
-
-

@@ -1,3 +1,0 @@
-﻿00:00 +0: 鏅€氱‘璁わ細鍙栨秷 ghost + 纭 primary锛岀‘璁よ繑鍥?true
-00:00 +1: 鍗遍櫓纭锛氱‘璁ゆ寜閽负 danger tone锛涘彇娑堣繑鍥?null
-00:00 +2: 鍗曟寜閽彁绀猴細cancelLabel 浼?null 鍙覆鏌撲竴棰楁寜閽?00:00 +3: All tests passed!

@@ -1,2 +1,0 @@
-﻿[notice] To update, run: C:\Users\o\.workbuddy\binaries\python\envs\default\Scr
-ipts\python.exe -m pip install --upgrade pip

@@ -1,1 +1,0 @@
-﻿Try `flutter pub outdated` for more information.

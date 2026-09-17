@@ -1,4 +1,0 @@
-﻿collapsed (860, 1864)
-  no coral band found at x=60
-expanded (860, 1864)
-  no coral band found at x=60
