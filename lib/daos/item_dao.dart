@@ -27,6 +27,7 @@ class ItemDao extends DatabaseAccessor<AppDatabase> with _$ItemDaoMixin {
   /// 更新物品的收纳位置（房间/柜体/格子）
   ///
   /// [roomId] 为物品所属房间 —— 物品可以直接归属房间（此时 cabinetId/slotId 为 null）。
+  /// 同时刷新 lastTouchedAt（移动位置算一次「接触」）。
   Future<int> updateLocation({
     required String id,
     String? roomId,
@@ -40,8 +41,26 @@ class ItemDao extends DatabaseAccessor<AppDatabase> with _$ItemDaoMixin {
         cabinetId: Value(cabinetId),
         slotId: Value(slotId),
         location: Value(locationLabel),
+        lastTouchedAt: Value(DateTime.now()),
       ),
     );
+  }
+
+  /// 批量修改物品状态（如闲置物品批量标记为「已用」），并刷新接触时间。
+  /// 调用方需要事务包裹时自行包（ItemDao 无事务上下文）。
+  Future<void> updateStatuses(
+    List<String> ids, {
+    required String status,
+  }) async {
+    if (ids.isEmpty) return;
+    for (final id in ids) {
+      await (update(items)..where((t) => t.id.equals(id))).write(
+        ItemsCompanion(
+          status: Value(status),
+          lastTouchedAt: Value(DateTime.now()),
+        ),
+      );
+    }
   }
 
   Future<int> countAll() async {

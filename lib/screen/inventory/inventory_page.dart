@@ -377,6 +377,8 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                     _buildCategoryTabs(),
                     const SizedBox(height: 12),
                     _buildFilterBar(),
+                    const SizedBox(height: 8),
+                    _buildQuickTags(),
                     const SizedBox(height: 4),
                     Expanded(child: _buildListArea(items)),
                   ],
@@ -629,14 +631,16 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   // ─── Filter Bar ────────────────────────────
 
   Widget _buildFilterBar() {
-    // 预筛激活 chip 的文案：状态预筛显示状态名，派生视图显示视图名
-    final String? pendingChipLabel = _statusFilter != null
-        ? (_statusLabels[_statusFilter] ?? _statusFilter)
-        : switch (_specialFilter) {
-            kSpecialFilterExpiring => '即将到期',
-            kSpecialFilterIdle => '长期闲置',
-            _ => null,
-          };
+    // 可移除过滤 chip：只负责「标签行覆盖不到」的条件——
+    // 即将到期（无对应标签）与 面板设置的 丢失/已用（标签只有三个常用态）
+    final String? removableChipLabel = switch (_specialFilter) {
+      kSpecialFilterExpiring => '即将到期',
+      _ => switch (_statusFilter) {
+          'lost' => '丢失',
+          'used' => '已用',
+          _ => null,
+        },
+    };
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -662,10 +666,10 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             icon: Icons.tune,
             onTap: () => _showFilterPanel(),
           ),
-          // 首页预筛激活时，显示可一键清除的过滤 chip（如「借出 ✕」）
-          if (pendingChipLabel != null) ...[
+          // 可移除过滤 chip（如「即将到期 ✕」）
+          if (removableChipLabel != null) ...[
             const SizedBox(width: 6),
-            _buildPendingFilterChip(pendingChipLabel),
+            _buildRemovableFilterChip(removableChipLabel),
           ],
           const Spacer(),
           // 视图切换
@@ -675,15 +679,18 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     );
   }
 
-  /// 预筛激活 chip：珊瑚实心 + 关闭钮，点击清除预筛回到全量列表。
-  Widget _buildPendingFilterChip(String label) {
+  /// 可移除过滤 chip：珊瑚实心 + 关闭钮，点击清除该条件回到全量列表。
+  Widget _buildRemovableFilterChip(String label) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          _statusFilter = null;
-          _specialFilter = null;
+          if (_specialFilter == kSpecialFilterExpiring) {
+            _specialFilter = null;
+          } else {
+            _statusFilter = null;
+          }
         });
-        ToastUtils.show(context, '已清除预筛条件');
+        ToastUtils.show(context, '已清除过滤条件');
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -716,6 +723,92 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               color: AppColors.chipSelectedFg,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// 快捷标签行（2026-09-17 拍板）：筛选内容以「标签」形式平铺——
+  /// 在库 / 出借中 / 闲置中，点选即筛、再点取消（与首页统计卡预筛同一状态，
+  /// 首页带过来的条件也会在这里回显为选中态）。
+  static const List<(String, String, String)> _quickTags = [
+    // (显示文案, 维度 status|special, 值)
+    ('在库', 'status', 'safe'),
+    ('出借中', 'status', 'lent'),
+    ('闲置中', 'special', kSpecialFilterIdle),
+  ];
+
+  bool _isTagActive(String kind, String value) =>
+      kind == 'status' ? _statusFilter == value : _specialFilter == value;
+
+  void _toggleTag(String kind, String value) {
+    setState(() {
+      if (kind == 'status') {
+        _statusFilter = _statusFilter == value ? null : value;
+        if (_statusFilter != null) _specialFilter = null; // 两个维度互斥
+      } else {
+        _specialFilter = _specialFilter == value ? null : value;
+        if (_specialFilter != null) _statusFilter = null;
+      }
+    });
+  }
+
+  Widget _buildQuickTags() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.pageMarginHorizontal,
+      ),
+      child: Row(
+        children: [
+          for (int i = 0; i < _quickTags.length; i++) ...[
+            if (i > 0) const SizedBox(width: 8),
+            _buildQuickTagChip(
+              _quickTags[i].$1,
+              _quickTags[i].$2,
+              _quickTags[i].$3,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickTagChip(String label, String kind, String value) {
+    final isActive = _isTagActive(kind, value);
+    return GestureDetector(
+      onTap: () => _toggleTag(kind, value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: isActive ? AppColors.chipSelectedBg : AppColors.chipBg,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isActive ? AppColors.chipSelectedBg : AppColors.chipBorder,
+            width: 1.5,
+          ),
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: AppColors.btnPrimaryShadow,
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
+        ),
+        child: Transform.translate(
+          // Web 端 CJK 文字墨水偏下，与其他胶囊同一光学补偿
+          offset: Offset(0, kIsWeb ? PillContent.kWebTextOpticalLift : 0.0),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: isActive ? AppColors.chipSelectedFg : AppColors.chipFg,
+              leadingDistribution: TextLeadingDistribution.even,
+            ),
+          ),
         ),
       ),
     );
@@ -1214,49 +1307,75 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          RichText(
-            text: TextSpan(
-              text: '已选 ',
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
-              ),
-              children: [
-                TextSpan(
-                  text: '${_selectedIds.length}',
-                  style: const TextStyle(
-                    color: AppColors.coralDeep,
-                    fontWeight: FontWeight.w700,
-                  ),
+          Flexible(
+            child: RichText(
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                text: '已选 ',
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
                 ),
-                const TextSpan(text: ' 件'),
-              ],
+                children: [
+                  TextSpan(
+                    text: '${_selectedIds.length}',
+                    style: const TextStyle(
+                      color: AppColors.coralDeep,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const TextSpan(text: ' 件'),
+                ],
+              ),
             ),
           ),
-          Row(
-            children: [
-              _buildBatchBtn('移动'),
-              const SizedBox(width: 8),
-              _buildBatchBtn('导出'),
-              const SizedBox(width: 8),
-              _buildBatchBtn('删除', danger: true),
-            ],
+          const SizedBox(width: 8),
+          // FittedBox 兜底：4 颗按钮在窄视口下整体缩放，不溢出
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                children: [
+                  _buildBatchBtn('标记已用', onTap: _markSelectedUsed),
+                  const SizedBox(width: 8),
+                  _buildBatchBtn('移动'),
+                  const SizedBox(width: 8),
+                  _buildBatchBtn('导出'),
+                  const SizedBox(width: 8),
+                  _buildBatchBtn('删除', danger: true),
+                ],
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
+  /// 批量标记为「已用」：闲置物品的批量处理闭环——
+  /// 状态改为 used 后自动退出闲置清单与批量模式。
+  Future<void> _markSelectedUsed() async {
+    if (_selectedIds.isEmpty) return;
+    final ids = _selectedIds.toList();
+    await ref.read(itemsProvider.notifier).markItemsStatus(ids, 'used');
+    if (!mounted) return;
+    setState(() {
+      _batchMode = false;
+      _selectedIds.clear();
+    });
+    ToastUtils.show(context, '已将 ${ids.length} 件物品标记为已用');
+  }
+
   /// 批量操作栏的次级按钮。
   ///
   /// 按高保真稿 `.btn.ghost`（白底 + 1.5px 浅粉线 + 深暖棕字）绘制；
   /// [danger] 为 true 时改用稿子的 `--red` 系（删除这类不可逆动作用红）。
-  Widget _buildBatchBtn(String label, {bool danger = false}) {
+  /// [onTap] 缺省时仍是占位 toast（移动 / 导出等未实装功能）。
+  Widget _buildBatchBtn(String label, {bool danger = false, VoidCallback? onTap}) {
     return GestureDetector(
-      onTap: () {
+      onTap: onTap ?? () {
         final actions = {'移动': '移动到…', '导出': '导出选中物品', '删除': '确认删除？'};
         ToastUtils.show(context, actions[label] ?? label);
       },

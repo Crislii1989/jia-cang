@@ -23,6 +23,9 @@ _Item _$ItemFromJson(Map<String, dynamic> json) => _Item(
       : DateTime.parse(json['expiryDate'] as String),
   note: json['note'] as String? ?? '',
   createdAt: DateTime.parse(json['createdAt'] as String),
+  lastTouchedAt: json['lastTouchedAt'] == null
+      ? null
+      : DateTime.parse(json['lastTouchedAt'] as String),
 );
 
 Map<String, dynamic> _$ItemToJson(_Item instance) => <String, dynamic>{
@@ -38,4 +41,5 @@ Map<String, dynamic> _$ItemToJson(_Item instance) => <String, dynamic>{
   'expiryDate': instance.expiryDate?.toIso8601String(),
   'note': instance.note,
   'createdAt': instance.createdAt.toIso8601String(),
+  'lastTouchedAt': instance.lastTouchedAt?.toIso8601String(),
 };

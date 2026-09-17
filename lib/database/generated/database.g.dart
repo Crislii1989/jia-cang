@@ -132,6 +132,18 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, Item> {
     requiredDuringInsert: false,
     clientDefault: () => DateTime.now(),
   );
+  static const VerificationMeta _lastTouchedAtMeta = const VerificationMeta(
+    'lastTouchedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastTouchedAt =
+      GeneratedColumn<DateTime>(
+        'last_touched_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -146,6 +158,7 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, Item> {
     expiryDate,
     note,
     createdAt,
+    lastTouchedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -235,6 +248,15 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, Item> {
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
+    if (data.containsKey('last_touched_at')) {
+      context.handle(
+        _lastTouchedAtMeta,
+        lastTouchedAt.isAcceptableOrUnknown(
+          data['last_touched_at']!,
+          _lastTouchedAtMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -292,6 +314,10 @@ class $ItemsTable extends Items with TableInfo<$ItemsTable, Item> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      lastTouchedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_touched_at'],
+      ),
     );
   }
 
@@ -314,6 +340,7 @@ class Item extends DataClass implements Insertable<Item> {
   final DateTime? expiryDate;
   final String note;
   final DateTime createdAt;
+  final DateTime? lastTouchedAt;
   const Item({
     required this.id,
     required this.name,
@@ -327,6 +354,7 @@ class Item extends DataClass implements Insertable<Item> {
     this.expiryDate,
     required this.note,
     required this.createdAt,
+    this.lastTouchedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -351,6 +379,9 @@ class Item extends DataClass implements Insertable<Item> {
     }
     map['note'] = Variable<String>(note);
     map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || lastTouchedAt != null) {
+      map['last_touched_at'] = Variable<DateTime>(lastTouchedAt);
+    }
     return map;
   }
 
@@ -376,6 +407,9 @@ class Item extends DataClass implements Insertable<Item> {
           : Value(expiryDate),
       note: Value(note),
       createdAt: Value(createdAt),
+      lastTouchedAt: lastTouchedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastTouchedAt),
     );
   }
 
@@ -397,6 +431,7 @@ class Item extends DataClass implements Insertable<Item> {
       expiryDate: serializer.fromJson<DateTime?>(json['expiryDate']),
       note: serializer.fromJson<String>(json['note']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      lastTouchedAt: serializer.fromJson<DateTime?>(json['lastTouchedAt']),
     );
   }
   @override
@@ -415,6 +450,7 @@ class Item extends DataClass implements Insertable<Item> {
       'expiryDate': serializer.toJson<DateTime?>(expiryDate),
       'note': serializer.toJson<String>(note),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'lastTouchedAt': serializer.toJson<DateTime?>(lastTouchedAt),
     };
   }
 
@@ -431,6 +467,7 @@ class Item extends DataClass implements Insertable<Item> {
     Value<DateTime?> expiryDate = const Value.absent(),
     String? note,
     DateTime? createdAt,
+    Value<DateTime?> lastTouchedAt = const Value.absent(),
   }) => Item(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -444,6 +481,9 @@ class Item extends DataClass implements Insertable<Item> {
     expiryDate: expiryDate.present ? expiryDate.value : this.expiryDate,
     note: note ?? this.note,
     createdAt: createdAt ?? this.createdAt,
+    lastTouchedAt: lastTouchedAt.present
+        ? lastTouchedAt.value
+        : this.lastTouchedAt,
   );
   Item copyWithCompanion(ItemsCompanion data) {
     return Item(
@@ -463,6 +503,9 @@ class Item extends DataClass implements Insertable<Item> {
           : this.expiryDate,
       note: data.note.present ? data.note.value : this.note,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      lastTouchedAt: data.lastTouchedAt.present
+          ? data.lastTouchedAt.value
+          : this.lastTouchedAt,
     );
   }
 
@@ -480,7 +523,8 @@ class Item extends DataClass implements Insertable<Item> {
           ..write('photos: $photos, ')
           ..write('expiryDate: $expiryDate, ')
           ..write('note: $note, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('lastTouchedAt: $lastTouchedAt')
           ..write(')'))
         .toString();
   }
@@ -499,6 +543,7 @@ class Item extends DataClass implements Insertable<Item> {
     expiryDate,
     note,
     createdAt,
+    lastTouchedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -515,7 +560,8 @@ class Item extends DataClass implements Insertable<Item> {
           other.photos == this.photos &&
           other.expiryDate == this.expiryDate &&
           other.note == this.note &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.lastTouchedAt == this.lastTouchedAt);
 }
 
 class ItemsCompanion extends UpdateCompanion<Item> {
@@ -531,6 +577,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
   final Value<DateTime?> expiryDate;
   final Value<String> note;
   final Value<DateTime> createdAt;
+  final Value<DateTime?> lastTouchedAt;
   final Value<int> rowid;
   const ItemsCompanion({
     this.id = const Value.absent(),
@@ -545,6 +592,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     this.expiryDate = const Value.absent(),
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.lastTouchedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ItemsCompanion.insert({
@@ -560,6 +608,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     this.expiryDate = const Value.absent(),
     this.note = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.lastTouchedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name);
@@ -576,6 +625,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     Expression<DateTime>? expiryDate,
     Expression<String>? note,
     Expression<DateTime>? createdAt,
+    Expression<DateTime>? lastTouchedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -591,6 +641,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
       if (expiryDate != null) 'expiry_date': expiryDate,
       if (note != null) 'note': note,
       if (createdAt != null) 'created_at': createdAt,
+      if (lastTouchedAt != null) 'last_touched_at': lastTouchedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -608,6 +659,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     Value<DateTime?>? expiryDate,
     Value<String>? note,
     Value<DateTime>? createdAt,
+    Value<DateTime?>? lastTouchedAt,
     Value<int>? rowid,
   }) {
     return ItemsCompanion(
@@ -623,6 +675,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
       expiryDate: expiryDate ?? this.expiryDate,
       note: note ?? this.note,
       createdAt: createdAt ?? this.createdAt,
+      lastTouchedAt: lastTouchedAt ?? this.lastTouchedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -666,6 +719,9 @@ class ItemsCompanion extends UpdateCompanion<Item> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (lastTouchedAt.present) {
+      map['last_touched_at'] = Variable<DateTime>(lastTouchedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -687,6 +743,7 @@ class ItemsCompanion extends UpdateCompanion<Item> {
           ..write('expiryDate: $expiryDate, ')
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
+          ..write('lastTouchedAt: $lastTouchedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2893,6 +2950,7 @@ typedef $$ItemsTableCreateCompanionBuilder =
       Value<DateTime?> expiryDate,
       Value<String> note,
       Value<DateTime> createdAt,
+      Value<DateTime?> lastTouchedAt,
       Value<int> rowid,
     });
 typedef $$ItemsTableUpdateCompanionBuilder =
@@ -2909,6 +2967,7 @@ typedef $$ItemsTableUpdateCompanionBuilder =
       Value<DateTime?> expiryDate,
       Value<String> note,
       Value<DateTime> createdAt,
+      Value<DateTime?> lastTouchedAt,
       Value<int> rowid,
     });
 
@@ -2977,6 +3036,11 @@ class $$ItemsTableFilterComposer extends Composer<_$AppDatabase, $ItemsTable> {
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastTouchedAt => $composableBuilder(
+    column: $table.lastTouchedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -3049,6 +3113,11 @@ class $$ItemsTableOrderingComposer
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get lastTouchedAt => $composableBuilder(
+    column: $table.lastTouchedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ItemsTableAnnotationComposer
@@ -3099,6 +3168,11 @@ class $$ItemsTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastTouchedAt => $composableBuilder(
+    column: $table.lastTouchedAt,
+    builder: (column) => column,
+  );
 }
 
 class $$ItemsTableTableManager
@@ -3141,6 +3215,7 @@ class $$ItemsTableTableManager
                 Value<DateTime?> expiryDate = const Value.absent(),
                 Value<String> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> lastTouchedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ItemsCompanion(
                 id: id,
@@ -3155,6 +3230,7 @@ class $$ItemsTableTableManager
                 expiryDate: expiryDate,
                 note: note,
                 createdAt: createdAt,
+                lastTouchedAt: lastTouchedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -3171,6 +3247,7 @@ class $$ItemsTableTableManager
                 Value<DateTime?> expiryDate = const Value.absent(),
                 Value<String> note = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime?> lastTouchedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ItemsCompanion.insert(
                 id: id,
@@ -3185,6 +3262,7 @@ class $$ItemsTableTableManager
                 expiryDate: expiryDate,
                 note: note,
                 createdAt: createdAt,
+                lastTouchedAt: lastTouchedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -19,7 +19,9 @@ mixin _$Item {
 /// 也可经 cabinetId/slotId 间接归属——三种情况下 roomId 都有值。
  String? get roomId; String? get cabinetId; String? get slotId; List<String> get photos;/// 到期日：食品/药品/耗材等有保质期的物品才有值
  DateTime? get expiryDate; String get note;/// 登记时间：物品入库时按系统时间自动录入，同时作为「新增时间」排序依据
- DateTime get createdAt;
+ DateTime get createdAt;/// 最近接触时间（编辑/出借/移动等实际操作时刷新）；
+/// null 时「闲置」判定回退到 createdAt（与 v9 之前的旧数据等价）
+ DateTime? get lastTouchedAt;
 /// Create a copy of Item
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -32,16 +34,16 @@ $ItemCopyWith<Item> get copyWith => _$ItemCopyWithImpl<Item>(this as Item, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Item&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.location, location) || other.location == location)&&(identical(other.status, status) || other.status == status)&&(identical(other.categoryKey, categoryKey) || other.categoryKey == categoryKey)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.cabinetId, cabinetId) || other.cabinetId == cabinetId)&&(identical(other.slotId, slotId) || other.slotId == slotId)&&const DeepCollectionEquality().equals(other.photos, photos)&&(identical(other.expiryDate, expiryDate) || other.expiryDate == expiryDate)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Item&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.location, location) || other.location == location)&&(identical(other.status, status) || other.status == status)&&(identical(other.categoryKey, categoryKey) || other.categoryKey == categoryKey)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.cabinetId, cabinetId) || other.cabinetId == cabinetId)&&(identical(other.slotId, slotId) || other.slotId == slotId)&&const DeepCollectionEquality().equals(other.photos, photos)&&(identical(other.expiryDate, expiryDate) || other.expiryDate == expiryDate)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastTouchedAt, lastTouchedAt) || other.lastTouchedAt == lastTouchedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,location,status,categoryKey,roomId,cabinetId,slotId,const DeepCollectionEquality().hash(photos),expiryDate,note,createdAt);
+int get hashCode => Object.hash(runtimeType,id,name,location,status,categoryKey,roomId,cabinetId,slotId,const DeepCollectionEquality().hash(photos),expiryDate,note,createdAt,lastTouchedAt);
 
 @override
 String toString() {
-  return 'Item(id: $id, name: $name, location: $location, status: $status, categoryKey: $categoryKey, roomId: $roomId, cabinetId: $cabinetId, slotId: $slotId, photos: $photos, expiryDate: $expiryDate, note: $note, createdAt: $createdAt)';
+  return 'Item(id: $id, name: $name, location: $location, status: $status, categoryKey: $categoryKey, roomId: $roomId, cabinetId: $cabinetId, slotId: $slotId, photos: $photos, expiryDate: $expiryDate, note: $note, createdAt: $createdAt, lastTouchedAt: $lastTouchedAt)';
 }
 
 
@@ -52,7 +54,7 @@ abstract mixin class $ItemCopyWith<$Res>  {
   factory $ItemCopyWith(Item value, $Res Function(Item) _then) = _$ItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String location, String status, String categoryKey, String? roomId, String? cabinetId, String? slotId, List<String> photos, DateTime? expiryDate, String note, DateTime createdAt
+ String id, String name, String location, String status, String categoryKey, String? roomId, String? cabinetId, String? slotId, List<String> photos, DateTime? expiryDate, String note, DateTime createdAt, DateTime? lastTouchedAt
 });
 
 
@@ -69,7 +71,7 @@ class _$ItemCopyWithImpl<$Res>
 
 /// Create a copy of Item
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? location = null,Object? status = null,Object? categoryKey = null,Object? roomId = freezed,Object? cabinetId = freezed,Object? slotId = freezed,Object? photos = null,Object? expiryDate = freezed,Object? note = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? location = null,Object? status = null,Object? categoryKey = null,Object? roomId = freezed,Object? cabinetId = freezed,Object? slotId = freezed,Object? photos = null,Object? expiryDate = freezed,Object? note = null,Object? createdAt = null,Object? lastTouchedAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -83,7 +85,8 @@ as String?,photos: null == photos ? _self.photos : photos // ignore: cast_nullab
 as List<String>,expiryDate: freezed == expiryDate ? _self.expiryDate : expiryDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,note: null == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,lastTouchedAt: freezed == lastTouchedAt ? _self.lastTouchedAt : lastTouchedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -168,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String location,  String status,  String categoryKey,  String? roomId,  String? cabinetId,  String? slotId,  List<String> photos,  DateTime? expiryDate,  String note,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String location,  String status,  String categoryKey,  String? roomId,  String? cabinetId,  String? slotId,  List<String> photos,  DateTime? expiryDate,  String note,  DateTime createdAt,  DateTime? lastTouchedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Item() when $default != null:
-return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKey,_that.roomId,_that.cabinetId,_that.slotId,_that.photos,_that.expiryDate,_that.note,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKey,_that.roomId,_that.cabinetId,_that.slotId,_that.photos,_that.expiryDate,_that.note,_that.createdAt,_that.lastTouchedAt);case _:
   return orElse();
 
 }
@@ -189,10 +192,10 @@ return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKe
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String location,  String status,  String categoryKey,  String? roomId,  String? cabinetId,  String? slotId,  List<String> photos,  DateTime? expiryDate,  String note,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String location,  String status,  String categoryKey,  String? roomId,  String? cabinetId,  String? slotId,  List<String> photos,  DateTime? expiryDate,  String note,  DateTime createdAt,  DateTime? lastTouchedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Item():
-return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKey,_that.roomId,_that.cabinetId,_that.slotId,_that.photos,_that.expiryDate,_that.note,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKey,_that.roomId,_that.cabinetId,_that.slotId,_that.photos,_that.expiryDate,_that.note,_that.createdAt,_that.lastTouchedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +212,10 @@ return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKe
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String location,  String status,  String categoryKey,  String? roomId,  String? cabinetId,  String? slotId,  List<String> photos,  DateTime? expiryDate,  String note,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String location,  String status,  String categoryKey,  String? roomId,  String? cabinetId,  String? slotId,  List<String> photos,  DateTime? expiryDate,  String note,  DateTime createdAt,  DateTime? lastTouchedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Item() when $default != null:
-return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKey,_that.roomId,_that.cabinetId,_that.slotId,_that.photos,_that.expiryDate,_that.note,_that.createdAt);case _:
+return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKey,_that.roomId,_that.cabinetId,_that.slotId,_that.photos,_that.expiryDate,_that.note,_that.createdAt,_that.lastTouchedAt);case _:
   return null;
 
 }
@@ -224,7 +227,7 @@ return $default(_that.id,_that.name,_that.location,_that.status,_that.categoryKe
 @JsonSerializable()
 
 class _Item extends Item {
-  const _Item({required this.id, required this.name, this.location = '未知', this.status = 'safe', this.categoryKey = '', this.roomId, this.cabinetId, this.slotId, final  List<String> photos = const [], this.expiryDate, this.note = '', required this.createdAt}): _photos = photos,super._();
+  const _Item({required this.id, required this.name, this.location = '未知', this.status = 'safe', this.categoryKey = '', this.roomId, this.cabinetId, this.slotId, final  List<String> photos = const [], this.expiryDate, this.note = '', required this.createdAt, this.lastTouchedAt}): _photos = photos,super._();
   factory _Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
 
 @override final  String id;
@@ -249,6 +252,9 @@ class _Item extends Item {
 @override@JsonKey() final  String note;
 /// 登记时间：物品入库时按系统时间自动录入，同时作为「新增时间」排序依据
 @override final  DateTime createdAt;
+/// 最近接触时间（编辑/出借/移动等实际操作时刷新）；
+/// null 时「闲置」判定回退到 createdAt（与 v9 之前的旧数据等价）
+@override final  DateTime? lastTouchedAt;
 
 /// Create a copy of Item
 /// with the given fields replaced by the non-null parameter values.
@@ -263,16 +269,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Item&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.location, location) || other.location == location)&&(identical(other.status, status) || other.status == status)&&(identical(other.categoryKey, categoryKey) || other.categoryKey == categoryKey)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.cabinetId, cabinetId) || other.cabinetId == cabinetId)&&(identical(other.slotId, slotId) || other.slotId == slotId)&&const DeepCollectionEquality().equals(other._photos, _photos)&&(identical(other.expiryDate, expiryDate) || other.expiryDate == expiryDate)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Item&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.location, location) || other.location == location)&&(identical(other.status, status) || other.status == status)&&(identical(other.categoryKey, categoryKey) || other.categoryKey == categoryKey)&&(identical(other.roomId, roomId) || other.roomId == roomId)&&(identical(other.cabinetId, cabinetId) || other.cabinetId == cabinetId)&&(identical(other.slotId, slotId) || other.slotId == slotId)&&const DeepCollectionEquality().equals(other._photos, _photos)&&(identical(other.expiryDate, expiryDate) || other.expiryDate == expiryDate)&&(identical(other.note, note) || other.note == note)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.lastTouchedAt, lastTouchedAt) || other.lastTouchedAt == lastTouchedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,location,status,categoryKey,roomId,cabinetId,slotId,const DeepCollectionEquality().hash(_photos),expiryDate,note,createdAt);
+int get hashCode => Object.hash(runtimeType,id,name,location,status,categoryKey,roomId,cabinetId,slotId,const DeepCollectionEquality().hash(_photos),expiryDate,note,createdAt,lastTouchedAt);
 
 @override
 String toString() {
-  return 'Item(id: $id, name: $name, location: $location, status: $status, categoryKey: $categoryKey, roomId: $roomId, cabinetId: $cabinetId, slotId: $slotId, photos: $photos, expiryDate: $expiryDate, note: $note, createdAt: $createdAt)';
+  return 'Item(id: $id, name: $name, location: $location, status: $status, categoryKey: $categoryKey, roomId: $roomId, cabinetId: $cabinetId, slotId: $slotId, photos: $photos, expiryDate: $expiryDate, note: $note, createdAt: $createdAt, lastTouchedAt: $lastTouchedAt)';
 }
 
 
@@ -283,7 +289,7 @@ abstract mixin class _$ItemCopyWith<$Res> implements $ItemCopyWith<$Res> {
   factory _$ItemCopyWith(_Item value, $Res Function(_Item) _then) = __$ItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String location, String status, String categoryKey, String? roomId, String? cabinetId, String? slotId, List<String> photos, DateTime? expiryDate, String note, DateTime createdAt
+ String id, String name, String location, String status, String categoryKey, String? roomId, String? cabinetId, String? slotId, List<String> photos, DateTime? expiryDate, String note, DateTime createdAt, DateTime? lastTouchedAt
 });
 
 
@@ -300,7 +306,7 @@ class __$ItemCopyWithImpl<$Res>
 
 /// Create a copy of Item
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? location = null,Object? status = null,Object? categoryKey = null,Object? roomId = freezed,Object? cabinetId = freezed,Object? slotId = freezed,Object? photos = null,Object? expiryDate = freezed,Object? note = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? location = null,Object? status = null,Object? categoryKey = null,Object? roomId = freezed,Object? cabinetId = freezed,Object? slotId = freezed,Object? photos = null,Object? expiryDate = freezed,Object? note = null,Object? createdAt = null,Object? lastTouchedAt = freezed,}) {
   return _then(_Item(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -314,7 +320,8 @@ as String?,photos: null == photos ? _self._photos : photos // ignore: cast_nulla
 as List<String>,expiryDate: freezed == expiryDate ? _self.expiryDate : expiryDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,note: null == note ? _self.note : note // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,lastTouchedAt: freezed == lastTouchedAt ? _self.lastTouchedAt : lastTouchedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

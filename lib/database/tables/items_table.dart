@@ -20,6 +20,9 @@ class Items extends Table {
   TextColumn get note => text().withDefault(const Constant(''))();
   // 登记时间（自动记录，替代 purchaseDate，支撑「本周/本月新增」统计与排序）
   DateTimeColumn get createdAt => dateTime().clientDefault(() => DateTime.now())();
+  // 最近接触时间（v9 新增，可为空）：编辑/出借/移动位置等实际操作时刷新。
+  // 「长期闲置」口径基于它（空值回退 createdAt，由迁移回填为登记时间）。
+  DateTimeColumn get lastTouchedAt => dateTime().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

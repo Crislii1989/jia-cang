@@ -32,7 +32,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   /// 本地数据库名。Web 端 drift 会以这个名字在 IndexedDB 中保存数据库文件，
   /// 名字不一致会导致「清理本地数据」清错对象，因此统一在这里声明。
@@ -147,6 +147,15 @@ class AppDatabase extends _$AppDatabase {
             mode: InsertMode.insertOrReplace,
           );
         });
+      }
+      // v9: items 新增 lastTouchedAt（最近接触时间）——「长期闲置」口径从
+      //     「登记满 N 天」改为「N 天未接触」。历史数据回填为各自登记时间
+      //     （迁移后行为与旧口径一致，之后由编辑/出借/移动等操作刷新）。
+      if (from < 9) {
+        await m.addColumn(items, items.lastTouchedAt);
+        await customStatement(
+          'UPDATE items SET last_touched_at = created_at',
+        );
       }
     },
   );

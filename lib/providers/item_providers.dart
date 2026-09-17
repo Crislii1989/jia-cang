@@ -71,9 +71,11 @@ class Items extends _$Items {
     ref.invalidateSelf();
   }
 
-  /// 编辑模式下全量更新物品
+  /// 编辑模式下全量更新物品（同时刷新最近接触时间——编辑算一次「接触」）
   Future<void> updateItem(Item item) async {
-    await _dao.updateItem(_toCompanion(item, forUpdate: true));
+    await _dao.updateItem(
+      _toCompanion(item.copyWith(lastTouchedAt: DateTime.now()), forUpdate: true),
+    );
     ref.invalidateSelf();
   }
 
@@ -150,6 +152,16 @@ class Items extends _$Items {
     ref.invalidateSelf();
   }
 
+  /// 批量修改物品状态（物品库批量模式的「标记已用」等）。
+  /// 事务包裹保证整批原子性；状态变更同时刷新最近接触时间（见 DAO）。
+  Future<void> markItemsStatus(List<String> ids, String status) async {
+    if (ids.isEmpty) return;
+    await _dao.db.transaction(() async {
+      await _dao.updateStatuses(ids, status: status);
+    });
+    ref.invalidateSelf();
+  }
+
   /// 将 drift 行记录转换为 Item 模型（公开方法，供备份恢复等场景使用）
   static Item toModel(db.Item row) => Item(
     id: row.id,
@@ -164,6 +176,7 @@ class Items extends _$Items {
     expiryDate: row.expiryDate,
     note: row.note,
     createdAt: row.createdAt,
+    lastTouchedAt: row.lastTouchedAt,
   );
 
   /// Item → drift Companion（insert/update 复用）
@@ -181,6 +194,7 @@ class Items extends _$Items {
       expiryDate: Value(item.expiryDate),
       note: Value(item.note),
       createdAt: Value(item.createdAt),
+      lastTouchedAt: Value(item.lastTouchedAt),
     );
   }
 
@@ -277,12 +291,12 @@ Item? itemById(Ref ref, String id) {
 /// 与「我的 → 提醒设置」的默认值保持一致，将来接入设置项时改这里即可。
 const int kExpiringSoonDays = 3;
 
-/// 闲置阈值：登记后超过 N 天没再动过，算「长期闲置」。
+/// 闲置阈值：N 天内没有过「接触」（编辑 / 出借归还 / 移动位置）算「长期闲置」。
 ///
-/// 数据口径说明：items 表目前只有 `createdAt`（登记时间），没有「最后动过」的时间戳，
-/// 所以闲置天数按 `createdAt` 计算——即「登记满 90 天且仍在库」的物品。
-/// 若将来补上 `updatedAt`，只需把这里换成后者，UI 无需改动。
-const int kIdleDays = 90;
+/// 数据口径（2026-09-17 拍板，180 天）：基于 v9 新增的 `lastTouchedAt`
+/// （最近接触时间，编辑 / 出借归还 / 移动位置 / 批量改状态时刷新）；
+/// null 回退 `createdAt`（v9 迁移已把历史行回填为登记时间，两者等价）。
+const int kIdleDays = 180;
 
 /// 已过期的物品（到期日早于今天，且未标记为已用完/已丢失）
 @riverpod
@@ -320,7 +334,7 @@ List<Item> expiringSoonItems(Ref ref) {
       );
 }
 
-/// 长期闲置的物品（在库 + 登记已满 [kIdleDays] 天）
+/// 长期闲置的物品（在库 + 最近接触已满 [kIdleDays] 天）
 @riverpod
 List<Item> idleItems(Ref ref) {
   final cutoff = DateTime.now().subtract(const Duration(days: kIdleDays));
@@ -328,7 +342,9 @@ List<Item> idleItems(Ref ref) {
       .watch(itemsProvider)
       .maybeWhen(
         data: (items) => items
-            .where((i) => i.status == 'safe' && i.createdAt.isBefore(cutoff))
+            .where((i) =>
+                i.status == 'safe' &&
+                (i.lastTouchedAt ?? i.createdAt).isBefore(cutoff))
             .toList(),
         orElse: () => [],
       );
@@ -385,11 +401,14 @@ List<ReminderEntry> homeReminders(Ref ref) {
     ));
   }
 
-  // ③ 长期闲置：登记越久越靠前
+  // ③ 长期闲置：接触越久越靠前
   final idle = [...ref.watch(idleItemsProvider)]
-    ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    ..sort((a, b) => (a.lastTouchedAt ?? a.createdAt)
+        .compareTo(b.lastTouchedAt ?? b.createdAt));
   for (final item in idle) {
-    final days = DateTime.now().difference(item.createdAt).inDays;
+    final days = DateTime.now()
+        .difference(item.lastTouchedAt ?? item.createdAt)
+        .inDays;
     entries.add(ReminderEntry(
       item: item,
       kind: ReminderKind.idle,

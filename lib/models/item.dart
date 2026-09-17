@@ -25,6 +25,9 @@ abstract class Item with _$Item {
     @Default('') String note,
     /// 登记时间：物品入库时按系统时间自动录入，同时作为「新增时间」排序依据
     required DateTime createdAt,
+    /// 最近接触时间（编辑/出借/移动等实际操作时刷新）；
+    /// null 时「闲置」判定回退到 createdAt（与 v9 之前的旧数据等价）
+    DateTime? lastTouchedAt,
   }) = _Item;
 
   factory Item.fromJson(Map<String, dynamic> json) => _$ItemFromJson(json);
@@ -42,6 +45,7 @@ abstract class Item with _$Item {
     String note = '',
     DateTime? createdAt,
   }) {
+    final registeredAt = createdAt ?? DateTime.now();
     return Item(
       id: const Uuid().v4(),
       name: name,
@@ -54,7 +58,9 @@ abstract class Item with _$Item {
       photos: photos,
       expiryDate: expiryDate,
       note: note,
-      createdAt: createdAt ?? DateTime.now(),
+      createdAt: registeredAt,
+      // 新登记即「接触」：闲置计时从登记起算
+      lastTouchedAt: registeredAt,
     );
   }
 }

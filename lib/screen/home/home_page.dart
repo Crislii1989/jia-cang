@@ -99,8 +99,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  /// 搜索条大胶囊（46pt，V2.1 参考图规格）：点击进物品库并自动聚焦搜索框
-  ///（经 [PendingSearchFocus] 传递，物品库消费后自清）。
+  /// 搜索条胶囊（2026-09-17 反馈太大，由 46*k 降到 40*k）：
+  /// 点击进物品库并自动聚焦搜索框（经 [PendingSearchFocus] 传递，物品库消费后自清）。
   Widget _buildSearchBar(double k) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
@@ -111,8 +111,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           context.go('/inventory');
         },
         child: Container(
-          height: 46 * k,
-          padding: EdgeInsets.symmetric(horizontal: 16 * k),
+          height: 40 * k,
+          padding: EdgeInsets.symmetric(horizontal: 14 * k),
           decoration: BoxDecoration(
             color: AppColors.cardBg,
             borderRadius: BorderRadius.circular(999),
@@ -120,18 +120,18 @@ class _HomePageState extends ConsumerState<HomePage> {
             boxShadow: [
               BoxShadow(
                 color: AppColors.floatCardShadow,
-                blurRadius: 12 * k,
+                blurRadius: 10 * k,
                 offset: Offset(0, 3 * k),
               ),
             ],
           ),
           child: Row(
             children: [
-              Icon(Icons.search, size: 17 * k, color: AppColors.blushInk3),
-              SizedBox(width: 9 * k),
+              Icon(Icons.search, size: 16 * k, color: AppColors.blushInk3),
+              SizedBox(width: 8 * k),
               Text(
                 '搜索物品名称 / 位置',
-                style: TextStyle(fontSize: 12.5 * k, color: AppColors.blushInk3),
+                style: TextStyle(fontSize: 12 * k, color: AppColors.blushInk3),
               ),
             ],
           ),

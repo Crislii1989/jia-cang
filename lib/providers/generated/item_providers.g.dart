@@ -230,7 +230,7 @@ final class ItemsProvider extends $AsyncNotifierProvider<Items, List<Item>> {
   Items create() => Items();
 }
 
-String _$itemsHash() => r'4342ffb075168583f68071bf85182ea191fd447d';
+String _$itemsHash() => r'48dd757dac015bfe08406b386ab305f74bc2d6d3';
 
 /// 核心 Items Provider —— AsyncNotifier，从数据库读写
 
@@ -597,17 +597,17 @@ final class ExpiringSoonItemsProvider
 
 String _$expiringSoonItemsHash() => r'a3bb82514558302aaf28885b2ec8616caa13d694';
 
-/// 长期闲置的物品（在库 + 登记已满 [kIdleDays] 天）
+/// 长期闲置的物品（在库 + 最近接触已满 [kIdleDays] 天）
 
 @ProviderFor(idleItems)
 final idleItemsProvider = IdleItemsProvider._();
 
-/// 长期闲置的物品（在库 + 登记已满 [kIdleDays] 天）
+/// 长期闲置的物品（在库 + 最近接触已满 [kIdleDays] 天）
 
 final class IdleItemsProvider
     extends $FunctionalProvider<List<Item>, List<Item>, List<Item>>
     with $Provider<List<Item>> {
-  /// 长期闲置的物品（在库 + 登记已满 [kIdleDays] 天）
+  /// 长期闲置的物品（在库 + 最近接触已满 [kIdleDays] 天）
   IdleItemsProvider._()
     : super(
         from: null,
@@ -641,7 +641,7 @@ final class IdleItemsProvider
   }
 }
 
-String _$idleItemsHash() => r'4dfbcfa7a45ded0788bbd8beb0223dca84e3f06d';
+String _$idleItemsHash() => r'0e5f96eb8231236a0fcff9fb3b429d2569a436e6';
 
 /// 概览：即将到期数量
 
@@ -831,4 +831,4 @@ final class HomeRemindersProvider
   }
 }
 
-String _$homeRemindersHash() => r'7de53a615d1d6f0f6f819d45f9b73901d871e323';
+String _$homeRemindersHash() => r'4264d8ba3054a4023539969ba3a06a9293fb68b0';
