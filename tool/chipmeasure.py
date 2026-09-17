@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Find coral chip bbox in region, both states."""
+"""量截图里珊瑚色胶囊的像素包围盒（用于核对控件尺寸与 CSS 坐标）。
+
+用法（要量的截图是一次性的，走命令行参数，不写死在文件里）:
+    python tool/chipmeasure.py <截图1> [<截图2> ...]
+"""
+import os, sys
 from PIL import Image
 
 def chip_bbox(path, label):
@@ -19,5 +24,8 @@ def chip_bbox(path, label):
     else:
         print(label, "no coral")
 
-chip_bbox(r"C:\Users\o\shiwuji_build\.workbuddy\verify\2026-09-17\r9_collapsed.png", "collapsed")
-chip_bbox(r"C:\Users\o\shiwuji_build\.workbuddy\verify\2026-09-17\r9_expanded.png", "expanded")
+if len(sys.argv) < 2:
+    sys.exit("用法: python tool/chipmeasure.py <截图1> [<截图2> ...]")
+
+for path in sys.argv[1:]:
+    chip_bbox(path, os.path.basename(path))

@@ -76,3 +76,9 @@ app.*.map.json
 # 这一批误入库的是 24 个 drive*.json + shot6.json + deadcode.json + 4 个 .py，已清理。
 /*.json
 /*.py
+
+# drift Web Worker 的编译中间产物。
+# drift_worker.js 运行时必需、drift_worker.js.map 被它自己的 sourceMappingURL 引用，两者保留；
+# 而这个 .deps 是 dart compile 的依赖清单 —— 仓库里没有任何东西引用它，且里面写满了
+# 绝对路径（pub cache 与本机工程路径），属纯噪音，不入库。
+web/drift_worker.js.deps

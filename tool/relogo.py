@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
-"""Replace app logo: user-provided JPG -> assets/icon/jia_cang_icon_1024.png (+ web icons)."""
+"""Replace app logo: user-provided square JPG -> assets/icon/jia_cang_icon_1024.png (+ web icons).
+
+用法（源图是一次性的，所以走命令行参数，不写死在文件里）:
+    python tool/relogo.py <方形 logo 原图路径>
+"""
+import os, sys
 from PIL import Image
 
-# ⚠️ SRC 是 2026-09-17 那次换 logo 用的一次性临时路径，早已失效：
-#    重跑前请把 SRC 改成真实的源图路径（用户提供的方形 logo 原图）。
-SRC = r"C:\Users\o\WorkBuddy\2026-09-17-14-13-03\tidy-logo_assets\5ff021c5-miora_text_to_image-1789626065990-0-b48f48be7e20.jpg"
-ICON = r"D:\工作文件\敲代码\家中有数\shiwuji\assets\icon\jia_cang_icon_1024.png"
-WEB = r"D:\工作文件\敲代码\家中有数\shiwuji\web"
+# 仓库根 = 本脚本所在目录的上一级（别写死绝对路径：目录改名/换机器就失效）
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ICON = os.path.join(ROOT, "assets", "icon", "jia_cang_icon_1024.png")
+WEB = os.path.join(ROOT, "web")
+
+if len(sys.argv) < 2:
+    sys.exit("用法: python tool/relogo.py <方形 logo 原图路径>")
+SRC = sys.argv[1]
 
 img = Image.open(SRC).convert("RGB")
 print("src size:", img.size)
@@ -19,6 +27,6 @@ img.save(ICON, "PNG")
 print("saved", ICON, img.size)
 
 for name, size in [("icons/Icon-192.png", 192), ("icons/Icon-512.png", 512), ("favicon.png", 32)]:
-    out = f"{WEB}\\{name}"
+    out = os.path.join(WEB, name)
     img.resize((size, size), Image.LANCZOS).save(out, "PNG")
     print("saved", out)

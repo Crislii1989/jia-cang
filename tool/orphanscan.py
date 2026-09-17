@@ -2,7 +2,8 @@
 """Orphan-file scanner: lib/**.dart (non-generated) never imported by lib or test."""
 import os, re
 
-ROOT = r"D:\工作文件\敲代码\家中有数\shiwuji"
+# 仓库根 = 本脚本所在目录的上一级（别写死绝对路径：目录改名/换机器就失效）
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 files = []
 for dirpath, dirnames, filenames in os.walk(os.path.join(ROOT, "lib")):
@@ -21,11 +22,19 @@ for base in ("lib", "test"):
                 with open(p, encoding="utf-8") as fh:
                     bodies[rel] = fh.read()
 
+# 包名从 pubspec.yaml 读，避免包名一改这里就静默失效（踩过这个坑）
+_PKG = re.search(
+    r"^name:\s*(\S+)",
+    open(os.path.join(ROOT, "pubspec.yaml"), encoding="utf-8").read(),
+    re.M,
+).group(1)
+
 # import specifier -> lib-relative path mapping
 def spec_to_rel(spec):
-    # package:jia_cang/xxx -> lib/xxx ; relative imports: resolve crudely
-    if spec.startswith("package:jia_cang/"):
-        return "lib/" + spec[len("package:jia_cang/"):]
+    # package:<包名>/xxx -> lib/xxx ; relative imports: resolve crudely
+    prefix = f"package:{_PKG}/"
+    if spec.startswith(prefix):
+        return "lib/" + spec[len(prefix):]
     return None  # skip relative import resolution (rare here)
 
 orphans = []
