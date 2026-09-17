@@ -159,7 +159,7 @@ final class DatabaseRecoveryProvider
   DatabaseRecovery create() => DatabaseRecovery();
 }
 
-String _$databaseRecoveryHash() => r'88da15d510d2ed6c552e73c2357245687e186ca8';
+String _$databaseRecoveryHash() => r'cf70067cabe048e5507f8a46d87988bdd459a688';
 
 /// 数据库异常时的恢复操作（供 DbGate 的出错界面调用）。
 

@@ -64,6 +64,9 @@ class DatabaseRecovery extends _$DatabaseRecovery {
   /// 因此调用方必须给出明确的二次确认。
   Future<void> resetLocalData() async {
     await reset.deleteLocalDatabase(AppDatabase.databaseName);
+    // 更名前的历史库（若存在）也一并清理，否则下次打开
+    // 改名迁移会把旧数据原样搬回来，「重建」就白做了。
+    await reset.deleteLocalDatabase(AppDatabase.legacyDatabaseName);
     ref.invalidate(databaseProvider);
   }
 }

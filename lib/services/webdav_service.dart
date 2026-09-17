@@ -36,9 +36,14 @@ class BackupFileInfo {
 /// 恢复时兼容新版 .zip 与旧版 .json 两种格式。
 class WebDavService {
   Client? _client;
-  String _backupDir = '/shiwuji_backups';
+  String _backupDir = '/jiacang_backups';
 
-  static const _filenamePrefix = 'shiwuji_backup_';
+  static const _filenamePrefix = 'jiacang_backup_';
+
+  /// 品牌更名（家藏 → 家藏）前的历史备份目录 / 前缀。
+  /// 列出备份时仍会扫描，保证老用户的云端旧备份不会「消失」。
+  static const _legacyBackupDir = '/shiwuji_backups';
+  static const _legacyFilenamePrefix = 'shiwuji_backup_';
 
   /// 配置 WebDAV 客户端
   void configure(String url, String user, String password, {String? dir}) {
@@ -147,25 +152,39 @@ class WebDavService {
   }
 
   /// 列出备份历史
+  ///
+  /// 同时扫描新目录（/jiacang_backups）与更名前的历史目录
+  /// （/shiwuji_backups），老用户的旧云端备份继续可见、可恢复。
   Future<List<BackupFileInfo>> listBackups() async {
     if (_client == null) throw Exception('WebDAV 未配置');
     try {
-      final files = await _client!.readDir(_backupDir);
       final backups = <BackupFileInfo>[];
-      for (final f in files) {
-        final name = f.name ?? '';
-        final isZip = name.endsWith('.zip');
-        final isJson = name.endsWith('.json');
-        if (!isZip && !isJson) continue;
-        backups.add(
-          BackupFileInfo(
-            name: name,
-            path: f.path ?? '',
-            isZip: isZip,
-            time: _parseFilenameTime(name),
-            itemCount: _parseFilenameCount(name),
-          ),
-        );
+      final dirs = <String>{
+        _backupDir,
+        if (_legacyBackupDir != _backupDir) _legacyBackupDir,
+      };
+      for (final dir in dirs) {
+        final List<dynamic> files;
+        try {
+          files = await _client!.readDir(dir);
+        } catch (_) {
+          continue; // 历史目录不存在是常态，跳过即可
+        }
+        for (final f in files) {
+          final name = f.name ?? '';
+          final isZip = name.endsWith('.zip');
+          final isJson = name.endsWith('.json');
+          if (!isZip && !isJson) continue;
+          backups.add(
+            BackupFileInfo(
+              name: name,
+              path: f.path ?? '',
+              isZip: isZip,
+              time: _parseFilenameTime(name),
+              itemCount: _parseFilenameCount(name),
+            ),
+          );
+        }
       }
       backups.sort((a, b) {
         // 按时间倒序，无时间的排最后
@@ -478,15 +497,18 @@ class WebDavService {
 
   /// 从文件名解析备份时间
   ///
-  /// 支持格式：
-  /// - shiwuji_backup_20260627_143000_n42.zip
-  /// - shiwuji_backup_20260627_143000.zip
-  /// - shiwuji_backup_20260627_143000.json（旧版）
+  /// 支持格式（新旧前缀均兼容）：
+  /// - jiacang_backup_20260917_143000_n42.zip
+  /// - jiacang_backup_20260917_143000.zip
+  /// - jiacang_backup_20260917_143000.json（旧版格式）
+  /// - shiwuji_backup_20260627_143000.zip（更名前历史备份）
   static DateTime? _parseFilenameTime(String name) {
     try {
       var base = _stripExtension(name);
       if (base.startsWith(_filenamePrefix)) {
         base = base.substring(_filenamePrefix.length);
+      } else if (base.startsWith(_legacyFilenamePrefix)) {
+        base = base.substring(_legacyFilenamePrefix.length);
       }
       // 去掉 _n{count} 后缀
       final nIdx = base.lastIndexOf('_n');

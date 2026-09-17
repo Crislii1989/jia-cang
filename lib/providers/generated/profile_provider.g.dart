@@ -178,7 +178,7 @@ final class AiConfigManagerProvider
   AiConfigManager create() => AiConfigManager();
 }
 
-String _$aiConfigManagerHash() => r'1c72219a002cd0870543d2720bffcedc51d7be05';
+String _$aiConfigManagerHash() => r'57eb2724505afd6a6eae029d57265ae8ffad382c';
 
 /// 多 AI Provider 配置管理
 ///

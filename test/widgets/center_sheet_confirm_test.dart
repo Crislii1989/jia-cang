@@ -7,35 +7,6 @@ import 'package:jia_cang/widgets/floating_bar.dart';
 /// 标题/说明居中、取消 ghost + 确认 primary（danger 时红字），
 /// 确认返回 result，取消/点遮罩返回 null。
 void main() {
-  Future<void> openDialog(
-    WidgetTester tester, {
-    bool danger = false,
-    String? cancelLabel = '取消',
-  }) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Builder(
-          builder: (context) => Center(
-            child: TextButton(
-              onPressed: () => CenterSheetConfirm.show<bool>(
-                context: context,
-                title: '删除房间',
-                message: '确定删除「卧室」？此操作不可撤销。',
-                confirmLabel: '删除',
-                cancelLabel: cancelLabel,
-                danger: danger,
-                result: true,
-              ),
-              child: const Text('open'),
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.tap(find.text('open'));
-    await tester.pumpAndSettle();
-  }
-
   testWidgets('普通确认：取消 ghost + 确认 primary，确认返回 true', (tester) async {
     bool? confirmed;
     await tester.pumpWidget(

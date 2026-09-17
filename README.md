@@ -127,6 +127,12 @@ flutter run
 
 > `.env` 会被打包进应用资源，缺少它应用会启动失败（白屏），仓库内已提供 `.env.example` 模板。
 
+#### 命名约定（v1.2 品牌更名）
+
+- **Dart 包名**：`jia_cang`（import 路径为 `package:jia_cang/...`）。
+- **本地数据库存储名**：`jiacang`。旧版本（更名前）的存量数据会在新版首次启动时自动搬迁到新名下，旧库保留作兜底、不删除；「清理本地数据」会同时清掉新旧两个名字的库。
+- **WebDAV 备份**：新备份上传到 `/jiacang_backups`（文件名前缀 `jiacang_backup_`）；列出备份时仍会扫描更名前的 `/shiwuji_backups`，老用户的云端旧备份不受影响。
+
 ### 代码生成
 
 修改 `models/`、`database/tables/` 或 `providers/`（riverpod 注解）后重新运行：
@@ -182,7 +188,7 @@ Web 端依赖仓库内的 `web/sqlite3.wasm` 与 `web/drift_worker.js`（已随�
 | UI 框架 | Flutter + Material 3 | 六端跨平台 UI |
 | 状态管理 | Riverpod + riverpod_annotation (codegen) | 单向数据流 |
 | 路由 | go_router (StatefulShellRoute) | 底部导航路由 |
-| 本地存储 | drift (SQLite ORM) | 数据库（schema v8，7 张表） |
+| 本地存储 | drift (SQLite ORM) | 数据库（schema v9，7 张表） |
 | Web 存储 | drift_flutter + SQLite WASM + Web Worker | 浏览器端 IndexedDB 持久化 |
 | 网络请求 | dio | HTTP 请求 |
 | 云备份 | webdav_client + archive | WebDAV 备份 / 恢复（压缩包） |
@@ -206,7 +212,7 @@ lib/
 ├── app_router.dart               # 路由配置（底部导航 + 详情/编辑子路由）
 ├── constants/                    # 主题色、字号、阴影、输入样式
 ├── database/                     # drift 数据库定义
-│   ├── database.dart             # 数据库实例、迁移策略（当前 schema v8）
+│   ├── database.dart             # 数据库实例、迁移策略（当前 schema v9）
 │   ├── seed_data.dart            # 首次安装种子数据（14 内置分类 / 默认房间 / 设置）
 │   └── tables/                   # 7 张表：items / rooms / cabinets / slots /
 │                                 #        import_history / categories / settings

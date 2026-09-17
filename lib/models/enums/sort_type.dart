@@ -1,5 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
 /// 枚举顺序 = 排序下拉的展示顺序（sort_dropdown 直接遍历 values）。
 /// 2026-09-17 反馈：「名称」放最底下；持久化按 name 解析，
 /// 与枚举顺序无关，重排不影响已保存的偏好。

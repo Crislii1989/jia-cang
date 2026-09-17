@@ -3,7 +3,8 @@ import 'dart:js_interop';
 /// Web 端：删除 drift 存放在 IndexedDB 里的数据库。
 ///
 /// drift 在缺少 SharedArrayBuffer 的浏览器上会降级为 `sharedIndexedDb`
-/// 存储实现，数据库以同名的 IndexedDB 记录保存（这里就是 `shiwuji`）。
+/// 存储实现，数据库以同名的 IndexedDB 记录保存（当前是 `jiacang`，
+/// 更名前为 `shiwuji`）。
 /// 一旦该记录处于半打开 / 损坏状态，新的打开请求会永久挂起 ——
 /// 所有查询都不返回、界面一直转圈、点击新增也没有任何反应。
 /// 这种状态只能整库删除后重建，因此提供一个显式的清理入口。

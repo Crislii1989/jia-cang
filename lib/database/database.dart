@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../utils/database_storage_migrate.dart';
+
 // 表定义（part files）
 part 'tables/items_table.dart';
 part 'tables/rooms_table.dart';
@@ -34,9 +36,15 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 9;
 
-  /// 本地数据库名。Web 端 drift 会以这个名字在 IndexedDB 中保存数据库文件，
-  /// 名字不一致会导致「清理本地数据」清错对象，因此统一在这里声明。
-  static const String databaseName = 'shiwuji';
+  /// 本地数据库名。Web 端 drift 会以这个名字在 OPFS / IndexedDB 中保存
+  /// 数据库文件，名字不一致会导致「清理本地数据」清错对象，因此统一在这里声明。
+  ///
+  /// 品牌更名（家藏 → 家藏）时同步改名；旧名的存量数据由
+  /// [migrateLegacyDatabaseStorage] 在 drift 打开新库之前自动搬迁一次。
+  static const String databaseName = 'jiacang';
+
+  /// 更名前的历史存储名（旧版本安装遗留）。
+  static const String legacyDatabaseName = 'shiwuji';
 
   /// 首版种子数据自动创建的柜体 id（v5 起不再写入，并在 v5 迁移里清理历史库残留）。
   static const List<String> _seededCabinetIds = [
@@ -230,15 +238,23 @@ class AppDatabase extends _$AppDatabase {
   }
 
   static QueryExecutor _openConnection() {
-    return driftDatabase(
-      name: databaseName,
-      native: const DriftNativeOptions(
-        databaseDirectory: getApplicationSupportDirectory,
-      ),
-      web: DriftWebOptions(
-        sqlite3Wasm: Uri.parse('sqlite3.wasm'),
-        driftWorker: Uri.parse('drift_worker.js'),
-      ),
-    );
+    return DatabaseConnection.delayed(Future(() async {
+      // 改名迁移必须发生在 drift 打开新库之前：
+      // 把旧名（shiwuji）存量数据搬到新名（jiacang），失败不阻断启动。
+      await migrateLegacyDatabaseStorage(
+        legacyName: legacyDatabaseName,
+        newName: databaseName,
+      );
+      return driftDatabase(
+        name: databaseName,
+        native: const DriftNativeOptions(
+          databaseDirectory: getApplicationSupportDirectory,
+        ),
+        web: DriftWebOptions(
+          sqlite3Wasm: Uri.parse('sqlite3.wasm'),
+          driftWorker: Uri.parse('drift_worker.js'),
+        ),
+      ) as DatabaseConnection;
+    }));
   }
 }

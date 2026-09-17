@@ -417,7 +417,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
           _buildInputField(
             controller: _dirController,
             label: '备份目录（可选）',
-            hint: '/shiwuji_backups',
+            hint: '/jiacang_backups',
             icon: Icons.folder_outlined,
           ),
           const SizedBox(height: 16),
