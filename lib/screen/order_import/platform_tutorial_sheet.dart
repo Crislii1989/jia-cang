@@ -20,7 +20,7 @@ class PlatformTutorialSheet extends StatelessWidget {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.75,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.cardBg,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -39,7 +39,7 @@ class PlatformTutorialSheet extends StatelessWidget {
                     const SizedBox(width: 10),
                     Text(
                       '${platform.name}授权导入',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                         color: AppColors.textPrimary,
@@ -52,11 +52,11 @@ class PlatformTutorialSheet extends StatelessWidget {
                   child: Container(
                     width: 32,
                     height: 32,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: AppColors.background,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.close,
                       size: 16,
                       color: AppColors.textHint,
@@ -87,7 +87,7 @@ class PlatformTutorialSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                   // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
                   color: AppColors.btnPrimaryBg,
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       color: AppColors.btnPrimaryShadow,
                       blurRadius: 10,
@@ -98,7 +98,7 @@ class PlatformTutorialSheet extends StatelessWidget {
                 child: Center(
                   child: Text(
                     platform.connected ? '📱 重新授权并导入' : '🔑 授权并开始导入',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: AppColors.btnPrimaryFg,
@@ -118,7 +118,7 @@ class PlatformTutorialSheet extends StatelessWidget {
                   borderRadius: BorderRadius.circular(18),
                   color: AppColors.background,
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     '暂不导入',
                     style: TextStyle(
@@ -163,14 +163,14 @@ class _TutorialStepWidget extends StatelessWidget {
                 Container(
                   width: 30,
                   height: 30,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.btnPrimaryBg,
                   ),
                   child: Center(
                     child: Text(
                       '$index',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
                         color: AppColors.btnPrimaryFg,
@@ -198,7 +198,7 @@ class _TutorialStepWidget extends StatelessWidget {
                 children: [
                   Text(
                     step.title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
@@ -207,7 +207,7 @@ class _TutorialStepWidget extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     step.desc,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textSecondary,
                       height: 1.5,

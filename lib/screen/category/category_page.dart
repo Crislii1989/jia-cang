@@ -107,7 +107,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             const SizedBox(height: 16),
             Text(
               cat.label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -160,7 +160,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(color: AppColors.border, width: 0.5),
           ),
@@ -179,7 +179,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             const SizedBox(width: 12),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -328,7 +328,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back_ios_new,
                 size: 16,
                 color: AppColors.textSecondary,
@@ -336,7 +336,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             ),
           ),
           const SizedBox(width: 14),
-          const Expanded(
+          Expanded(
             child: Text(
               '分类管理',
               style: TextStyle(
@@ -355,7 +355,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                 // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
                 color: AppColors.btnPrimaryBg,
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
                     color: AppColors.btnPrimaryShadow,
                     blurRadius: 12,
@@ -363,7 +363,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                   ),
                 ],
               ),
-              child: const Icon(Icons.add, size: 20, color: AppColors.btnPrimaryFg),
+              child: Icon(Icons.add, size: 20, color: AppColors.btnPrimaryFg),
             ),
           ),
         ],
@@ -384,13 +384,13 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           // 主色横幅：珊瑚渐变（原金→橙渐变随全局主色一起收敛）
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [AppColors.coral, AppColors.coralDeep],
           ),
           borderRadius: BorderRadius.circular(24),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.btnPrimaryShadow,
               blurRadius: 24,
@@ -427,7 +427,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w500,
               color: AppColors.floatHairlineSoft,
@@ -451,7 +451,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
@@ -466,7 +466,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             ),
             child: Text(
               subtitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary,
@@ -544,7 +544,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                   index: i,
                   child: Container(
                     padding: const EdgeInsets.all(6),
-                    child: const Icon(
+                    child: Icon(
                       Icons.drag_handle,
                       color: AppColors.textHint,
                       size: 20,
@@ -613,14 +613,14 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                   color: AppColors.background,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.add_circle_outline,
                   size: 24,
                   color: AppColors.textHint,
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 '暂无自定义分类',
                 style: TextStyle(
                   fontSize: 13,
@@ -629,7 +629,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 '点击右上角 + 添加你常用的品类',
                 style: TextStyle(fontSize: 11, color: AppColors.textHint),
               ),
@@ -757,7 +757,7 @@ class _CategoryCard extends StatelessWidget {
                       children: [
                         Text(
                           category.label,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
                             color: AppColors.textPrimary,
@@ -766,7 +766,7 @@ class _CategoryCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           category.isBuiltIn ? '系统分类' : '自定义',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
                             color: AppColors.textHint,
                           ),
@@ -784,7 +784,7 @@ class _CategoryCard extends StatelessWidget {
                         color: AppColors.background,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.more_horiz,
                         size: 14,
                         color: AppColors.textHint,

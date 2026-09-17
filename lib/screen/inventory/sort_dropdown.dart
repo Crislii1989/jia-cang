@@ -68,7 +68,7 @@ class SortDropdown extends StatelessWidget {
                         ),
                       ),
                       if (isActive)
-                        const Icon(
+                        Icon(
                           Icons.check,
                           size: 18,
                           color: AppColors.coralDeep,

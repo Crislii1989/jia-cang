@@ -127,7 +127,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ],
           ),
-          child: const Row(
+          child: Row(
             children: [
               Icon(Icons.search, size: 18, color: AppColors.blushInk3),
               SizedBox(width: 8),

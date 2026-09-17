@@ -39,7 +39,7 @@ class ProfileHeaderSection extends ConsumerWidget {
             color: AppColors.cardBg,
             borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLarge),
             border: Border.all(color: AppColors.border),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
                 color: AppColors.floatCardShadow,
                 blurRadius: 10,
@@ -53,7 +53,7 @@ class ProfileHeaderSection extends ConsumerWidget {
               Container(
                 width: 46 * k,
                 height: 46 * k,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
                     begin: Alignment(-0.6, -1),
@@ -114,7 +114,7 @@ class ProfileHeaderSection extends ConsumerWidget {
         color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(AppDimensions.borderRadiusLarge),
       ),
-      child: const Center(
+      child: Center(
         child: SizedBox(
           width: 22,
           height: 22,

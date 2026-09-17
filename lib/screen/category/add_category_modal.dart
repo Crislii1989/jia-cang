@@ -113,7 +113,7 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
       children: [
         Text(
           widget.title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w900,
             color: AppColors.textPrimary,
@@ -128,7 +128,7 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
               color: AppColors.background,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.close, size: 16, color: AppColors.textHint),
+            child: Icon(Icons.close, size: 16, color: AppColors.textHint),
           ),
         ),
       ],
@@ -139,7 +139,7 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '选择图标',
           style: TextStyle(
             fontSize: 12,
@@ -163,7 +163,7 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
       children: [
         Row(
           children: [
-            const Text(
+            Text(
               '分类名称',
               style: TextStyle(
                 fontSize: 12,
@@ -186,26 +186,26 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
           ],
           decoration: InputDecoration(
             hintText: '例如：美妆、户外、宠物',
-            hintStyle: const TextStyle(color: AppColors.textHint),
+            hintStyle: TextStyle(color: AppColors.textHint),
             filled: true,
             fillColor: AppColors.background,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                 color: AppColors.border,
                 width: 1.5,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                 color: AppColors.border,
                 width: 1.5,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                 color: AppColors.coral,
                 width: 1.5,
               ),
@@ -231,7 +231,7 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
           // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
           color: AppColors.btnPrimaryBg,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.btnPrimaryShadow,
               blurRadius: 10,
@@ -242,7 +242,7 @@ class _AddCategoryModalState extends State<AddCategoryModal> {
         child: Center(
           child: Text(
             widget.editLabel != null ? '保存修改' : '确认添加',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               color: AppColors.btnPrimaryFg,

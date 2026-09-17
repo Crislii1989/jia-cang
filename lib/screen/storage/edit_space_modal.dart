@@ -74,7 +74,7 @@ class _EditSpaceModalState extends State<EditSpaceModal> {
                         children: [
                           Text(
                             widget.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w900,
                               color: AppColors.textPrimary,
@@ -89,7 +89,7 @@ class _EditSpaceModalState extends State<EditSpaceModal> {
                                 color: AppColors.background,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.close,
                                 size: 16,
                                 color: AppColors.textHint,
@@ -100,7 +100,7 @@ class _EditSpaceModalState extends State<EditSpaceModal> {
                       ),
                       const SizedBox(height: 18),
                       // 名称输入
-                      const Text(
+                      Text(
                         '名称',
                         style: TextStyle(
                           fontSize: 13,
@@ -124,7 +124,7 @@ class _EditSpaceModalState extends State<EditSpaceModal> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
+                            borderSide: BorderSide(
                               color: AppColors.coral,
                               width: 1.5,
                             ),
@@ -133,7 +133,7 @@ class _EditSpaceModalState extends State<EditSpaceModal> {
                       ),
                       const SizedBox(height: 16),
                       // 图标选择
-                      const Text(
+                      Text(
                         '图标',
                         style: TextStyle(
                           fontSize: 13,
@@ -158,7 +158,7 @@ class _EditSpaceModalState extends State<EditSpaceModal> {
                             // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
                             color: AppColors.btnPrimaryBg,
                             borderRadius: BorderRadius.circular(18),
-                            boxShadow: const [
+                            boxShadow: [
                               BoxShadow(
                                 color: AppColors.btnPrimaryShadow,
                                 blurRadius: 10,
@@ -166,7 +166,7 @@ class _EditSpaceModalState extends State<EditSpaceModal> {
                               ),
                             ],
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               '保存',
                               style: TextStyle(

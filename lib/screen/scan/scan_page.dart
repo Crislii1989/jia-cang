@@ -370,16 +370,16 @@ class _ScanPageState extends ConsumerState<ScanPage> {
       decoration: BoxDecoration(
         border: Border(
           left: isLeft
-              ? const BorderSide(color: AppColors.coral, width: 3)
+              ? BorderSide(color: AppColors.coral, width: 3)
               : BorderSide.none,
           right: !isLeft
-              ? const BorderSide(color: AppColors.coral, width: 3)
+              ? BorderSide(color: AppColors.coral, width: 3)
               : BorderSide.none,
           top: isTop
-              ? const BorderSide(color: AppColors.coral, width: 3)
+              ? BorderSide(color: AppColors.coral, width: 3)
               : BorderSide.none,
           bottom: !isTop
-              ? const BorderSide(color: AppColors.coral, width: 3)
+              ? BorderSide(color: AppColors.coral, width: 3)
               : BorderSide.none,
         ),
       ),
@@ -444,7 +444,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.smart_toy_outlined,
                     color: AppColors.coral,
                     size: 16,
@@ -631,13 +631,13 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           children: [
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.smart_toy_outlined,
                   size: 20,
                   color: AppColors.coral,
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   '识别模型',
                   style: TextStyle(
                     fontSize: 14,
@@ -677,7 +677,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                               current.modelName!.isNotEmpty)
                             Text(
                               current.modelName!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 color: AppColors.textHint,
                               ),
@@ -685,7 +685,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                         ],
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_drop_down,
                       color: AppColors.textSecondary,
                     ),
@@ -740,7 +740,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                         (_selectedConfig == null && i == 0);
                     return ListTile(
                       leading: isSelected
-                          ? const Icon(
+                          ? Icon(
                               Icons.check_circle,
                               color: AppColors.coral,
                             )
@@ -801,7 +801,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 36,
                 height: 36,
                 child: CircularProgressIndicator(
@@ -819,7 +819,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               const SizedBox(height: 6),
               Text(
                 meta != null ? '使用 ${meta.displayName} 分析图片' : '正在分析图片内容',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   color: AppColors.textSecondary,
                 ),
@@ -855,7 +855,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
             const SizedBox(height: 8),
             Text(
               _errorMessage!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textPrimary,
               ),
@@ -894,7 +894,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           children: [
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.auto_awesome,
                   color: AppColors.coral,
                   size: 22,
@@ -914,7 +914,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.smart_toy_outlined,
                     size: 14,
                     color: AppColors.textHint,
@@ -922,7 +922,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                   const SizedBox(width: 4),
                   Text(
                     meta?.displayName ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textHint,
                     ),
@@ -931,7 +931,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                     const SizedBox(width: 8),
                     Text(
                       '· ${r.model}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textHint,
                       ),
@@ -940,7 +940,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                   const SizedBox(width: 8),
                   Text(
                     '· ${r.elapsedMs}ms',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.textHint,
                     ),
@@ -961,7 +961,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               _buildInfoRow(Icons.star_outline, '成色', r.condition),
             if (r.description.isNotEmpty) ...[
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 '物品描述',
                 style: TextStyle(
                   fontSize: 14,
@@ -972,7 +972,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               const SizedBox(height: 6),
               Text(
                 r.description,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   color: AppColors.textPrimary,
                   height: 1.6,
@@ -981,7 +981,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
             ],
             if (r.features.isNotEmpty) ...[
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 '主要特征',
                 style: TextStyle(
                   fontSize: 14,
@@ -992,7 +992,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               const SizedBox(height: 8),
               Text(
                 r.features,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   color: AppColors.textPrimary,
                   height: 1.6,
@@ -1001,7 +1001,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
             ],
             if (r.suggestedTags.isNotEmpty) ...[
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 '推荐标签',
                 style: TextStyle(
                   fontSize: 14,
@@ -1034,7 +1034,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
             width: 48,
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 color: AppColors.textSecondary,
               ),
@@ -1043,7 +1043,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textPrimary,
               ),
@@ -1061,13 +1061,13 @@ class _ScanPageState extends ConsumerState<ScanPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.palette_outlined,
             size: 16,
             color: AppColors.textHint,
           ),
           const SizedBox(width: 8),
-          const SizedBox(
+          SizedBox(
             width: 48,
             child: Text(
               '颜色',
@@ -1089,7 +1089,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           Expanded(
             child: Text(
               color,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textPrimary,
               ),
@@ -1145,7 +1145,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
       ),
       child: Text(
         '#$text',
-        style: const TextStyle(fontSize: 12, color: AppColors.coralDeep),
+        style: TextStyle(fontSize: 12, color: AppColors.coralDeep),
       ),
     );
   }
@@ -1160,7 +1160,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               onPressed: _reset,
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.coral,
-                side: const BorderSide(color: AppColors.coral),
+                side: BorderSide(color: AppColors.coral),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),

@@ -40,7 +40,7 @@ class GradientBackground extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         // 纯色暖粉白底
-        const ColoredBox(color: AppColors.blushBg),
+        ColoredBox(color: AppColors.blushBg),
         // 右上角光晕（唯一一层装饰）
         Positioned(
           top: -170,
@@ -48,7 +48,7 @@ class GradientBackground extends StatelessWidget {
           child: Container(
             width: _glowSize,
             height: _glowSize,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [AppColors.bgGlow, AppColors.glowFade],

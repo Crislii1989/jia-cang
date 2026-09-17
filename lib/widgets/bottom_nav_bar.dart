@@ -69,7 +69,7 @@ class BottomNavBar extends StatelessWidget {
             width: 40,
             height: 40,
             transform: Matrix4.translationValues(0, -6, 0),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.addFab,
               boxShadow: [

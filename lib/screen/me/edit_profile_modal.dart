@@ -81,7 +81,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
+        Text(
           '编辑资料',
           style: TextStyle(
             fontSize: 17,
@@ -98,7 +98,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
               color: AppColors.background,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.close, size: 16, color: AppColors.textHint),
+            child: Icon(Icons.close, size: 16, color: AppColors.textHint),
           ),
         ),
       ],
@@ -109,7 +109,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '选择头像',
           style: TextStyle(
             fontSize: 12,
@@ -133,7 +133,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
       children: [
         Row(
           children: [
-            const Text(
+            Text(
               '昵称',
               style: TextStyle(
                 fontSize: 12,
@@ -152,26 +152,26 @@ class _EditProfileModalState extends State<EditProfileModal> {
           controller: _controller,
           decoration: InputDecoration(
             hintText: '给自己起个名字吧',
-            hintStyle: const TextStyle(color: AppColors.textHint),
+            hintStyle: TextStyle(color: AppColors.textHint),
             filled: true,
             fillColor: AppColors.background,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                 color: AppColors.border,
                 width: 1.5,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                 color: AppColors.border,
                 width: 1.5,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                 color: AppColors.coral,
                 width: 1.5,
               ),
@@ -197,7 +197,7 @@ class _EditProfileModalState extends State<EditProfileModal> {
           // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
           color: AppColors.btnPrimaryBg,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.btnPrimaryShadow,
               blurRadius: 10,

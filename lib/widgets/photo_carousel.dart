@@ -115,8 +115,8 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
                   },
                   backgroundDecoration:
                       widget.background ??
-                      const BoxDecoration(color: AppColors.background),
-                  loadingBuilder: (_, __) => const Center(
+                      BoxDecoration(color: AppColors.background),
+                  loadingBuilder: (_, __) => Center(
                     child: CircularProgressIndicator(
                       color: AppColors.coral,
                       strokeWidth: 2,
@@ -176,7 +176,7 @@ class _PhotoCarouselState extends State<PhotoCarousel> {
         color: AppColors.background,
         borderRadius: widget.borderRadius,
       ),
-      child: const Center(
+      child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

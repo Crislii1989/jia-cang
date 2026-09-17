@@ -366,7 +366,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.chevron_left,
                 size: 20,
                 color: AppColors.textSecondary,
@@ -374,7 +374,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
             ),
           ),
           const SizedBox(width: 12),
-          const Text(
+          Text(
             '订单导入',
             style: TextStyle(
               fontSize: 18,
@@ -400,7 +400,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.help_outline,
                 size: 18,
                 color: AppColors.textSecondary,
@@ -418,7 +418,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [AppColors.coral, AppColors.coralDeep],
@@ -592,7 +592,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
         const SizedBox(width: 8),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
@@ -614,7 +614,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
           decoration: BoxDecoration(
             color: AppColors.cardBg,
             borderRadius: BorderRadius.circular(24),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
                 color: AppColors.shadowCard,
                 blurRadius: 20,
@@ -670,7 +670,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
         const SizedBox(width: 6),
         Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
@@ -719,7 +719,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
     return Row(
       children: [
         Expanded(child: _buildDateInput('2024-01-01')),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Text(
             '至',
@@ -745,12 +745,12 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
       ),
       child: Row(
         children: [
-          const Icon(Icons.calendar_today, size: 14, color: AppColors.textHint),
+          Icon(Icons.calendar_today, size: 14, color: AppColors.textHint),
           const SizedBox(width: 6),
           Expanded(
             child: Text(
               defaultDate,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 color: AppColors.textPrimary,
               ),
@@ -784,7 +784,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
           const SizedBox(width: 10),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
             ),
@@ -807,7 +807,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
             borderRadius: BorderRadius.circular(18),
             // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
             color: AppColors.btnPrimaryBg,
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
                 color: AppColors.btnPrimaryShadow,
                 blurRadius: 10,
@@ -869,7 +869,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
   // ==================== History List ====================
   Widget _buildHistoryList(AsyncValue<List<HistoryRecord>> historyAsync) {
     return historyAsync.when(
-      loading: () => const Padding(
+      loading: () => Padding(
         padding: EdgeInsets.all(16),
         child: Center(
           child: CircularProgressIndicator(
@@ -887,7 +887,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
               color: AppColors.cardBg,
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Center(
+            child: Center(
               child: Text(
                 '暂无导入记录',
                 style: TextStyle(fontSize: 13, color: AppColors.textHint),
@@ -942,7 +942,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
                           children: [
                             Text(
                               record.title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.textPrimary,
@@ -951,7 +951,7 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
                             const SizedBox(height: 2),
                             Text(
                               record.meta,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 color: AppColors.textHint,
                               ),
@@ -965,13 +965,13 @@ class _OrderImportPageState extends ConsumerState<OrderImportPage>
                           children: [
                             TextSpan(
                               text: '${record.count}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900,
                                 color: AppColors.coralDeep,
                               ),
                             ),
-                            const TextSpan(
+                            TextSpan(
                               text: ' 件',
                               style: TextStyle(
                                 fontSize: 11,

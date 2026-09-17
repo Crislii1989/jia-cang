@@ -54,7 +54,7 @@ class PlatformGrid extends StatelessWidget {
                     end: Alignment.bottomRight,
                     colors: platform.gradientColors,
                   ),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       color: AppColors.shadowCard,
                       blurRadius: 20,
@@ -93,7 +93,7 @@ class PlatformGrid extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             platform.name,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: AppColors.textSecondary,
@@ -121,7 +121,7 @@ class PlatformGrid extends StatelessWidget {
                 width: 2,
                 strokeAlign: BorderSide.strokeAlignInside,
               ),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
                   color: AppColors.shadowCard,
                   blurRadius: 20,
@@ -129,10 +129,10 @@ class PlatformGrid extends StatelessWidget {
                 ),
               ],
             ),
-            child: const Icon(Icons.add, size: 24, color: AppColors.textHint),
+            child: Icon(Icons.add, size: 24, color: AppColors.textHint),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             '更多',
             style: TextStyle(
               fontSize: 11,

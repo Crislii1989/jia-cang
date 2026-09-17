@@ -123,7 +123,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                 children: [
                   Icon(Icons.system_update, color: AppColors.coral, size: 24),
                   const SizedBox(width: 8),
-                  const Text(
+                  Text(
                     '发现新版本',
                     style: TextStyle(
                       fontSize: 16,
@@ -143,14 +143,14 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                     children: [
                       Text(
                         'v$_currentVersion → v$_latestVersion',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
                           color: AppColors.textSecondary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         '更新内容：',
                         style: TextStyle(
                           fontSize: 13,
@@ -161,7 +161,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                       const SizedBox(height: 6),
                       Text(
                         _releaseNotes.isEmpty ? '暂无更新说明' : _releaseNotes,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textSecondary,
                           height: 1.6,
@@ -284,7 +284,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.chevron_left,
                 size: 20,
                 color: AppColors.textSecondary,
@@ -292,7 +292,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
             ),
           ),
           const SizedBox(width: 12),
-          const Text(
+          Text(
             '检查更新',
             style: TextStyle(
               fontSize: 18,
@@ -319,7 +319,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
               borderRadius: BorderRadius.circular(24),
               // 应用图标：实心珊瑚（与底部导航中央添加钮同色系）
               color: AppColors.btnPrimaryBg,
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
                   color: AppColors.btnPrimaryShadow,
                   blurRadius: 20,
@@ -330,7 +330,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
             child: Center(child: EmojiText(emoji: '📦', fontSize: 40)),
           ),
           const SizedBox(height: 14),
-          const Text(
+          Text(
             '家藏',
             style: TextStyle(
               fontSize: 20,
@@ -347,7 +347,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
             ),
             child: Text(
               'v$_currentVersion',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.coralDeep,
@@ -407,7 +407,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
           child: Icon(Icons.system_update, size: 24, color: AppColors.info),
         ),
         const SizedBox(width: 14),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -451,7 +451,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
           ),
         ),
         const SizedBox(width: 14),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -503,7 +503,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
               const SizedBox(height: 3),
               Text(
                 '当前版本 v$_currentVersion 已是最新',
-                style: const TextStyle(fontSize: 12, color: AppColors.textHint),
+                style: TextStyle(fontSize: 12, color: AppColors.textHint),
               ),
             ],
           ),
@@ -538,7 +538,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                 children: [
                   Text(
                     '发现新版本 v$_latestVersion',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: AppColors.coralDeep,
@@ -561,7 +561,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
                 color: AppColors.coralSoft,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
+              child: Text(
                 'NEW',
                 style: TextStyle(
                   fontSize: 10,
@@ -605,7 +605,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
               const SizedBox(height: 3),
               Text(
                 _errorMessage.isEmpty ? '网络连接异常，请稍后重试' : _errorMessage,
-                style: const TextStyle(fontSize: 12, color: AppColors.textHint),
+                style: TextStyle(fontSize: 12, color: AppColors.textHint),
               ),
             ],
           ),
@@ -628,7 +628,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
             borderRadius: BorderRadius.circular(18),
             // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
             color: AppColors.btnPrimaryBg,
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
                 color: AppColors.btnPrimaryShadow,
                 blurRadius: 10,
@@ -636,7 +636,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
               ),
             ],
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               '立即更新',
               style: TextStyle(
@@ -663,7 +663,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
           color: isChecking ? AppColors.border : AppColors.btnPrimaryBg,
           boxShadow: isChecking
               ? null
-              : const [
+              : [
                   BoxShadow(
                     color: AppColors.btnPrimaryShadow,
                     blurRadius: 10,
@@ -712,7 +712,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
             children: [
               Icon(Icons.notes, size: 18, color: AppColors.coral),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 '更新内容',
                 style: TextStyle(
                   fontSize: 14,
@@ -725,7 +725,7 @@ class _CheckUpdatePageState extends State<CheckUpdatePage>
           const SizedBox(height: 12),
           Text(
             _releaseNotes,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               color: AppColors.textSecondary,
               height: 1.7,

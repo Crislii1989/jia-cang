@@ -32,20 +32,24 @@ class FloatingBar extends StatelessWidget {
 
   final Widget child;
 
-  /// 条底颜色：默认导航条的半透明白 .86
-  final Color background;
+  /// 条底颜色：null 表示用当前皮肤的导航条底色（半透明白 .86）。
+  ///
+  /// 不能写成默认值 `= AppColors.navBarBg`——默认值必须是编译期常量，
+  /// 而条底颜色要跟随皮肤在运行时解析，所以留空并在 build 里兜底。
+  final Color? background;
 
   final EdgeInsetsGeometry padding;
 
   const FloatingBar({
     super.key,
     required this.child,
-    this.background = AppColors.navBarBg,
+    this.background,
     this.padding = actionBarPadding,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bg = background ?? AppColors.navBarBg;
     return Padding(
       padding: EdgeInsets.only(
         left: sideInset,
@@ -56,9 +60,9 @@ class FloatingBar extends StatelessWidget {
         height: height,
         padding: padding,
         decoration: BoxDecoration(
-          color: background,
+          color: bg,
           borderRadius: BorderRadius.circular(radius),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.barShadow,
               blurRadius: 16,
@@ -123,7 +127,7 @@ class FloatingBarButton extends StatelessWidget {
               ? null
               : Border.all(color: AppColors.blushLine, width: 1.5),
           boxShadow: isPrimary
-              ? const [
+              ? [
                   BoxShadow(
                     color: AppColors.btnPrimaryShadow,
                     blurRadius: 10,

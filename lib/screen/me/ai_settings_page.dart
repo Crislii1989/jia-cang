@@ -60,7 +60,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: configAsync.when(
-          loading: () => const Center(
+          loading: () => Center(
             child: CircularProgressIndicator(color: AppColors.coral),
           ),
           error: (e, _) => Center(child: Text('加载失败：$e')),
@@ -166,7 +166,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.chevron_left,
                 size: 20,
                 color: AppColors.textSecondary,
@@ -174,7 +174,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
             ),
           ),
           const SizedBox(width: 12),
-          const Text(
+          Text(
             'AI 模型设置',
             style: TextStyle(
               fontSize: 18,
@@ -204,7 +204,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '选择 AI 供应商',
             style: TextStyle(
               fontSize: 14,
@@ -295,14 +295,14 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                   color: AppColors.coral.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.save_outlined,
                   size: 22,
                   color: AppColors.coral,
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -329,7 +329,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
           ),
           const SizedBox(height: 16),
           if (_loadingSaved)
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: 20),
               child: Center(
                 child: SizedBox(
@@ -350,7 +350,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                 color: AppColors.background,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   '暂无已保存模型，请在下方配置后保存',
                   style: TextStyle(fontSize: 13, color: AppColors.textHint),
@@ -469,7 +469,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                     const SizedBox(height: 2),
                     Text(
                       '${meta.displayName} · $modelName',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
@@ -498,7 +498,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: isSwitching
-                        ? const Center(
+                        ? Center(
                             child: SizedBox(
                               width: 14,
                               height: 14,
@@ -571,7 +571,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                       ),
                     ),
                     child: isTesting
-                        ? const Center(
+                        ? Center(
                             child: SizedBox(
                               width: 14,
                               height: 14,
@@ -581,7 +581,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                               ),
                             ),
                           )
-                        : const Center(
+                        : Center(
                             child: Text(
                               '测试',
                               style: TextStyle(
@@ -776,7 +776,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                           isEditing
                               ? '编辑 ${meta.displayName} 模型'
                               : '添加 ${meta.displayName} 模型',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
                             color: AppColors.textPrimary,
@@ -797,7 +797,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                                 ),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
+                              child: Text(
                                 '取消编辑',
                                 style: TextStyle(
                                   fontSize: 10,
@@ -813,7 +813,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                     const SizedBox(height: 2),
                     Text(
                       meta.description,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
@@ -866,7 +866,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
             onTap: () => _launchUrl(meta.apiKeyHelpUrl),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.open_in_new,
                   size: 14,
                   color: AppColors.coral,
@@ -875,7 +875,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                 Expanded(
                   child: Text(
                     '前往 ${meta.displayName} 获取 API Key →',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       color: AppColors.coral,
                       decoration: TextDecoration.underline,
@@ -901,7 +901,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: AppColors.textSecondary,
@@ -939,7 +939,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
+              borderSide: BorderSide(
                 color: AppColors.coral,
                 width: 1.5,
               ),
@@ -1228,14 +1228,14 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                   color: AppColors.coral.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.history_rounded,
                   size: 22,
                   color: AppColors.coral,
                 ),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1291,7 +1291,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
                 color: AppColors.background,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   '暂无测试记录',
                   style: TextStyle(fontSize: 13, color: AppColors.textHint),
@@ -1339,7 +1339,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
               Expanded(
                 child: Text(
                   entry.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
@@ -1371,7 +1371,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
               Expanded(
                 child: Text(
                   '${entry.provider} · ${entry.model}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     color: AppColors.textSecondary,
                   ),
@@ -1382,7 +1382,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
               const SizedBox(width: 8),
               Text(
                 '$timeStr · ${entry.elapsedMs}ms',
-                style: const TextStyle(fontSize: 11, color: AppColors.textHint),
+                style: TextStyle(fontSize: 11, color: AppColors.textHint),
               ),
             ],
           ),

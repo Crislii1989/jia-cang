@@ -45,7 +45,7 @@ class ItemsPreviewModal extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w900,
                               color: AppColors.textPrimary,
@@ -63,7 +63,7 @@ class ItemsPreviewModal extends StatelessWidget {
                               color: AppColors.background,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.close,
                               size: 16,
                               color: AppColors.textHint,
@@ -76,7 +76,7 @@ class ItemsPreviewModal extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         '已选 ${selectedItemIds.length} 项',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           color: AppColors.coralDeep,
                           fontWeight: FontWeight.w600,
@@ -87,7 +87,7 @@ class ItemsPreviewModal extends StatelessWidget {
                     // 物品列表（可滚动，受 maxHeight 约束）
                     Flexible(
                       child: items.isEmpty
-                          ? const Center(
+                          ? Center(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 32),
                                 child: Text(
@@ -134,7 +134,7 @@ class ItemsPreviewModal extends StatelessWidget {
                                     width: AppColors.btnGhostBorderWidth,
                                   ),
                                 ),
-                                child: const Center(
+                                child: Center(
                                   child: Text(
                                     '批量迁移',
                                     style: TextStyle(
@@ -197,7 +197,7 @@ class ItemsPreviewModal extends StatelessWidget {
       onTap: () => onToggleItem(item.id),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(color: AppColors.border, width: 1),
           ),
@@ -220,7 +220,7 @@ class ItemsPreviewModal extends StatelessWidget {
                 children: [
                   Text(
                     item.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
@@ -229,7 +229,7 @@ class ItemsPreviewModal extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     meta,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       color: AppColors.textHint,
                     ),
@@ -253,7 +253,7 @@ class ItemsPreviewModal extends StatelessWidget {
                 ),
               ),
               child: isSelected
-                  ? const Icon(
+                  ? Icon(
                       Icons.check,
                       size: 12,
                       color: AppColors.chipSelectedFg,

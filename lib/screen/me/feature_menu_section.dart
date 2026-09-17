@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:jia_cang/constants/app_colors.dart';
 import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/providers/profile_provider.dart';
+import 'package:jia_cang/providers/skin_provider.dart';
 import 'package:jia_cang/widgets/emoji_text.dart';
 import 'package:jia_cang/widgets/section_title.dart';
 import 'help_feedback_sheet.dart';
@@ -21,6 +22,8 @@ class FeatureMenuSection extends ConsumerWidget {
     final k = DesignMetrics.of(context);
     final stats = ref.watch(profileStatsProvider);
     final data = stats.value ?? const {};
+    // 当前配色名直接显示在行右侧——不用点进去就知道现在用的哪套
+    final skinName = ref.watch(skinManagerProvider).active.name;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
@@ -62,6 +65,12 @@ class FeatureMenuSection extends ConsumerWidget {
           _CellGroup(
             k: k,
             cells: [
+              _Cell(
+                emoji: '🎨',
+                title: '外观',
+                value: skinName,
+                onTap: () => context.push('/appearance'),
+              ),
               _Cell(
                 emoji: '☁️',
                 title: '数据备份与恢复',
@@ -107,7 +116,7 @@ class _CellGroup extends StatelessWidget {
         color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(14 * k),
         border: Border.all(color: AppColors.border),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.floatCardShadow,
             blurRadius: 10,

@@ -7,8 +7,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app_router.dart';
 import 'constants/app_theme.dart';
+import 'providers/skin_provider.dart';
 import 'services/first_run_service.dart';
 import 'services/encryption_service.dart';
+import 'services/skin_store.dart';
 import 'widgets/app_canvas.dart';
 import 'widgets/db_gate.dart';
 import 'utils/package_info_setup_web.dart'
@@ -54,6 +56,9 @@ void main() async {
   }
 
   await FirstRunService.init();
+  // 皮肤要在 runApp 之前读出来：否则开屏会先用默认配色渲染一帧再跳成
+  // 用户选的皮肤（肉眼可见地闪一下）
+  await SkinStore.load();
   await EncryptionService.instance.init();
   // 预加载首页背景图，避免首次渲染时闪烁
   await rootBundle.load('assets/icon/background1.jpg');
@@ -74,6 +79,14 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // 监听皮肤变更：换肤后本组件重建 → MaterialApp / Router 重建 →
+    // go_router 重新构建各路由页面；页面外层挂的 key 含皮肤版本号
+    // （见 `app_router.dart` 的 `_skinKeyed`），key 一变 Element 重新挂载，
+    // 整页（含内部写死 const 的子块）才会按新配色重建。
+    // 只有这个 watch 才能把「配色变了」传下去——AppColors 是静态取值，
+    // 本身不会通知任何人。
+    ref.watch(skinManagerProvider.select((s) => s.revision));
+
     // DbGate：进入应用前先确认本地数据库能用。
     // 数据库连接挂起时界面会一直转圈、点击也没反应，
     // 这里把它变成一页能看懂、能自救的错误提示。

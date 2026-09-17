@@ -79,7 +79,7 @@ class DataStatsSection extends ConsumerWidget {
         color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(14 * k),
         border: Border.all(color: AppColors.border),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.floatCardShadow,
             blurRadius: 10,

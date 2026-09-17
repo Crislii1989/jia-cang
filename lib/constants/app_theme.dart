@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
-/// 全局浅色主题（珊瑚暖色系）。
+/// 全局浅色主题（跟随当前皮肤的主色）。
 ///
 /// 此前 MaterialApp 只有 `primarySwatch: Colors.amber`，导致
-/// showDatePicker 等系统组件回落到 Material 默认紫色，与全局珊瑚主题冲突
-/// （2026-09-16 用户反馈）。这里集中给一套珊瑚 ColorScheme，
-/// 并为日期选择器定制样式；后续系统组件（开关/菜单/对话框）也会自动跟随。
+/// showDatePicker 等系统组件回落到 Material 默认紫色，与全局主题冲突
+/// （2026-09-16 用户反馈）。这里集中给一套由皮肤主色派生的 ColorScheme，
+/// 并为日期选择器定制样式；系统组件（开关/菜单/对话框）会自动跟随。
+///
+/// ⚠️ 本函数在**每次构建时调用**（见 main.dart 的 MaterialApp），
+/// 换肤后主题会立刻跟着变；不要把它缓存成常量。
 ThemeData buildAppTheme() {
   // fromSeed 出来的中间色（容器色/悬停色等）由珊瑚种子派生；
   // 品牌关键色再显式钉住，避免 HCT 调色带来的色相漂移
@@ -66,8 +69,8 @@ ThemeData buildAppTheme() {
         if (states.contains(WidgetState.selected)) return AppColors.coral;
         return null;
       }),
-      todayBorder: const BorderSide(color: AppColors.coral),
-      yearStyle: const TextStyle(
+      todayBorder: BorderSide(color: AppColors.coral),
+      yearStyle: TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: AppColors.blushInk,

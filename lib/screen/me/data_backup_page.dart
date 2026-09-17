@@ -235,7 +235,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                 children: [
                   Expanded(
                     child: _isLoading
-                        ? const Center(
+                        ? Center(
                             child: CircularProgressIndicator(
                               color: AppColors.coral,
                             ),
@@ -280,7 +280,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(
+                CircularProgressIndicator(
                   color: AppColors.coral,
                   strokeWidth: 3,
                 ),
@@ -327,7 +327,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back_ios_new,
                 size: 18,
                 color: AppColors.textPrimary,
@@ -335,7 +335,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
             ),
           ),
           const SizedBox(width: 12),
-          const Text(
+          Text(
             '数据备份',
             style: TextStyle(
               fontSize: 18,
@@ -381,7 +381,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 'WebDAV 服务器配置',
                 style: TextStyle(
                   fontSize: 15,
@@ -464,7 +464,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: AppColors.textSecondary,
@@ -476,22 +476,22 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
           obscureText: obscureText,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 13),
+            hintStyle: TextStyle(color: AppColors.textHint, fontSize: 13),
             prefixIcon: Icon(icon, size: 18, color: AppColors.textHint),
             prefixIconConstraints: const BoxConstraints(minWidth: 36),
             filled: true,
             fillColor: AppColors.background,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColors.border),
+              borderSide: BorderSide(color: AppColors.border),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColors.border),
+              borderSide: BorderSide(color: AppColors.border),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppColors.coral),
+              borderSide: BorderSide(color: AppColors.coral),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 12,
@@ -524,7 +524,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
         ),
         child: Center(
           child: _isTesting
-              ? const SizedBox(
+              ? SizedBox(
                   width: 18,
                   height: 18,
                   child: CircularProgressIndicator(
@@ -571,14 +571,14 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                   color: AppColors.coral.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.backup_outlined,
                   size: 20,
                   color: AppColors.coral,
                 ),
               ),
               const SizedBox(width: 10),
-              const Text(
+              Text(
                 '备份操作',
                 style: TextStyle(
                   fontSize: 15,
@@ -620,7 +620,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
               : AppColors.textHint.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(18),
           boxShadow: enabled
-              ? const [
+              ? [
                   BoxShadow(
                     color: AppColors.btnPrimaryShadow,
                     blurRadius: 10,
@@ -631,7 +631,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
         ),
         child: Center(
           child: _isBackingUp
-              ? const SizedBox(
+              ? SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
@@ -660,7 +660,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
           padding: const EdgeInsets.only(bottom: 12),
           child: Row(
             children: [
-              const Text(
+              Text(
                 '备份历史',
                 style: TextStyle(
                   fontSize: 16,
@@ -684,7 +684,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
           ),
         ),
         if (_isLoadingBackups)
-          const Center(
+          Center(
             child: Padding(
               padding: EdgeInsets.all(20),
               child: CircularProgressIndicator(
@@ -765,7 +765,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                 children: [
                   Text(
                     timeStr,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -786,7 +786,7 @@ class _DataBackupPageState extends ConsumerState<DataBackupPage> {
                           ),
                           child: Text(
                             '${info.itemCount} 件物品',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               color: AppColors.coralDeep,

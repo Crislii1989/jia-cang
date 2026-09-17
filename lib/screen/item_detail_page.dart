@@ -40,7 +40,10 @@ class ItemDetailPage extends ConsumerWidget {
   };
 
   /// 状态 → 徽标配色（对应稿子 `.badge` 的四档 `.bg-*`）
-  static const Map<String, List<Color>> _statusBadgeColors = {
+  ///
+  /// getter 而非 const：'used' 一档用 [AppColors.blushInk2]（跟随皮肤），
+  /// 常量表达式放不下动态颜色，也不能用 final（会冻结首次取到的颜色）。
+  static Map<String, List<Color>> get _statusBadgeColors => {
     'safe': [AppColors.statGreen, AppColors.statGreenBg],
     'lent': [AppColors.statBlue, AppColors.statBlueBg],
     'lost': [AppColors.alertRed, AppColors.alertRedBg],
@@ -117,7 +120,7 @@ class ItemDetailPage extends ConsumerWidget {
       ref.watch(availableCategoriesProvider),
       item.categoryKey,
     );
-    const gradient = BoxDecoration(
+    final gradient = BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment(-0.3, -1),
         end: Alignment(0.3, 1),
@@ -231,7 +234,7 @@ class ItemDetailPage extends ConsumerWidget {
           color: AppColors.coralSoft,
           borderRadius: BorderRadius.circular(12 * k),
           border: Border.all(color: AppColors.expiryRowBorder),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(color: AppColors.cardShadow, blurRadius: 10, offset: Offset(0, 2)),
           ],
         ),
@@ -319,7 +322,7 @@ class ItemDetailPage extends ConsumerWidget {
         color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(12 * k),
         border: Border.all(color: AppColors.blushLine),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(color: AppColors.cardShadow, blurRadius: 10, offset: Offset(0, 2)),
         ],
       ),
@@ -423,7 +426,7 @@ class ItemDetailPage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
+            Text(
               '删除物品',
               style: TextStyle(
                 fontSize: 17,
@@ -434,7 +437,7 @@ class ItemDetailPage extends ConsumerWidget {
             const SizedBox(height: 10),
             Text(
               '确定要删除「${item.name}」吗？此操作无法撤销。',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13.5,
                 height: 1.6,
                 color: AppColors.textSecondary,
@@ -457,7 +460,7 @@ class ItemDetailPage extends ConsumerWidget {
                           width: 1.5,
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         '取消',
                         style: TextStyle(
                           fontSize: 14,
@@ -617,7 +620,7 @@ class _BackButton extends StatelessWidget {
       child: Container(
         width: AppDimensions.heroBackSize * k,
         height: AppDimensions.heroBackSize * k,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.cardBg,
           shape: BoxShape.circle,
           boxShadow: [
@@ -830,7 +833,7 @@ class _DetailLocationSheet extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   '修改收纳位置',
                   style: TextStyle(
                     fontSize: 16,
@@ -840,7 +843,7 @@ class _DetailLocationSheet extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: onClear,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.refresh,
                     size: 18,
                     color: AppColors.textSecondary,
@@ -850,10 +853,10 @@ class _DetailLocationSheet extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColors.border),
+          Divider(height: 1, color: AppColors.border),
           Flexible(
             child: isLoading
-                ? const Center(
+                ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(40),
                       child: CircularProgressIndicator(
@@ -862,7 +865,7 @@ class _DetailLocationSheet extends StatelessWidget {
                     ),
                   )
                 : nodes.isEmpty
-                ? const Center(
+                ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(40),
                       child: Text(
@@ -933,7 +936,7 @@ class _DetailLocationSheet extends StatelessWidget {
                                   children: [
                                     Text(
                                       node.name,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         color: AppColors.textPrimary,
@@ -942,7 +945,7 @@ class _DetailLocationSheet extends StatelessWidget {
                                     const SizedBox(height: 2),
                                     Text(
                                       node.subLabel,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11,
                                         color: AppColors.textHint,
                                       ),
@@ -953,7 +956,7 @@ class _DetailLocationSheet extends StatelessWidget {
                                 ),
                               ),
                               if (isSelected)
-                                const Icon(
+                                Icon(
                                   Icons.check_circle,
                                   color: AppColors.coral,
                                   size: 20,

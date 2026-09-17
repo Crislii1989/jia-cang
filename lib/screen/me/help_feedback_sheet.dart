@@ -60,7 +60,7 @@ class HelpFeedbackSheet extends StatelessWidget {
           child: Center(child: EmojiText(emoji: '📦', fontSize: 32)),
         ),
         const SizedBox(height: 12),
-        const Text(
+        Text(
           '家藏',
           style: TextStyle(
             fontSize: 18,
@@ -91,7 +91,7 @@ class HelpFeedbackSheet extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '常见问题',
           style: TextStyle(
             fontSize: 14,
@@ -114,7 +114,7 @@ class HelpFeedbackSheet extends StatelessWidget {
         shape: const RoundedRectangleBorder(),
         title: Text(
           question,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -146,7 +146,7 @@ class HelpFeedbackSheet extends StatelessWidget {
           // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
           color: AppColors.btnPrimaryBg,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.btnPrimaryShadow,
               blurRadius: 10,
@@ -154,7 +154,7 @@ class HelpFeedbackSheet extends StatelessWidget {
             ),
           ],
         ),
-        child: const Center(
+        child: Center(
           child: Text(
             '知道了',
             style: TextStyle(

@@ -1,24 +1,70 @@
-/// 统一颜色常量
+/// 统一颜色令牌。**所有页面取色只走这里**（禁写 Color(0x…) 字面量）。
 ///
-/// 应用主色调（V2.6 水彩粉/珊瑚改版后）：
-/// - 珊瑚 (#F2705B) 作为主色，按钮/选中态/链接一律取「按钮色彩」那一段
-/// - 暖粉白 (#FBF3EE，即 [AppColors.blushBg]) 作为全局底色
-/// - 深暖棕 (#4A3733，即 [AppColors.blushInk]) 作为文字主色
+/// ## 与皮肤系统的关系（2026-09-17 起）
 ///
-/// 旧的金色系（#FFB800 / #E5A500 / #FF8C42）已不再用于任何按钮或页面底色，
-/// 仅保留在语义状态色与分类身份色里，见文件末尾说明。
+/// 令牌分两类：
+///
+/// 1. **跟随皮肤（动态 getter）**——品牌色、中性面、文字三级、描边、阴影、
+///    首页装饰色。它们由当前 [AppSkin] 解析：先查该皮肤的精确覆盖表，
+///    没有则按锚点色派生（见 [_t] 的派生公式）。
+/// 2. **固定常量（static const）**——语义色（成功/警告/危险/信息/逾期红）、
+///    身份色（分类、房间、订单平台品牌、收纳层级、首页四色 pastel 轮转）。
+///    这些**故意不随皮肤变**：状态语义不能因为换了绿色皮肤就把「危险」变绿；
+///    pastel 轮转是设计的视觉签名。
+///
+/// 默认皮肤 [AppSkins.coral] 把全部动态令牌钉成了改造前的精确值，
+/// 所以「不换皮肤」时的渲染与旧版本完全一致。
+///
+/// ⚠️ 动态令牌不能再进 `const` 表达式（运行时才能确定），
+/// 写法上用 `final` 或直接在 build 里取用。
 library;
 
 import 'package:flutter/material.dart';
 
+import 'app_skin.dart';
+
 class AppColors {
   AppColors._();
 
-  // ── 主色 ──
-  static const int _primaryInt = 0xFFFFB800;
-  static const int _textInt = 0xFF3D2B1F;
+  // ── 当前皮肤 ──
+  //
+  // 用可变静态持有：近千处调用点写的是 `AppColors.coral` 这种静态取值，
+  // 若改成 `context.skin.coral` 需要改遍全库；这里保持静态 API 不变，
+  // 由皮肤 provider 在切换时调用 [applySkin]，再让根节点重建即全局生效。
+  static AppSkin _skin = AppSkins.coral;
 
-  // ── 品牌色 ──
+  /// 皮肤变更计数：每次 [applySkin] 自增。
+  ///
+  /// 用途：路由页面的 key（见 `app_router.dart` 的 `_skinKeyed`）。
+  /// **为什么必须换 key**：`const HomePage()` 这类页面在祖辈重建时会被
+  /// Element 复用——`updateChild` 里 `child.widget == newWidget`（同一个
+  /// const 规范化实例）会直接短路，**连 build 都不会调用**，页面内部
+  /// 那些 `const _XxxSection()` 同理。于是「重建整棵树」对 const 子树
+  /// 完全无效，换肤后它们纹丝不动。换成新 key 会让 Element 重新挂载，
+  /// 整棵子树才会用新配色重新 build。
+  static int skinRevision = 0;
+
+  /// 当前生效的皮肤
+  static AppSkin get skin => _skin;
+
+  /// 应用皮肤（只改数据，刷新由调用方触发根节点重建）
+  static void applySkin(AppSkin skin) {
+    _skin = skin;
+    skinRevision++;
+  }
+
+  /// 令牌解析：精确覆盖优先，否则用派生值。
+  static Color _t(String token, Color derived) => _skin.exact[token] ?? derived;
+
+  /// 派生的三级文字色（多处复用，避免公式散落）
+  static Color get _ink3 =>
+      _skin.exact[SkinTokens.blushInk3] ?? mixColor(_skin.ink2, _skin.bg, 0.5);
+
+  // ── 兼容保留：旧金色系 ──
+  //
+  // 全局改版后不再用于按钮或页面底色，仅少量装饰/图表引用，保持常量。
+  static const int _primaryInt = 0xFFFFB800;
+
   static const primary = Color(_primaryInt);
   static const primaryLight = Color(0xFFFFE9B0);
   static const primaryDark = Color(0xFFE5A500);
@@ -26,26 +72,34 @@ class AppColors {
   static const primaryMid = Color(0xFFFFD460);
   static const primaryDeep = Color(0xFFFF9E40);
 
-  // ── 背景色 ──
-  //
-  // V2.6 起全局底色与首页统一：旧的奶黄 `#FFF8E7` 已废弃，改用暖粉白 [blushBg]。
-  // 子页面的 `Scaffold(backgroundColor: ...)`、表单填充、未选中项底色等
-  // 一律经这个令牌取值，改一处即可全局对齐。
-  static const background = blushBg;
-  /// 已废弃：旧版浅金底 (#FFE9B0)，随全局改版不再使用
+  // ── 背景（跟随皮肤） ──
+  /// 全局页面底色
+  static Color get background => _t(SkinTokens.background, blushBg);
+  /// 已废弃：旧版浅金底，随全局改版不再使用
   static const backgroundLight = Color(0xFFFFE9B0);
-  static const cardBg = Colors.white;
+  /// 卡片/悬浮条底
+  static Color get cardBg => _t(SkinTokens.cardBg, _skin.cardBg);
+  /// 暖粉白页面底色（V2.0 令牌，与 [background] 同源）
+  static Color get blushBg => _t(SkinTokens.blushBg, _skin.bg);
 
-  // ── 文字色 ──
-  static const textPrimary = Color(_textInt);
-  static const textSecondary = Color(0xFF8B7355);
-  static const textHint = Color(0xFFB8A48E);
+  // ── 文字（跟随皮肤） ──
+  static Color get textPrimary => _t(SkinTokens.textPrimary, _skin.ink);
+  static Color get textSecondary => _t(SkinTokens.textSecondary, _skin.ink2);
+  static Color get textHint => _t(SkinTokens.textHint, _ink3);
+  /// 深暖棕文字主色（V2.0 令牌）
+  static Color get blushInk => _t(SkinTokens.blushInk, _skin.ink);
+  /// 次级文字
+  static Color get blushInk2 => _t(SkinTokens.blushInk2, _skin.ink2);
+  /// 三级文字/占位
+  static Color get blushInk3 => _t(SkinTokens.blushInk3, _ink3);
 
-  // ── 装饰色 ──
-  static const border = Color(0xFFF0E4D0);
-  static const divider = Color(0xFFF0E4D0);
+  // ── 描边 / 分割线（跟随皮肤） ──
+  static Color get border => _t(SkinTokens.border, _skin.line);
+  static Color get divider => _t(SkinTokens.divider, _skin.line);
+  /// 边框 / 分隔线（V2.0 令牌）
+  static Color get blushLine => _t(SkinTokens.blushLine, _skin.line);
 
-  // ── 语义色 ──
+  // ── 语义色（固定，不随皮肤变） ──
   static const success = Color(0xFF6BCB77);
   static const successLight = Color(0xFFD4F5D9);
   static const warning = Color(0xFFFF8C42);
@@ -61,15 +115,13 @@ class AppColors {
   static const statusUsingBg = Color(0xFFD4F5D9);
   static const selectedBg = Color(0xFFD4E8FF);
   static const accentLight = Color(0xFFFFE066);
-
-  // ── 额外背景色 ──
   static const accentLightBg = Color.fromARGB(255, 241, 198, 77);
+
+  // ── shimmer / 渐变（固定） ──
   static const shimmerGold = Color(0xFFFFB800);
   static const shimmerOrange = Color(0xFFFF8C42);
   static const shimmerRed = Color(0xFFFF6B6B);
   static const shimmerGreen = Color(0xFF6BCB77);
-
-  // ── 渐变起始色（快捷操作） ──
   static const gradientGold = Color(0xFFFFD460);
   static const gradientOrange = Color(0xFFFF9E6C);
   static const gradientOrangeEnd = Color(0xFFFF7A30);
@@ -78,63 +130,45 @@ class AppColors {
   static const gradientBlue = Color(0xFF8AB4FF);
   static const gradientBlueEnd = Color(0xFF5588EE);
 
-  // ── 标签色 ──
+  // ── 标签色（固定） ──
   static const tagNew = Color(0xFF3A9E4A);
   static const tagNewBg = Color(0xFFD4F5D9);
   static const tagUrgent = Color(0xFFFF6B6B);
   static const tagNormal = Color(0xFF5B9BFF);
 
-  // ── 阴影色（带透明度） ──
-  static const shadowPrimary = Color(0x1FFFB800);
-  static const shadowDark = Color(0x0D3D2B1F);
-  static const shadowCard = Color(0x1AFFB800);
+  // ── 阴影（跟随皮肤：色相跟文字色走，避免彩色皮肤上出现突兀的暖棕影子） ──
+  static Color get shadowPrimary =>
+      _t(SkinTokens.shadowPrimary, _skin.primary.withValues(alpha: 0.12));
+  static Color get shadowDark =>
+      _t(SkinTokens.shadowDark, _skin.ink.withValues(alpha: 0.05));
+  static Color get shadowCard =>
+      _t(SkinTokens.shadowCard, _skin.ink.withValues(alpha: 0.10));
 
-  // ── UI 改版令牌（高保真稿 docs/ui-hifi-mockups.html V1.x，2026-09） ──
-  /// 浅金底：临期/闲置等「hot 态」统计卡与提醒强调
-  static const goldSoft = Color(0xFFFFF4D6);
-  /// hot 态卡片描边
-  static const goldSoftBorder = Color(0xFFF2D488);
-  /// hot 态图标块底色
-  static const goldTile = Color(0xFFFFE49A);
-  /// 普通图标块底色（中性暖灰）
-  static const neutralTile = Color(0xFFF5EFE4);
-
-  /// 在库（绿）
+  // ── 状态身份色（固定：在库绿 / 出借蓝） ──
   static const safeGreen = Color(0xFF3E9B4F);
   static const safeGreenBg = Color(0xFFE6F4EA);
-  /// 出借中（蓝）
   static const lendBlue = Color(0xFF4A7FB5);
   static const lendBlueBg = Color(0xFFE8F0F8);
   /// 临期文字（浅金底上的深金棕，保证对比度）
   static const warnBrown = Color(0xFFB27E00);
-  /// 逾期（红，替换旧 coral 色 danger 用于徽标/旋钮）
+  /// 逾期（红）
   static const alertRed = Color(0xFFD64545);
   static const alertRedBg = Color(0xFFFDE8E8);
 
-  // ── V2.0 水彩粉 / 珊瑚色系令牌（docs/ui-hifi-mockups.html V2.0，2026-09-16） ──
-  //
-  // 用户参考图定调：暖粉白底 + 珊瑚主色 + 彩虹 pastel 数字色块。
-  // 本轮先用于「首页 + 底部悬浮胶囊导航」，其余页面下一轮跟进统一。
-  /// 主色：珊瑚（点击态、当前 Tab、主按钮）
-  static const coral = Color(0xFFF2705B);
+  // ── 品牌色 / 主色（跟随皮肤） ──
+  /// 主色（默认皮肤为珊瑚）
+  static Color get coral => _t(SkinTokens.coral, _skin.primary);
   /// 主色加深：链接文字 / 按压态
-  static const coralDeep = Color(0xFFDD5B46);
+  static Color get coralDeep =>
+      _t(SkinTokens.coralDeep, darkenColor(_skin.primary, 0.12));
   /// 主色浅底：hot 态卡片底色
-  static const coralSoft = Color(0xFFFFE9E2);
+  static Color get coralSoft =>
+      _t(SkinTokens.coralSoft, mixColor(_skin.primary, _skin.cardBg, 0.86));
   /// hot 态图标/数字块底色
-  static const coralTile = Color(0xFFFFD9CC);
-  /// 暖粉白页面底色
-  static const blushBg = Color(0xFFFBF3EE);
-  /// 深暖棕文字主色
-  static const blushInk = Color(0xFF4A3733);
-  /// 次级文字
-  static const blushInk2 = Color(0xFF9A817B);
-  /// 三级文字/占位
-  static const blushInk3 = Color(0xFFC3ABA4);
-  /// 边框 / 分隔线
-  static const blushLine = Color(0xFFF3DED7);
+  static Color get coralTile =>
+      _t(SkinTokens.coralTile, mixColor(_skin.primary, _skin.cardBg, 0.74));
 
-  /// 首页统计迷你卡数字色块（4 色轮转：物品总数 / 即将到期 / 出借中 / 长期闲置）
+  // ── 首页统计迷你卡色块 / 四色 pastel 轮转（固定：设计视觉签名） ──
   static const statPeach = Color(0xFFD97B4F);
   static const statPeachBg = Color(0xFFFFE3D3);
   static const statCoral = Color(0xFFDD5B46);
@@ -146,186 +180,160 @@ class AppColors {
   static const statGreen = Color(0xFF4E9E68);
   static const statGreenBg = Color(0xFFDFF0E4);
 
-  // ── V2.6 令牌（docs/ui-hifi-mockups.html V2.6 / 线框图 V2.15，2026-09-16） ──
-  //
-  // 本轮把「全局背景 + 悬浮条语言」统一到所有页面：
-  // 背景只剩一层右上角放射渐变；底部导航与详情/添加页的操作条共用同一套悬浮圆角条规格。
+  // ── 全局背景光晕（跟随皮肤） ──
+  /// 右上角光晕（自带 alpha，叠在页面底色上）
+  static Color get bgGlow => _t(SkinTokens.bgGlow, _skin.glow);
+  /// 光晕渐隐端（同色全透明）——外圈必须淡到 0，否则出现硬边圆环
+  static Color get glowFade =>
+      _t(SkinTokens.glowFade, _skin.glow.withValues(alpha: 0));
 
-  /// 全局背景的右上角光晕（rgba(255,164,112,.52)，叠在 blushBg 上）
-  static const bgGlow = Color(0x85FFA470);
-
-  /// 光晕渐隐端（同色全透明）——光晕外圈必须淡到 0，否则会出现硬边圆环
-  static const glowFade = Color(0x00FFA470);
-
+  // ── 悬浮条 / 悬浮卡（跟随皮肤） ──
   /// 底部导航条底：半透明白 .86（透出全局背景）
-  static const navBarBg = Color(0xDBFFFFFF);
+  static Color get navBarBg =>
+      _t(SkinTokens.navBarBg, cardBg.withValues(alpha: 0.86));
+  /// 底部操作条条底：半透明白 .92（托按钮，需保证对比度）
+  static Color get actionBarBg =>
+      _t(SkinTokens.actionBarBg, cardBg.withValues(alpha: 0.92));
+  /// 悬浮条投影
+  static Color get barShadow =>
+      _t(SkinTokens.barShadow, _skin.ink.withValues(alpha: 0.14));
+  /// 悬浮条描边（白底方块的一圈极浅高光边）
+  static Color get floatHairline =>
+      _t(SkinTokens.floatHairline, Colors.white.withValues(alpha: 0.90));
+  /// 浅一档的高光边（水彩渐变卡片用）
+  static Color get floatHairlineSoft =>
+      _t(SkinTokens.floatHairlineSoft, Colors.white.withValues(alpha: 0.75));
+  /// 悬浮卡片投影——搜索胶囊、提醒卡组
+  static Color get floatCardShadow =>
+      _t(SkinTokens.floatCardShadow, _skin.ink.withValues(alpha: 0.10));
+  /// 稍重的悬浮卡片投影——水彩统计卡、分类大圆
+  static Color get floatCardShadowStrong =>
+      _t(SkinTokens.floatCardShadowStrong, _skin.ink.withValues(alpha: 0.12));
+  /// 中央添加钮投影
+  static Color get addFabShadow =>
+      _t(SkinTokens.addFabShadow, addFab.withValues(alpha: 0.45));
+  /// 主按钮投影
+  static Color get btnPrimaryShadow =>
+      _t(SkinTokens.btnPrimaryShadow, _skin.primary.withValues(alpha: 0.35));
 
-  /// 底部操作条条底：半透明白 .92（比导航条实一档——它托的是按钮，要保证对比度）
-  static const actionBarBg = Color(0xEBFFFFFF);
-
-  /// 悬浮条投影（rgba(150,90,70,.14)）
-  static const barShadow = Color(0x24965A46);
-
-  /// 悬浮条描边（rgba(255,255,255,.9)，给白底方块一圈极浅的高光边）
-  static const floatHairline = Color(0xE6FFFFFF);
-
-  /// 浅一档的高光边（rgba(255,255,255,.75)，水彩渐变卡片用）
-  static const floatHairlineSoft = Color(0xBFFFFFFF);
-
-  /// 悬浮卡片投影（rgba(150,90,70,.10) / 0 3px 12px）——搜索胶囊、提醒卡组
-  static const floatCardShadow = Color(0x1A965A46);
-
-  /// 稍重的悬浮卡片投影（rgba(150,90,70,.12) / 0 3px 9px）——水彩统计卡、分类大圆
-  static const floatCardShadowStrong = Color(0x1F965A46);
-
-  /// 中央添加钮投影（rgba(247,156,132,.45)）
-  static const addFabShadow = Color(0x73F79C84);
-
-  /// 主按钮投影（rgba(242,112,91,.35)）
-  static const btnPrimaryShadow = Color(0x59F2705B);
-
-  /// 导航条当前 Tab（珊瑚粉）
-  static const navActive = Color(0xFFE8807F);
-
-  /// 导航条未选中（暖棕）
-  static const navInactive = Color(0xFF9A7C5C);
-
+  /// 导航条当前 Tab
+  static Color get navActive =>
+      _t(SkinTokens.navActive, mixColor(_skin.primary, _skin.cardBg, 0.16));
+  /// 导航条未选中
+  static Color get navInactive => _t(SkinTokens.navInactive, _skin.ink2);
   /// 中央添加钮底色
-  static const addFab = Color(0xFFF79C84);
+  static Color get addFab =>
+      _t(SkinTokens.addFab, mixColor(_skin.primary, _skin.cardBg, 0.28));
 
-  /// 首页问候语
-  static const greetInk = Color(0xFF6B3B33);
+  // ── 首页问候区（跟随皮肤） ──
+  static Color get greetInk =>
+      _t(SkinTokens.greetInk, mixColor(_skin.ink, _skin.primary, 0.30));
+  static Color get greetSub =>
+      _t(SkinTokens.greetSub, mixColor(_skin.ink2, _skin.bg, 0.25));
+  static Color get greetHeart =>
+      _t(SkinTokens.greetHeart, mixColor(_skin.primary, _skin.ink, 0.30));
+  static Color get homeHouseIcon => _t(SkinTokens.homeHouseIcon, _skin.ink2);
 
-  /// 首页副标题 / 日期
-  static const greetSub = Color(0xFFB48D82);
-
-  /// 问候语后面那颗小爱心
-  static const greetHeart = Color(0xFFC98A79);
-
-  /// 头部线描房子图标
-  static const homeHouseIcon = Color(0xFF8E6E65);
-
-  // ── 首页竖排统计高卡（4 张，粉 / 绿 / 蓝 / 紫水彩渐变底） ──
-  /// 卡内数字与线性图标色（与各自渐变底同色系深色）
+  // ── 首页统计高卡 / 分类大圆的 pastel 渐变（固定） ──
   static const statHighPinkFg = Color(0xFFD9534A);
   static const statHighGreenFg = Color(0xFF3E9B5B);
   static const statHighBlueFg = Color(0xFF3F7DC0);
   static const statHighPurpleFg = Color(0xFF7B5FC7);
-  /// 卡内标签（统一暖灰）
   static const statHighLabel = Color(0xFF6F5A52);
-  /// 四张渐变底（158deg，三档：浓 → 中 → 几乎白）
   static const statHighPink = [Color(0xFFF9D5D1), Color(0xFFFCEBE6), Color(0xFFFDF7F3)];
   static const statHighGreen = [Color(0xFFD3E7CE), Color(0xFFEAF3E6), Color(0xFFF6FAF3)];
   static const statHighBlue = [Color(0xFFD0E0F0), Color(0xFFE8F0F8), Color(0xFFF4F8FC)];
   static const statHighPurple = [Color(0xFFDED4F1), Color(0xFFEEE9F8), Color(0xFFF8F5FC)];
-
-  // ── 首页分类大圆的 pastel 渐变底（粉 / 蓝 / 绿 / 紫轮转） ──
   static const catPink = [Color(0xFFF6CBC6), Color(0xFFFCEAE6)];
   static const catBlue = [Color(0xFFCCDEF1), Color(0xFFEBF2F9)];
   static const catGreen = [Color(0xFFD0E7CB), Color(0xFFEBF4E8)];
   static const catPurple = [Color(0xFFDACFF0), Color(0xFFEFEAF9)];
-  /// 分类标签文字
-  static const catLabel = Color(0xFF5C4740);
+  /// 分类标签文字（跟随皮肤）
+  static Color get catLabel => _t(SkinTokens.catLabel, _skin.ink);
 
   // ── 首页提醒卡组 ──
-  /// 行间细分割线
-  static const reminderDivider = Color(0xFFF7EAE4);
-  /// 右侧日期（三级文字）
-  static const reminderDate = Color(0xFFC3ABA4);
-  /// 状态小字三档
+  /// 行间细分割线（跟随皮肤）
+  static Color get reminderDivider =>
+      _t(SkinTokens.reminderDivider, mixColor(_skin.line, _skin.cardBg, 0.30));
+  /// 右侧日期（三级文字，跟随皮肤）
+  static Color get reminderDate => _t(SkinTokens.reminderDate, _ink3);
+  /// 状态小字（语义，固定）
   static const reminderDanger = Color(0xFFD9534A);
   static const reminderWarn = Color(0xFFE0764F);
-  static const reminderMuted = Color(0xFF9A817B);
+  /// 状态小字第三档（跟随皮肤）
+  static Color get reminderMuted => _t(SkinTokens.reminderMuted, _skin.ink2);
 
-  // ── 按钮色彩（V2.6/V2.7 全局统一；**所有页面的按钮一律取这一段**） ──
-  //
-  // 依据高保真稿的 `.btn` 规范（docs/ui-hifi-mockups.html）：
-  //   .btn.primary { background: var(--gold); color: #fff;
-  //                  box-shadow: 0 3px 10px rgba(242,112,91,.35); }
-  //   .btn.ghost   { background: var(--card); color: var(--ink);
-  //                  border: 1.5px solid var(--line); }
-  // 稿子里的按钮**没有渐变**，所以旧版「金 → 橙」渐变主按钮一律收敛为
-  // **实心珊瑚**；旧的 `AppColors.primary`(金) / `warning`(橙) / `primaryDark`
-  // (深金) 不再用于任何按钮，只留给非按钮的装饰与图表色块。
-  // 分类/排序等「可选中标签（chip）」也走这一段，避免各页自己拼一套。
-
-  /// 主按钮底色：实心珊瑚
-  static const btnPrimaryBg = coral;
+  // ── 按钮色彩（跟随皮肤；所有页面按钮一律取这一段） ──
+  /// 主按钮底色：实心主色
+  static Color get btnPrimaryBg => _t(SkinTokens.btnPrimaryBg, coral);
   /// 主按钮文字/图标：白
-  static const btnPrimaryFg = Colors.white;
-
-  /// 幽灵（次要）按钮底色：白
-  static const btnGhostBg = cardBg;
-  /// 幽灵按钮描边：浅粉线（稿子 1.5px）
-  static const btnGhostBorder = blushLine;
+  static Color get btnPrimaryFg => _t(SkinTokens.btnPrimaryFg, Colors.white);
+  /// 幽灵（次要）按钮底色
+  static Color get btnGhostBg => _t(SkinTokens.btnGhostBg, cardBg);
+  /// 幽灵按钮描边
+  static Color get btnGhostBorder => _t(SkinTokens.btnGhostBorder, blushLine);
   /// 幽灵按钮描边宽度
   static const btnGhostBorderWidth = 1.5;
-  /// 幽灵按钮文字/图标：深暖棕
-  static const btnGhostFg = blushInk;
-
-  /// 软性按钮底色（次级强调，不是主行动）
-  static const btnSoftBg = coralSoft;
+  /// 幽灵按钮文字/图标
+  static Color get btnGhostFg => _t(SkinTokens.btnGhostFg, blushInk);
+  /// 软性按钮底色
+  static Color get btnSoftBg => _t(SkinTokens.btnSoftBg, coralSoft);
   /// 软性按钮文字/图标
-  static const btnSoftFg = coralDeep;
-
-  /// 文字按钮 / 链接型按钮前景色（TextButton 等）
-  static const btnTextFg = coralDeep;
-
-  /// 危险行动（删除、清空）：文字/描边用稿子的 `--red`
+  static Color get btnSoftFg => _t(SkinTokens.btnSoftFg, coralDeep);
+  /// 文字按钮 / 链接型按钮前景色
+  static Color get btnTextFg => _t(SkinTokens.btnTextFg, coralDeep);
+  /// 危险行动（删除、清空）——固定语义色
   static const btnDangerFg = alertRed;
-  /// 危险行动的浅底（二次确认里的危险按钮）
   static const btnDangerBg = alertRedBg;
-
-  /// 选中态标签（chip / 分段控件）底色：实心珊瑚
-  static const chipSelectedBg = coral;
-  /// 选中态标签文字/图标：白
-  static const chipSelectedFg = Colors.white;
-  /// 未选中标签底色：白
-  static const chipBg = cardBg;
+  /// 选中态标签底色
+  static Color get chipSelectedBg => _t(SkinTokens.chipSelectedBg, coral);
+  /// 选中态标签文字/图标
+  static Color get chipSelectedFg => _t(SkinTokens.chipSelectedFg, Colors.white);
+  /// 未选中标签底色
+  static Color get chipBg => _t(SkinTokens.chipBg, cardBg);
   /// 未选中标签描边
-  static const chipBorder = blushLine;
-  /// 未选中标签文字：次级暖棕
-  static const chipFg = blushInk2;
+  static Color get chipBorder => _t(SkinTokens.chipBorder, blushLine);
+  /// 未选中标签文字
+  static Color get chipFg => _t(SkinTokens.chipFg, _skin.ink2);
 
-  // ── V2.7 令牌（高保真稿 S3 详情 / S4 添加页落地，2026-09-16） ──
-  //
-  // 这一段的取值直接取自 docs/ui-hifi-mockups.html 的 S3/S4 内联样式与
-  // `.cell / .f-cell / .photo-add / .delknob / .badge` 规则，别再各页自己拼。
-  //
-  // 状态徽标与分类徽标**不需要新色**，四个状态与稿子的 `.bg-*` 完全对上：
-  //   在库   → .bg-ok     = statGreen / statGreenBg
-  //   出借中 → .bg-info   = statBlue  / statBlueBg
-  //   已丢失 → .bg-danger = alertRed  / alertRedBg
-  //   已使用 → .bg-muted  = blushInk2 / statPeachBg
-
-  /// 详情页沉浸大图的珊瑚渐变底（稿子 140deg：#FFB9A5 → #F2705B 55% → #DD5B46）
-  static const heroGradient = [
-    Color(0xFFFFB9A5),
-    Color(0xFFF2705B),
-    Color(0xFFDD5B46),
-  ];
-
-  /// 信息组（cell-group）行与行之间的极浅分割线（稿子 #FAF0EA）
-  static const cellDivider = Color(0xFFFAF0EA);
-
-  /// 新增照片虚线块的虚线色（稿子 1.5px dashed #F0B7A6）
-  static const photoAddBorder = Color(0xFFF0B7A6);
-
-  /// 新增照片虚线块的底色（稿子 #FFF7F3）
-  static const photoAddBg = Color(0xFFFFF7F3);
-
-  /// 详情页删除旋钮的描边（稿子 1.5px #F0B9B9，底色用 [alertRedBg]）
+  // ── 详情页 / 添加页（V2.7 令牌） ──
+  /// 详情页沉浸大图的渐变（跟随皮肤）
+  static List<Color> get heroGradient =>
+      _skin.exactGradient ??
+      [
+        mixColor(_skin.primary, Colors.white, 0.35),
+        _skin.primary,
+        darkenColor(_skin.primary, 0.12),
+      ];
+  /// 信息组行间极浅分割线
+  static Color get cellDivider =>
+      _t(SkinTokens.cellDivider, mixColor(_skin.line, _skin.cardBg, 0.45));
+  /// 新增照片虚线块描边
+  static Color get photoAddBorder =>
+      _t(SkinTokens.photoAddBorder, mixColor(_skin.primary, _skin.cardBg, 0.55));
+  /// 新增照片虚线块底色
+  static Color get photoAddBg =>
+      _t(SkinTokens.photoAddBg, mixColor(_skin.primary, _skin.cardBg, 0.93));
+  /// hot 态提示卡底色（临期/闲置强调；非默认皮肤跟随主色浅底）
+  static Color get goldSoft =>
+      _t(SkinTokens.goldSoft, mixColor(_skin.primary, _skin.cardBg, 0.88));
+  /// hot 态卡片描边（无生产引用，保留常量）
+  static const goldSoftBorder = Color(0xFFF2D488);
+  /// hot 态图标块底色（无生产引用，保留常量）
+  static const goldTile = Color(0xFFFFE49A);
+  /// 普通图标块底色（中性暖灰）
+  static const neutralTile = Color(0xFFF5EFE4);
+  /// 详情页删除旋钮描边（危险语义，固定）
   static const delKnobBorder = Color(0xFFF0B9B9);
-
-  /// 详情页删除旋钮投影（稿子 rgba(214,69,69,.18) / 0 3px 8px）
+  /// 详情页删除旋钮投影（危险语义，固定）
   static const delKnobShadow = Color(0x2ED64545);
-
-  /// 卡片投影（稿子 `--shadow: 0 2px 10px rgba(77,55,51,.07)`）
-  static const cardShadow = Color(0x124D3733);
-
-  /// 详情页「到期日」条的描边（稿子 `.stat.hot` 的 #F6C4B4，底色 [coralSoft]）
-  static const expiryRowBorder = Color(0xFFF6C4B4);
-
-  /// 到期日条里「还剩 N 天」的强调色（稿子 #C25A3C）
-  static const expiryHint = Color(0xFFC25A3C);
+  /// 卡片投影
+  static Color get cardShadow =>
+      _t(SkinTokens.cardShadow, _skin.ink.withValues(alpha: 0.07));
+  /// 详情页「到期日」条描边
+  static Color get expiryRowBorder =>
+      _t(SkinTokens.expiryRowBorder, mixColor(_skin.primary, _skin.cardBg, 0.70));
+  /// 到期日条里「还剩 N 天」的强调色
+  static Color get expiryHint =>
+      _t(SkinTokens.expiryHint, darkenColor(_skin.primary, 0.20));
 }

@@ -50,7 +50,7 @@ class ReminderSection extends ConsumerWidget {
           children: [
             for (int i = 0; i < reminders.length; i++) ...[
               if (i > 0)
-                const Divider(
+                Divider(
                   height: 1,
                   thickness: 1,
                   color: AppColors.reminderDivider,

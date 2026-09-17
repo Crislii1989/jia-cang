@@ -56,7 +56,7 @@ class ImportProgressSection extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.cardBg,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
               color: AppColors.shadowCard,
               blurRadius: 20,
@@ -73,7 +73,7 @@ class ImportProgressSection extends StatelessWidget {
               children: [
                 Text(
                   importDone ? '导入完成！' : '正在导入${platformName ?? ''}订单…',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
@@ -146,7 +146,7 @@ class ImportProgressSection extends StatelessWidget {
                     clipBehavior: Clip.none,
                     children: [
                       Container(
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           color: AppColors.coral,
                         ),
                       ),
@@ -231,7 +231,7 @@ class ImportProgressSection extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w500,
             color: AppColors.textHint,
@@ -249,7 +249,7 @@ class ImportProgressSection extends StatelessWidget {
         shrinkWrap: true,
         itemCount: importedItems.length,
         separatorBuilder: (_, _) =>
-            const Divider(color: AppColors.border, height: 1, thickness: 1),
+            Divider(color: AppColors.border, height: 1, thickness: 1),
         itemBuilder: (context, index) {
           final item = importedItems[index];
           return Padding(
@@ -261,7 +261,7 @@ class ImportProgressSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     item.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -271,7 +271,7 @@ class ImportProgressSection extends StatelessWidget {
                 ),
                 Text(
                   item.price,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: AppColors.coralDeep,

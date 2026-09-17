@@ -127,7 +127,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
             Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             '新增收纳空间',
                             style: TextStyle(
                               fontSize: 17,
@@ -144,7 +144,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                                 color: AppColors.background,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.close,
                                 size: 16,
                                 color: AppColors.textHint,
@@ -177,7 +177,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                             // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
                             color: AppColors.btnPrimaryBg,
                             borderRadius: BorderRadius.circular(18),
-                            boxShadow: const [
+                            boxShadow: [
                               BoxShadow(
                                 color: AppColors.btnPrimaryShadow,
                                 blurRadius: 10,
@@ -187,7 +187,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                           ),
                           child: Center(
                             child: _submitting
-                                ? const Row(
+                                ? Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       SizedBox(
@@ -209,7 +209,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                                       ),
                                     ],
                                   )
-                                : const Text(
+                                : Text(
                                     '确认添加',
                                     style: TextStyle(
                                       fontSize: 15,
@@ -236,7 +236,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
             children: [
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textSecondary,
@@ -438,7 +438,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
               ),
             ),
             if (highlight)
-              const Text(
+              Text(
                 ' · 已选定',
                 style: TextStyle(
                   fontSize: 10,
@@ -514,7 +514,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
       ),
       child: Text(
         hint,
-        style: const TextStyle(color: AppColors.textHint, fontSize: 13),
+        style: TextStyle(color: AppColors.textHint, fontSize: 13),
       ),
     );
   }
@@ -527,20 +527,20 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
             : _addLevel == 'cabinet'
             ? '例如：电视柜、衣柜'
             : '例如：上层隔板、抽屉',
-        hintStyle: const TextStyle(color: AppColors.textHint),
+        hintStyle: TextStyle(color: AppColors.textHint),
         filled: true,
         fillColor: AppColors.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border, width: 1.5),
+          borderSide: BorderSide(color: AppColors.border, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border, width: 1.5),
+          borderSide: BorderSide(color: AppColors.border, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.coral, width: 1.5),
+          borderSide: BorderSide(color: AppColors.coral, width: 1.5),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
@@ -569,7 +569,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: AppColors.border, width: 2),
         ),
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -621,7 +621,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
                 fit: BoxFit.cover,
                 errorBuilder: (_, _, _) => Container(
                   color: AppColors.border,
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.broken_image,
                       color: AppColors.textHint,
@@ -694,7 +694,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
           border: Border.all(color: AppColors.border, width: 2),
           borderRadius: BorderRadius.circular(18),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
@@ -748,7 +748,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
               ),
             ),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.photo_library,
                 color: AppColors.btnTextFg,
               ),
@@ -759,7 +759,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
               },
             ),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.camera_alt,
                 color: AppColors.btnTextFg,
               ),
@@ -770,7 +770,7 @@ class _AddSpaceModalState extends ConsumerState<AddSpaceModal> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.close, color: AppColors.textSecondary),
+              leading: Icon(Icons.close, color: AppColors.textSecondary),
               title: const Text('取消'),
               onTap: () => Navigator.pop(ctx),
             ),

@@ -527,7 +527,7 @@ class _EmojiPickerFieldState extends State<EmojiPickerField> {
               EmojiText(emoji: widget.value, fontSize: 22),
             ],
             const Spacer(),
-            const Icon(
+            Icon(
               Icons.expand_more_rounded,
               size: 18,
               color: AppColors.textSecondary,
@@ -570,7 +570,7 @@ class _EmojiPickerPanel extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
@@ -581,7 +581,7 @@ class _EmojiPickerPanel extends StatelessWidget {
               GestureDetector(
                 onTap: () => Navigator.of(context).pop(),
                 behavior: HitTestBehavior.opaque,
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(
                     Icons.close_rounded,

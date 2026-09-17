@@ -486,17 +486,17 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.search, size: 18, color: AppColors.textHint),
+                  Icon(Icons.search, size: 18, color: AppColors.textHint),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: _searchController,
                       onChanged: _onSearchChanged,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textPrimary,
                       ),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: '搜索物品名称、分类…',
                         hintStyle: TextStyle(
                           fontSize: 14,
@@ -810,14 +810,14 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           children: [
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: AppColors.chipSelectedFg,
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(
+            Icon(
               Icons.close,
               size: 13,
               color: AppColors.chipSelectedFg,
@@ -938,17 +938,17 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     return RichText(
       text: TextSpan(
         text: '共 ',
-        style: const TextStyle(fontSize: 12, color: AppColors.textHint),
+        style: TextStyle(fontSize: 12, color: AppColors.textHint),
         children: [
           TextSpan(
             text: '$count',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: AppColors.coralDeep,
             ),
           ),
-          const TextSpan(
+          TextSpan(
             text: ' 件物品',
             style: TextStyle(fontSize: 12, color: AppColors.textHint),
           ),
@@ -1068,7 +1068,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                               ),
                             ),
                             child: isSelected
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check,
                                     size: 14,
                                     color: AppColors.chipSelectedFg,
@@ -1096,7 +1096,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                       item.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
@@ -1112,7 +1112,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                             item.location,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 11,
                               color: AppColors.textHint,
                             ),
@@ -1218,7 +1218,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                             ),
                           ),
                           child: isSelected
-                              ? const Icon(
+                              ? Icon(
                                   Icons.check,
                                   size: 12,
                                   color: AppColors.chipSelectedFg,
@@ -1239,7 +1239,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                       item.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
@@ -1251,7 +1251,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                         item.location,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           color: AppColors.textHint,
                         ),
@@ -1319,7 +1319,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               overflow: TextOverflow.ellipsis,
               text: TextSpan(
                 text: '已选 ',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   color: AppColors.blushInk,
                   fontWeight: FontWeight.w700,
@@ -1327,7 +1327,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                 children: [
                   TextSpan(
                     text: '${_selectedIds.length}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.coralDeep,
                       fontWeight: FontWeight.w800,
                     ),

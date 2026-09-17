@@ -506,7 +506,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
               ),
             ),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.photo_library,
                 color: AppColors.btnTextFg,
               ),
@@ -517,7 +517,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
               },
             ),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.camera_alt,
                 color: AppColors.btnTextFg,
               ),
@@ -528,7 +528,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
               },
             ),
             ListTile(
-              leading: const Icon(Icons.close, color: AppColors.textSecondary),
+              leading: Icon(Icons.close, color: AppColors.textSecondary),
               title: const Text('取消'),
               onTap: () => Navigator.pop(ctx),
             ),
@@ -893,7 +893,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
             ),
           ),
           child: _isPicking
-              ? const Center(
+              ? Center(
                   child: SizedBox(
                     width: 22,
                     height: 22,
@@ -928,7 +928,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
         color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(16 * k),
         border: Border.all(color: AppColors.blushLine),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(color: AppColors.cardShadow, blurRadius: 10, offset: Offset(0, 2)),
         ],
       ),
@@ -970,7 +970,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
         color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(12 * k),
         border: Border.all(color: AppColors.blushLine),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.cardShadow,
             blurRadius: 10,
@@ -1091,7 +1091,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
             const SizedBox(height: 20),
             Text(
               _successTitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
                 color: AppColors.textPrimary,
@@ -1100,7 +1100,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
             const SizedBox(height: 6),
             Text(
               _successSub,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,
               ),
@@ -1117,7 +1117,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
                   borderRadius: BorderRadius.circular(18),
                   // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
                   color: AppColors.btnPrimaryBg,
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       color: AppColors.btnPrimaryShadow,
                       blurRadius: 10,
@@ -1127,7 +1127,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
                 ),
                 child: Text(
                   _successBtnText,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: AppColors.btnPrimaryFg,
@@ -1381,7 +1381,7 @@ class _PickerSheet extends StatelessWidget {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.6,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.cardBg,
         borderRadius: BorderRadius.all(Radius.circular(24)),
       ),
@@ -1395,7 +1395,7 @@ class _PickerSheet extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
                   color: AppColors.textPrimary,
@@ -1520,7 +1520,7 @@ class _LocationPickerSheet extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   '选择收纳位置',
                   style: TextStyle(
                     fontSize: 16,
@@ -1530,7 +1530,7 @@ class _LocationPickerSheet extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: onClear,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.refresh,
                     size: 18,
                     color: AppColors.textSecondary,
@@ -1540,11 +1540,11 @@ class _LocationPickerSheet extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColors.border),
+          Divider(height: 1, color: AppColors.border),
           // 列表
           Flexible(
             child: isLoading
-                ? const Center(
+                ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(40),
                       child: CircularProgressIndicator(
@@ -1553,7 +1553,7 @@ class _LocationPickerSheet extends StatelessWidget {
                     ),
                   )
                 : nodes.isEmpty
-                ? const Center(
+                ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(40),
                       child: Text(
@@ -1641,7 +1641,7 @@ class _LocationTile extends StatelessWidget {
                 children: [
                   Text(
                     node.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
@@ -1650,7 +1650,7 @@ class _LocationTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     node.subLabel,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       color: AppColors.textHint,
                     ),
@@ -1662,7 +1662,7 @@ class _LocationTile extends StatelessWidget {
             ),
             // 选中标记
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle,
                 color: AppColors.coral,
                 size: 20,
@@ -1719,7 +1719,7 @@ class _PhotoThumb extends StatelessWidget {
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(
               color: AppColors.border,
-              child: const Icon(Icons.broken_image, color: AppColors.textHint),
+              child: Icon(Icons.broken_image, color: AppColors.textHint),
             ),
           ),
           // 上传中遮罩
@@ -1785,10 +1785,10 @@ class _PhotoThumb extends StatelessWidget {
               right: 0,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 3),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.btnPrimaryBg,
                 ),
-                child: const Text(
+                child: Text(
                   '封面',
                   textAlign: TextAlign.center,
                   style: TextStyle(

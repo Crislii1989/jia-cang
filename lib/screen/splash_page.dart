@@ -155,7 +155,7 @@ class _SplashPageState extends State<SplashPage> {
           opacity: value.clamp(0.0, 1.0),
           child: Transform.translate(
             offset: Offset(0, 24 * (1 - value)),
-            child: const Text('家藏', style: AppTextStyles.splashTitle),
+            child: Text('家藏', style: AppTextStyles.splashTitle),
           ),
         );
       },
@@ -172,7 +172,7 @@ class _SplashPageState extends State<SplashPage> {
           opacity: value.clamp(0.0, 1.0),
           child: Transform.translate(
             offset: Offset(0, 14 * (1 - value)),
-            child: const Text('记录每个物品的故事', style: AppTextStyles.splashSubtitle),
+            child: Text('记录每个物品的故事', style: AppTextStyles.splashSubtitle),
           ),
         );
       },

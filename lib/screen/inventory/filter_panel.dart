@@ -207,7 +207,7 @@ class _FilterPanelState extends State<FilterPanel> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   '筛选条件',
                   style: TextStyle(
                     fontSize: 17,
@@ -217,7 +217,7 @@ class _FilterPanelState extends State<FilterPanel> {
                 ),
                 GestureDetector(
                   onTap: _resetFilters,
-                  child: const Text(
+                  child: Text(
                     '重置',
                     style: TextStyle(
                       fontSize: 13,
@@ -270,7 +270,7 @@ class _FilterPanelState extends State<FilterPanel> {
                   borderRadius: BorderRadius.circular(
                     AppDimensions.borderRadiusExtraLarge,
                   ),
-                  boxShadow: const [
+                  boxShadow: [
                     BoxShadow(
                       color: AppColors.btnPrimaryShadow,
                       blurRadius: 10,
@@ -278,7 +278,7 @@ class _FilterPanelState extends State<FilterPanel> {
                     ),
                   ],
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     '确认筛选',
                     style: TextStyle(
@@ -307,7 +307,7 @@ class _FilterPanelState extends State<FilterPanel> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w700,
             color: AppColors.textSecondary,

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// 统一阴影常量
+/// 统一阴影。
+///
+/// ⚠️ 全部写成 **getter**：颜色跟随皮肤，若用 `static const` 编译不过，
+/// 若用 `static final` 则会在首次访问时把颜色冻结住（换肤后阴影不变），
+/// 所以这里刻意保持「每次访问重新构造」。
 class AppShadows {
   AppShadows._();
 
   // ── 卡片阴影 ──
-  static final card = [
+  static List<BoxShadow> get card => [
     BoxShadow(
       color: AppColors.textPrimary.withValues(alpha: 0.08),
       blurRadius: 10,
@@ -15,7 +19,7 @@ class AppShadows {
   ];
 
   // ── 浮动元素阴影 ──
-  static final floating = [
+  static List<BoxShadow> get floating => [
     BoxShadow(
       color: AppColors.textPrimary.withValues(alpha: 0.12),
       blurRadius: 16,
@@ -24,7 +28,7 @@ class AppShadows {
   ];
 
   // ── 底部导航栏阴影 ──
-  static final navBar = [
+  static List<BoxShadow> get navBar => [
     BoxShadow(
       color: AppColors.textPrimary.withValues(alpha: 0.08),
       blurRadius: 20,
@@ -33,29 +37,29 @@ class AppShadows {
   ];
 
   // ── 添加按钮阴影 ──
-  static const addButton = [
+  static List<BoxShadow> get addButton => [
     BoxShadow(
       color: AppColors.btnPrimaryShadow,
       blurRadius: 16,
-      offset: Offset(0, 4),
+      offset: const Offset(0, 4),
     ),
   ];
 
   // ── Logo 阴影 ──
-  static const logo = [
+  static List<BoxShadow> get logo => [
     BoxShadow(
       color: AppColors.btnPrimaryShadow,
       blurRadius: 48,
-      offset: Offset(0, 16),
+      offset: const Offset(0, 16),
     ),
   ];
 
   // ── 卡片主色阴影 ──
-  static const cardAccent = [
+  static List<BoxShadow> get cardAccent => [
     BoxShadow(
       color: AppColors.floatCardShadowStrong,
       blurRadius: 24,
-      offset: Offset(0, 6),
+      offset: const Offset(0, 6),
     ),
   ];
 

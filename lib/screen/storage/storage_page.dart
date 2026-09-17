@@ -224,7 +224,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
     final id = '${level}_$ts';
     // 新建空间的默认身份色：跟随 V2.6 珊瑚主色（旧值 AppColors.primary 是金色，
     // 在暖粉白底上会突兀出「金色瓷砖」，与首页的 pastel 身份色语言不统一）。
-    const color = AppColors.coral;
+    final color = AppColors.coral;
 
     // 等写入真正完成后再关闭弹窗并提示。
     // 若数据库写入失败（连接异常等），用户能立刻看到失败原因，
@@ -393,7 +393,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
           children: [
             _sheetHandle(),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.edit_outlined,
                 color: AppColors.btnTextFg,
               ),
@@ -416,7 +416,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                 color: AppColors.danger,
               ),
               title: const Text('删除房间'),
-              subtitle: const Text(
+              subtitle: Text(
                 '将一并删除其下所有柜体与格子（含物品时不可删除）',
                 style: TextStyle(fontSize: 11, color: AppColors.textHint),
               ),
@@ -445,7 +445,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
           children: [
             _sheetHandle(),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.edit_outlined,
                 color: AppColors.btnTextFg,
               ),
@@ -469,7 +469,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                 color: Color(0xFF4A90D9),
               ),
               title: const Text('移动到其他房间'),
-              subtitle: const Text(
+              subtitle: Text(
                 '柜体及其下格子、物品一并迁移到新房间',
                 style: TextStyle(fontSize: 11, color: AppColors.textHint),
               ),
@@ -484,7 +484,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                 color: AppColors.danger,
               ),
               title: const Text('删除柜体'),
-              subtitle: const Text(
+              subtitle: Text(
                 '将一并删除其下所有格子（含物品时不可删除）',
                 style: TextStyle(fontSize: 11, color: AppColors.textHint),
               ),
@@ -511,7 +511,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
           children: [
             _sheetHandle(),
             ListTile(
-              leading: const Icon(
+              leading: Icon(
                 Icons.edit_outlined,
                 color: AppColors.btnTextFg,
               ),
@@ -535,7 +535,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                 color: AppColors.danger,
               ),
               title: const Text('删除箱子'),
-              subtitle: const Text(
+              subtitle: Text(
                 '含物品时不可删除，请先迁移箱子内物品',
                 style: TextStyle(fontSize: 11, color: AppColors.textHint),
               ),
@@ -594,14 +594,14 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                 padding: const EdgeInsets.only(top: 16, bottom: 8),
                 child: Text(
                   '移动「${cabinet.name}」到',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     color: AppColors.textPrimary,
                   ),
                 ),
               ),
-              const Divider(height: 1, color: AppColors.border),
+              Divider(height: 1, color: AppColors.border),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -613,12 +613,12 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                       title: Text(room.name),
                       subtitle: Text(
                         '${room.storageCount}个柜体 · ${room.items}件物品',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           color: AppColors.textHint,
                         ),
                       ),
-                      trailing: const Icon(
+                      trailing: Icon(
                         Icons.chevron_right,
                         color: AppColors.textHint,
                       ),
@@ -914,7 +914,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                       ),
                     ),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.fromLTRB(20, 8, 20, 12),
                     child: Align(
                       alignment: Alignment.centerLeft,
@@ -928,10 +928,10 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                       ),
                     ),
                   ),
-                  const Divider(height: 1, color: AppColors.border),
+                  Divider(height: 1, color: AppColors.border),
                   Flexible(
                     child: nodes.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Padding(
                               padding: EdgeInsets.all(40),
                               child: Text(
@@ -958,7 +958,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                                 title: Text(node.name),
                                 subtitle: Text(
                                   node.subLabel,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 11,
                                     color: AppColors.textHint,
                                   ),
@@ -966,14 +966,14 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 trailing: isCurrent
-                                    ? const Text(
+                                    ? Text(
                                         '当前',
                                         style: TextStyle(
                                           fontSize: 11,
                                           color: AppColors.textHint,
                                         ),
                                       )
-                                    : const Icon(
+                                    : Icon(
                                         Icons.chevron_right,
                                         color: AppColors.textHint,
                                       ),
@@ -1117,17 +1117,17 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.search, size: 18, color: AppColors.textHint),
+                  Icon(Icons.search, size: 18, color: AppColors.textHint),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       controller: _searchController,
                       onChanged: _onSearchChanged,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textPrimary,
                       ),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: '搜索房间、柜体、箱子、物品…',
                         hintStyle: TextStyle(
                           fontSize: 14,
@@ -1145,7 +1145,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                         _searchController.clear();
                         _onSearchChanged('');
                       },
-                      child: const Icon(
+                      child: Icon(
                         Icons.close,
                         size: 16,
                         color: AppColors.textHint,
@@ -1165,7 +1165,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                 // 主按钮 = 实心珊瑚（稿子 `.btn.primary` 无渐变）
                 color: AppColors.btnPrimaryBg,
                 borderRadius: BorderRadius.circular(14),
-                boxShadow: const [
+                boxShadow: [
                   BoxShadow(
                     color: AppColors.btnPrimaryShadow,
                     blurRadius: 12,
@@ -1173,7 +1173,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                   ),
                 ],
               ),
-              child: const Icon(Icons.add, size: 20, color: AppColors.btnPrimaryFg),
+              child: Icon(Icons.add, size: 20, color: AppColors.btnPrimaryFg),
             ),
           ),
         ],
@@ -1275,7 +1275,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: AppColors.textPrimary,
@@ -1302,7 +1302,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                       // PillContent 在对侧补等宽留白，让文字真正居中。
                       child: PillContent(
                         label: _tab == 2 ? '全部箱子' : '全部柜体',
-                        labelStyle: const TextStyle(
+                        labelStyle: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: AppColors.textSecondary,
@@ -1319,7 +1319,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
           const SizedBox(height: 2),
           Text(
             '$path共 $total 件物品',
-            style: const TextStyle(fontSize: 12, color: AppColors.textHint),
+            style: TextStyle(fontSize: 12, color: AppColors.textHint),
           ),
         ],
       ),
@@ -1737,7 +1737,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
           const SizedBox(width: 8),
           Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
@@ -1758,7 +1758,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
   }
 
   Widget _buildLoading() {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.all(48),
       child: Center(
         child: CircularProgressIndicator(color: AppColors.coral),
@@ -1772,7 +1772,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
       child: Center(
         child: Text(
           '加载失败: $e',
-          style: const TextStyle(color: AppColors.textHint),
+          style: TextStyle(color: AppColors.textHint),
         ),
       ),
     );
@@ -1785,7 +1785,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textHint,
             fontSize: 14,
             height: 1.6,
@@ -1912,7 +1912,7 @@ class _NavCard extends StatelessWidget {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
@@ -1923,7 +1923,7 @@ class _NavCard extends StatelessWidget {
                       subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         color: AppColors.textHint,
                       ),
@@ -1931,7 +1931,7 @@ class _NavCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.chevron_right,
                 size: 18,
                 color: AppColors.textHint,
@@ -2003,7 +2003,7 @@ class _ItemCard extends StatelessWidget {
                       item.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
@@ -2014,7 +2014,7 @@ class _ItemCard extends StatelessWidget {
                       item.location.isEmpty ? '未指定位置' : item.location,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: AppColors.textHint,
                       ),
@@ -2022,7 +2022,7 @@ class _ItemCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.chevron_right,
                 size: 16,
                 color: AppColors.textHint,

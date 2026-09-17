@@ -91,7 +91,7 @@ class _DbGatePage extends ConsumerWidget {
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: AppColors.textPrimary,
@@ -99,7 +99,7 @@ class _DbGatePage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 14),
                   if (busy)
-                    const SizedBox(
+                    SizedBox(
                       width: 26,
                       height: 26,
                       child: CircularProgressIndicator(
@@ -113,7 +113,7 @@ class _DbGatePage extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: AppColors.cardBg,
                       borderRadius: BorderRadius.circular(18),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
                           color: AppColors.shadowCard,
                           blurRadius: 14,
@@ -123,7 +123,7 @@ class _DbGatePage extends ConsumerWidget {
                     ),
                     child: Text(
                       message,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         height: 1.7,
                         color: AppColors.textSecondary,
@@ -206,7 +206,7 @@ class _GateButton extends StatelessWidget {
                   width: AppColors.btnGhostBorderWidth,
                 ),
           boxShadow: filled
-              ? const [
+              ? [
                   BoxShadow(
                     color: AppColors.btnPrimaryShadow,
                     blurRadius: 10,

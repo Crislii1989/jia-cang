@@ -149,7 +149,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
         // 选项之间的分隔符：1px 高的浅色细线，自动插入到每两个 item 之间
         dropdownSeparator: DropdownSeparator<T>(
           height: 1,
-          child: const Divider(
+          child: Divider(
             height: 1,
             thickness: 0.5,
             color: AppColors.divider,
@@ -182,7 +182,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
           decoration: BoxDecoration(
             color: AppColors.cardBg,
             borderRadius: BorderRadius.circular(8),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
                 color: AppColors.shadowDark,
                 blurRadius: 8,
@@ -196,7 +196,7 @@ class _AppDropdownButtonState<T> extends State<AppDropdownButton<T>> {
             thumbVisibility: WidgetStateProperty.all<bool>(true),
           ),
         ),
-        menuItemStyleData: const MenuItemStyleData(
+        menuItemStyleData: MenuItemStyleData(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           overlayColor: WidgetStatePropertyAll<Color?>(AppColors.coralSoft),
         ),
