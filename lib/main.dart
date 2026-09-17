@@ -1,4 +1,5 @@
 import 'package:bugsnag_flutter/bugsnag_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,12 +26,25 @@ void main() async {
   ]);
 
   // 加载 .env 配置文件（含 BUGSNAG_API_KEY 等敏感信息）
-  await dotenv.load(fileName: '.env');
+  // ⚠️ 这里踩过两次白屏，两点都必须容错：
+  //   ① 部分静态托管会拦截点号开头的文件，assets/.env 直接返回 403/404；
+  //   ② 加载失败后**再读 dotenv.env 会抛 NotInitializedError**（本次白屏真凶）。
+  // 任一处抛出都会中断 main()，runApp() 不执行 → 纯白屏（已本地复现）。
+  // Web 端整体跳过：Bugsnag 本就不支持 Web（MissingPluginException），
+  // 跳过既无副作用，也省掉一次必然失败的 403 请求。
+  var bugsnagApiKey = '';
+  if (!kIsWeb) {
+    try {
+      await dotenv.load(fileName: '.env');
+      bugsnagApiKey = dotenv.env['BUGSNAG_API_KEY'] ?? '';
+    } catch (e) {
+      debugPrint('dotenv load skipped (.env unavailable): $e');
+    }
+  }
 
   // 启动 Bugsnag 崩溃监控，API Key 从 .env 读取
   // 注意：Bugsnag 仅支持 Android/iOS，Windows/Linux/macOS 会抛 MissingPluginException，
   // 必须 try-catch 否则会导致 runApp() 之前中断、窗口无法创建
-  final bugsnagApiKey = dotenv.env['BUGSNAG_API_KEY'] ?? '';
   if (bugsnagApiKey.isNotEmpty) {
     try {
       await bugsnag.start(apiKey: bugsnagApiKey);
