@@ -101,7 +101,9 @@ class AppDimensions {
   static const double formRowPadding = 12;
 
   /// 表单行标签列宽（稿子 .f-cell .lb width:64）
-  static const double formLabelWidth = 64;
+  // 76：容纳最宽标签「存放位置」4 字 + 必填星号不换行（64 会把 4 字标签
+  // 挤成两行，2026-09-17 反馈）
+  static const double formLabelWidth = 76;
 
   /// 信息行内的小图标块：边长 / 圆角
   static const double cellIconTile = 26;

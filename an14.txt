@@ -1,0 +1,7 @@
+﻿Analyzing add_item_page.dart...
+
+   info - add_item_page.dart:941:33 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
+   info - add_item_page.dart:1720:31 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
+   info - add_item_page.dart:1720:35 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
+
+3 issues found.

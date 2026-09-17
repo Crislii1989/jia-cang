@@ -1001,7 +1001,9 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
           _FormRow(
             k: k,
             label: '存放位置',
-            value: _selectedLocation ?? '可不填',
+            // 存放位置是保存的必填字段（不选只弹 toast），标签补红星
+            isRequired: true,
+            value: _selectedLocation ?? '请选择',
             filled: _selectedLocation != null,
             showChevron: true,
             onTap: _openLocationPicker,
@@ -1010,7 +1012,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
           _FormRow(
             k: k,
             label: '到期日',
-            value: _expiryDate == null ? '可不填' : _formatDate(_expiryDate!),
+            value: _expiryDate == null ? '请选择' : _formatDate(_expiryDate!),
             filled: _expiryDate != null,
             showChevron: true,
             onClear: _expiryDate == null ? null : _clearExpiryDate,
@@ -1276,6 +1278,10 @@ class _FormTextRow extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              // 值列右对齐：与 _FormRow 的值文字同侧（2026-09-17 反馈
+              // 「文字靠右侧」——名称输入的内容此前靠左，与分类/到期日
+              // 等行的右对齐值不一致）
+              textAlign: TextAlign.right,
               style: TextStyle(
                 fontSize: 14 * k,
                 fontWeight: FontWeight.w600,
