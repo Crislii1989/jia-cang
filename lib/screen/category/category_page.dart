@@ -398,39 +398,14 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
             ),
           ],
         ),
-        child: Stack(
+        // 2026-09-17 反馈「取消这些色块」：原装饰白圆（Positioned 溢出
+        // 圆角横幅、无裁剪时会露出方形色斑）已删除——也符合全局规则
+        // 「页面禁止再画装饰色斑」。
+        child: Row(
           children: [
-            Positioned(
-              top: -20,
-              right: -20,
-              child: Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.12),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -10,
-              left: 40,
-              child: Container(
-                width: 45,
-                height: 45,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.08),
-                  shape: BoxShape.circle,
-                ),
-              ),
-            ),
-            Row(
-              children: [
-                _buildBannerStat(total, '全部分类'),
-                _buildBannerStat(builtInCount, '系统分类'),
-                _buildBannerStat(customCount, '自定义'),
-              ],
-            ),
+            _buildBannerStat(total, '全部分类'),
+            _buildBannerStat(builtInCount, '系统分类'),
+            _buildBannerStat(customCount, '自定义'),
           ],
         ),
       ),
@@ -510,21 +485,31 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
   Widget _buildCategoryGrid(List<CategoryItem> categories) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children: categories.asMap().entries.map((entry) {
-          final i = entry.key;
-          final cat = entry.value;
-          return SizedBox(
-            width: (MediaQuery.of(context).size.width - 52) / 2,
-            child: _CategoryCard(
-              category: cat,
-              delay: i * 0.06,
-              onTap: () => _showCategoryActions(cat),
-            ),
+      // 列宽按 **LayoutBuilder 实际约束**算，不能用 MediaQuery.size——
+      // 宽视口下 AppCanvas 已把内容限宽 430，而 MediaQuery 拿到的是
+      // 浏览器整窗宽度，算出的卡片宽超过可用宽，Wrap 退化成单列
+      // （2026-09-17 反馈「分类只剩一列」）。
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          const gap = 12.0;
+          final colWidth = (constraints.maxWidth - gap) / 2;
+          return Wrap(
+            spacing: gap,
+            runSpacing: gap,
+            children: categories.asMap().entries.map((entry) {
+              final i = entry.key;
+              final cat = entry.value;
+              return SizedBox(
+                width: colWidth,
+                child: _CategoryCard(
+                  category: cat,
+                  delay: i * 0.06,
+                  onTap: () => _showCategoryActions(cat),
+                ),
+              );
+            }).toList(),
           );
-        }).toList(),
+        },
       ),
     );
   }
