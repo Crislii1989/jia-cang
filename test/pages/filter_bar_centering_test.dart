@@ -33,7 +33,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 800));
 
-    for (final label in ['新增时间', '筛选']) {
+    // 2026-09-17 起排序 chip 默认只显示「排序」（选择结果不回显在 chip 上）
+    for (final label in ['排序', '筛选']) {
       final tf = _text(label);
       expect(tf, findsOneWidget, reason: '找不到胶囊文字「$label」');
 

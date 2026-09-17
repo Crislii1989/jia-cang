@@ -9,6 +9,7 @@ import 'package:jia_cang/constants/app_dimensions.dart';
 import 'package:jia_cang/widgets/gradient_background.dart';
 import 'package:jia_cang/widgets/emoji_text.dart';
 import 'package:jia_cang/widgets/photo_image.dart';
+import 'package:jia_cang/widgets/floating_bar.dart';
 import 'package:jia_cang/widgets/toast_utils.dart';
 import 'package:jia_cang/widgets/pill_content.dart';
 import 'package:jia_cang/models/item.dart';
@@ -49,6 +50,9 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   String _searchQuery = '';
   SortType _sortType = SortType.newest;
   bool _sortDropdownOpen = false;
+
+  /// 分类 chip 区默认收起为单行横滑（2026-09-17 反馈：多行太占空间）
+  bool _categoryExpanded = false;
 
   // ── 预筛（首页统计卡点击带过来的条件，可在筛选条上一键清除）──
   String? _statusFilter; // items.status 原值
@@ -377,8 +381,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                     _buildCategoryTabs(),
                     const SizedBox(height: 12),
                     _buildFilterBar(),
-                    const SizedBox(height: 8),
-                    _buildQuickTags(),
                     const SizedBox(height: 4),
                     Expanded(child: _buildListArea(items)),
                   ],
@@ -569,17 +571,58 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         !tabs.any((c) => c.key == _activeCategory)) {
       _activeCategory = 'all';
     }
-    // Wrap 多行流式布局：内置分类扩充到 14 个后，单行横滑会展示不全，
-    // 改为自动换行让全部分类一屏可见（约 2~3 行，由内容自然决定）。
+    // Wrap 多行流式布局：2026-09-17 反馈分类 chip 太占纵向空间 →
+    // 默认收起为**单行横滑**，右侧箭头按钮点击后才展开为全量多行。
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.pageMarginHorizontal,
       ),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (final cat in tabs) _buildCategoryChip(cat),
+          Expanded(
+            child: _categoryExpanded
+                ? Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final cat in tabs) _buildCategoryChip(cat),
+                    ],
+                  )
+                : SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: Row(
+                      children: [
+                        for (final cat in tabs)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: _buildCategoryChip(cat),
+                          ),
+                      ],
+                    ),
+                  ),
+          ),
+          const SizedBox(width: 4),
+          GestureDetector(
+            onTap: () =>
+                setState(() => _categoryExpanded = !_categoryExpanded),
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: AppColors.chipBg,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _categoryExpanded
+                    ? Icons.keyboard_arrow_up
+                    : Icons.keyboard_arrow_down,
+                size: 18,
+                color: AppColors.textHint,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -631,16 +674,13 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   // ─── Filter Bar ────────────────────────────
 
   Widget _buildFilterBar() {
-    // 可移除过滤 chip：只负责「标签行覆盖不到」的条件——
-    // 即将到期（无对应标签）与 面板设置的 丢失/已用（标签只有三个常用态）
-    final String? removableChipLabel = switch (_specialFilter) {
-      kSpecialFilterExpiring => '即将到期',
-      _ => switch (_statusFilter) {
-          'lost' => '丢失',
-          'used' => '已用',
-          _ => null,
-        },
-    };
+    // 可移除过滤 chip：任一状态/派生条件激活时显示（标签行已按 2026-09-17
+    // 反馈取消，预筛条件统一在这里回显并可一键清除）
+    final String? removableChipLabel = _specialFilter != null
+        ? (_specialFilter == kSpecialFilterExpiring ? '即将到期' : '闲置中')
+        : (_statusFilter != null
+              ? (_statusLabels[_statusFilter] ?? _statusFilter)
+              : null);
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -648,10 +688,10 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
       ),
       child: Row(
         children: [
-          // 排序 chip
+          // 排序 chip：默认只显示「排序」，选择后在下拉里体现（2026-09-17 反馈）
           _buildFilterChip(
-            label: kSortLabels[_sortType] ?? '排序',
-            isActive: true,
+            label: '排序',
+            isActive: false,
             showArrow: true,
             onTap: () {
               setState(() => _sortDropdownOpen = !_sortDropdownOpen);
@@ -679,12 +719,12 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     );
   }
 
-  /// 可移除过滤 chip：珊瑚实心 + 关闭钮，点击清除该条件回到全量列表。
+  /// 可移除过滤 chip：珊瑚实心 + 关闭钮，点击清除当前预筛条件回到全量列表。
   Widget _buildRemovableFilterChip(String label) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          if (_specialFilter == kSpecialFilterExpiring) {
+          if (_specialFilter != null) {
             _specialFilter = null;
           } else {
             _statusFilter = null;
@@ -723,92 +763,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               color: AppColors.chipSelectedFg,
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  /// 快捷标签行（2026-09-17 拍板）：筛选内容以「标签」形式平铺——
-  /// 在库 / 出借中 / 闲置中，点选即筛、再点取消（与首页统计卡预筛同一状态，
-  /// 首页带过来的条件也会在这里回显为选中态）。
-  static const List<(String, String, String)> _quickTags = [
-    // (显示文案, 维度 status|special, 值)
-    ('在库', 'status', 'safe'),
-    ('出借中', 'status', 'lent'),
-    ('闲置中', 'special', kSpecialFilterIdle),
-  ];
-
-  bool _isTagActive(String kind, String value) =>
-      kind == 'status' ? _statusFilter == value : _specialFilter == value;
-
-  void _toggleTag(String kind, String value) {
-    setState(() {
-      if (kind == 'status') {
-        _statusFilter = _statusFilter == value ? null : value;
-        if (_statusFilter != null) _specialFilter = null; // 两个维度互斥
-      } else {
-        _specialFilter = _specialFilter == value ? null : value;
-        if (_specialFilter != null) _statusFilter = null;
-      }
-    });
-  }
-
-  Widget _buildQuickTags() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.pageMarginHorizontal,
-      ),
-      child: Row(
-        children: [
-          for (int i = 0; i < _quickTags.length; i++) ...[
-            if (i > 0) const SizedBox(width: 8),
-            _buildQuickTagChip(
-              _quickTags[i].$1,
-              _quickTags[i].$2,
-              _quickTags[i].$3,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickTagChip(String label, String kind, String value) {
-    final isActive = _isTagActive(kind, value);
-    return GestureDetector(
-      onTap: () => _toggleTag(kind, value),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.chipSelectedBg : AppColors.chipBg,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isActive ? AppColors.chipSelectedBg : AppColors.chipBorder,
-            width: 1.5,
-          ),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: AppColors.btnPrimaryShadow,
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        child: Transform.translate(
-          // Web 端 CJK 文字墨水偏下，与其他胶囊同一光学补偿
-          offset: Offset(0, kIsWeb ? PillContent.kWebTextOpticalLift : 0.0),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: isActive ? AppColors.chipSelectedFg : AppColors.chipFg,
-              leadingDistribution: TextLeadingDistribution.even,
-            ),
-          ),
         ),
       ),
     );
@@ -1293,19 +1247,10 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   // ─── Batch Bar ─────────────────────────────
 
   Widget _buildBatchBar() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 12),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        border: Border(top: BorderSide(color: AppColors.border)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.textPrimary.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, -4),
-          ),
-        ],
-      ),
+    // 2026-09-17 反馈：与详情页底部操作条统一成同一套悬浮条语言
+    //（FloatingBar + 40pt 胶囊按钮，字号 13/700），不再是自绘的小字信息栏。
+    return FloatingBar(
+      background: AppColors.actionBarBg,
       child: Row(
         children: [
           Flexible(
@@ -1315,15 +1260,15 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                 text: '已选 ',
                 style: const TextStyle(
                   fontSize: 13,
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w600,
+                  color: AppColors.blushInk,
+                  fontWeight: FontWeight.w700,
                 ),
                 children: [
                   TextSpan(
                     text: '${_selectedIds.length}',
                     style: const TextStyle(
                       color: AppColors.coralDeep,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                   const TextSpan(text: ' 件'),
@@ -1331,22 +1276,20 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               ),
             ),
           ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: FloatingBarButton(
+              label: '标记已用',
+              tone: FloatingBarTone.ghost,
+              onTap: _markSelectedUsed,
+            ),
+          ),
           const SizedBox(width: 8),
-          // FittedBox 兜底：4 颗按钮在窄视口下整体缩放，不溢出
-          Flexible(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                children: [
-                  _buildBatchBtn('标记已用', onTap: _markSelectedUsed),
-                  const SizedBox(width: 8),
-                  _buildBatchBtn('移动'),
-                  const SizedBox(width: 8),
-                  _buildBatchBtn('导出'),
-                  const SizedBox(width: 8),
-                  _buildBatchBtn('删除', danger: true),
-                ],
-              ),
+          Expanded(
+            child: FloatingBarButton(
+              label: '删除',
+              tone: FloatingBarTone.danger,
+              onTap: () => ToastUtils.show(context, '确认删除？'),
             ),
           ),
         ],
@@ -1368,41 +1311,6 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     ToastUtils.show(context, '已将 ${ids.length} 件物品标记为已用');
   }
 
-  /// 批量操作栏的次级按钮。
-  ///
-  /// 按高保真稿 `.btn.ghost`（白底 + 1.5px 浅粉线 + 深暖棕字）绘制；
-  /// [danger] 为 true 时改用稿子的 `--red` 系（删除这类不可逆动作用红）。
-  /// [onTap] 缺省时仍是占位 toast（移动 / 导出等未实装功能）。
-  Widget _buildBatchBtn(String label, {bool danger = false, VoidCallback? onTap}) {
-    return GestureDetector(
-      onTap: onTap ?? () {
-        final actions = {'移动': '移动到…', '导出': '导出选中物品', '删除': '确认删除？'};
-        ToastUtils.show(context, actions[label] ?? label);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: danger ? AppColors.btnDangerBg : AppColors.btnGhostBg,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: danger
-                ? AppColors.btnDangerFg.withValues(alpha: 0.35)
-                : AppColors.btnGhostBorder,
-            width: AppColors.btnGhostBorderWidth,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: danger ? AppColors.btnDangerFg : AppColors.btnGhostFg,
-          ),
-        ),
-      ),
-    );
-  }
-
   // ─── Filter Panel (Bottom Sheet) ───────────
 
   void _showFilterPanel() {
@@ -1410,6 +1318,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
       context,
       initialLocation: _selectedLocation,
       initialStatus: _statusFilter,
+      initialSpecial: _specialFilter == kSpecialFilterIdle ? 'idle' : null,
       initialCategoryKey: _activeCategory,
       categories: ref.read(availableCategoriesProvider),
       dismissSignal: _filterDismissSignal,
@@ -1419,7 +1328,8 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           _statusFilter = result.status;
           // 面板里的分类与顶部分类 chip 是同一状态，改一个即同步
           _activeCategory = result.categoryKey ?? 'all';
-          _specialFilter = null; // 面板条件与首页预筛互斥，应用面板时清除预筛
+          // 「闲置」走派生视图口径；应用面板时覆盖原预筛（互斥）
+          _specialFilter = result.special;
         });
         ToastUtils.show(context, '已应用筛选条件');
       },

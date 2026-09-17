@@ -694,6 +694,11 @@ class _InfoRow extends StatelessWidget {
         vertical: 10 * k,
       ),
       child: Row(
+        // 多行值（备注）时图标/标签与首行**顶端对齐**，不垂直居中
+        //（2026-09-17 反馈：长备注不要把标签挤到行中间）
+        crossAxisAlignment: multiLine
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: [
           Container(
             width: AppDimensions.cellIconTile * k,

@@ -244,4 +244,44 @@ void main() {
       expect(find.text('sports'), findsNothing);
     });
   });
+
+  group('ItemDetailPage 备注 multiLine 顶对齐', () {
+    testWidgets('长备注时图标/标签与备注首行顶端对齐，不垂直居中', (tester) async {
+      // 足够长让备注折成多行；若仍垂直居中，备注块会向上越过高出标签的部分
+      final longNote = '这是一段很长的备注内容，' * 12;
+      final item = Item(
+        id: 'i_notes',
+        name: '卷尺',
+        location: '工具箱',
+        status: 'safe',
+        categoryKey: 'tools',
+        note: longNote,
+        createdAt: DateTime(2026, 9, 15),
+      );
+      await tester.binding.setSurfaceSize(const Size(430, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            itemsProvider.overrideWith(() => _FakeItems([item])),
+            categoryManagerProvider.overrideWith(() => _FakeCategoryManager()),
+            storageLocationTreeProvider.overrideWith(
+              (ref) async => <StorageLocationNode>[],
+            ),
+          ],
+          child: const MaterialApp(home: ItemDetailPage(itemId: 'i_notes')),
+        ),
+      );
+      for (var i = 0; i < 4; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      final labelTop = tester.getRect(find.text('备注')).top;
+      final noteTop = tester.getRect(find.text(longNote)).top;
+      // 顶端对齐：备注首行与标签顶边几乎同高（允许亚像素/字体度量误差）；
+      // 若回退成垂直居中，多行备注块顶边会明显高出标签，差值为负。
+      expect(noteTop - labelTop, greaterThanOrEqualTo(-2));
+      expect(noteTop - labelTop, lessThan(6));
+    });
+  });
 }

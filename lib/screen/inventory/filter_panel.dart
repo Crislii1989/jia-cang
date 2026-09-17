@@ -6,7 +6,7 @@ import 'package:jia_cang/models/category.dart';
 import 'package:jia_cang/widgets/center_sheet.dart';
 import 'package:jia_cang/widgets/pill_content.dart';
 
-/// 筛选结果：三个条件可叠加，null / 'all' 表示该维度不筛选。
+/// 筛选结果：各条件可叠加，null / 'all' 表示该维度不筛选。
 class FilterResult {
   /// 收纳位置（包含匹配），null 或 '全部' 表示不筛选
   final String? location;
@@ -14,10 +14,18 @@ class FilterResult {
   /// items.status 原值（'safe'/'lent'/'lost'/'used'），null 表示不筛选
   final String? status;
 
+  /// 派生视图筛选：'idle'＝闲置（非单一字段，判定口径同 idleItems）
+  final String? special;
+
   /// 分类 key，'all' 表示不筛选
   final String? categoryKey;
 
-  const FilterResult({this.location, this.status, this.categoryKey = 'all'});
+  const FilterResult({
+    this.location,
+    this.status,
+    this.special,
+    this.categoryKey = 'all',
+  });
 }
 
 /// Callback signature for when filters are applied.
@@ -31,12 +39,18 @@ const Map<String, String> _statusOptionValues = {
   '已用': 'used',
 };
 
+/// 状态区的选项顺序（「闲置」是派生视图，排在借出之后）
+const List<String> _statusOptionLabels = ['全部', '在库', '借出', '闲置', '丢失', '已用'];
+
 /// Standalone filter panel shown as a modal bottom sheet.
 class FilterPanel extends StatefulWidget {
   final String? initialLocation;
 
   /// 初始状态（items.status 原值），null = 全部
   final String? initialStatus;
+
+  /// 初始派生视图筛选：'idle' = 闲置（面板「闲置」选项回显用）
+  final String? initialSpecial;
 
   /// 初始分类 key，'all' = 全部
   final String initialCategoryKey;
@@ -58,6 +72,7 @@ class FilterPanel extends StatefulWidget {
     super.key,
     this.initialLocation,
     this.initialStatus,
+    this.initialSpecial,
     this.initialCategoryKey = 'all',
     this.categories = const [],
     required this.onApply,
@@ -71,6 +86,7 @@ class FilterPanel extends StatefulWidget {
     BuildContext context, {
     String? initialLocation,
     String? initialStatus,
+    String? initialSpecial,
     String initialCategoryKey = 'all',
     List<Category> categories = const [],
     required FilterApplyCallback onApply,
@@ -83,6 +99,7 @@ class FilterPanel extends StatefulWidget {
       builder: (ctx) => FilterPanel(
         initialLocation: initialLocation,
         initialStatus: initialStatus,
+        initialSpecial: initialSpecial,
         initialCategoryKey: initialCategoryKey,
         categories: categories,
         onApply: onApply,
@@ -99,13 +116,17 @@ class FilterPanel extends StatefulWidget {
 class _FilterPanelState extends State<FilterPanel> {
   late String? _selectedLocation = widget.initialLocation;
 
-  /// 面板内部用显示文案存状态（'全部' = 不筛选）
-  late String _selectedStatusDisplay = _statusDisplayFor(widget.initialStatus);
+  /// 面板内部用显示文案存状态（'全部' = 不筛选；'闲置' 是派生视图）
+  late String _selectedStatusDisplay = _statusDisplayFor(
+    widget.initialStatus,
+    widget.initialSpecial,
+  );
 
-  static String _statusDisplayFor(String? value) {
-    if (value == null) return '全部';
+  static String _statusDisplayFor(String? status, String? special) {
+    if (special == 'idle') return '闲置';
+    if (status == null) return '全部';
     for (final e in _statusOptionValues.entries) {
-      if (e.value == value) return e.key;
+      if (e.value == status) return e.key;
     }
     return '全部';
   }
@@ -147,12 +168,17 @@ class _FilterPanelState extends State<FilterPanel> {
 
   void _applyFilters() {
     Navigator.of(context).pop(); // close bottom sheet
+    // 「闲置」不是 items.status 的取值，走派生视图口径（special='idle'）
+    final isIdle = _selectedStatusDisplay == '闲置';
     widget.onApply(
       FilterResult(
         location: _selectedLocation,
-        status: _selectedStatusDisplay == '全部'
+        status: isIdle
+            ? null
+            : _selectedStatusDisplay == '全部'
             ? null
             : _statusOptionValues[_selectedStatusDisplay],
+        special: isIdle ? 'idle' : null,
         categoryKey: _selectedCategoryKey,
       ),
     );
@@ -215,10 +241,10 @@ class _FilterPanelState extends State<FilterPanel> {
               ),
             ),
             const SizedBox(height: 16),
-            // 状态
+            // 状态（闲置是派生视图，非数据库状态值）
             _buildFilterSection(
               label: '状态',
-              options: ['全部', ..._statusOptionValues.keys],
+              options: _statusOptionLabels,
               selected: _selectedStatusDisplay,
               onSelect: (v) =>
                   setState(() => _selectedStatusDisplay = v),
