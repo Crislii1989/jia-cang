@@ -5,14 +5,17 @@ import 'package:go_router/go_router.dart';
 import 'package:jia_cang/constants/app_colors.dart';
 import 'package:jia_cang/constants/design_metrics.dart';
 import 'package:jia_cang/models/category.dart';
+import 'package:jia_cang/models/item.dart';
 import 'package:jia_cang/providers/category_provider.dart';
 import 'package:jia_cang/providers/item_providers.dart';
 import 'package:jia_cang/widgets/emoji_text.dart';
 
 /// 首页分类入口：大圆形图标，**一行 4 个**（高保真稿 V2.6 定稿）。
 ///
-/// 一屏只展示前 [_maxVisible] 个分类，圆底用四色 pastel 水彩渐变轮转
-/// （粉 / 蓝 / 绿 / 紫，保证相邻不撞色）；圆形直径 56，标签 11。
+/// 展示规则（2026-09-17 拍板）：**按分类下的物品数取前 [_maxVisible] 个**——
+/// 常用品类自动浮上来，零配置；物品数相同的按 sortOrder 原顺序稳定排序
+/// （全 0 时等于维持原顺序）。一屏只展示前 4 个，圆底用四色 pastel 水彩
+/// 渐变轮转（粉 / 蓝 / 绿 / 紫，保证相邻不撞色）；圆形直径 56，标签 11。
 /// 点击某个分类 → 写入「待选分类」并切到物品库 Tab，由物品库在挂载/兜底
 /// 逻辑里消费（见 `pendingCategoryProvider`）。
 ///
@@ -36,7 +39,25 @@ class CategoryCirclesSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final k = DesignMetrics.of(context);
     final categories = ref.watch(availableCategoriesProvider);
-    final visible = categories.take(_maxVisible).toList();
+    final items = ref
+        .watch(itemsProvider)
+        .maybeWhen(data: (list) => list, orElse: () => const <Item>[]);
+
+    // 每个分类的物品数（一次遍历统计），随后按「物品数多者优先」稳定排序。
+    // List.sort 在 Dart 里不是稳定排序，所以用「计数取负 + 原索引」组合排序
+    // 保证同数分类维持 sortOrder 原顺序。
+    final counts = <String, int>{};
+    for (final item in items) {
+      counts[item.categoryKey] = (counts[item.categoryKey] ?? 0) + 1;
+    }
+    final indexed = categories.asMap().entries.toList()
+      ..sort((a, b) {
+        final ca = counts[a.value.key] ?? 0;
+        final cb = counts[b.value.key] ?? 0;
+        if (ca != cb) return cb - ca; // 多者优先
+        return a.key.compareTo(b.key); // 同数维持原顺序
+      });
+    final visible = indexed.take(_maxVisible).map((e) => e.value).toList();
 
     if (visible.isEmpty) return const SizedBox.shrink();
 

@@ -21,6 +21,39 @@ class PendingCategory extends _$PendingCategory {
   void set(String? value) => state = value;
 }
 
+/// 跨页面传递的「物品库预筛请求」——首页统计高卡点击时使用。
+///
+/// [status] 是 items.status 的原始值（'safe'/'lent'/'lost'/'used'）；
+/// [special] 是派生视图（不走单一字段）：'expiring'＝即将到期、'idle'＝长期闲置，
+/// 判定口径与 [expiringSoonItems] / [idleItems] 完全一致（复用同一批 provider）。
+/// 两者互斥使用，也可以都为空（表示清除预筛、看全量）。
+class PendingInventoryFilter {
+  final String? status;
+  final String? special;
+
+  const PendingInventoryFilter({this.status, this.special});
+
+  bool get isEmpty => status == null && special == null;
+}
+
+/// 首页统计卡 → 物品库 的预筛请求（消费方应用后应置回 null）。
+@Riverpod(keepAlive: true)
+class PendingInventoryFilterRequest extends _$PendingInventoryFilterRequest {
+  @override
+  PendingInventoryFilter? build() => null;
+
+  void set(PendingInventoryFilter? value) => state = value;
+}
+
+/// 首页搜索胶囊 → 物品库 的「自动聚焦搜索框」请求（消费方应用后应置回 false）。
+@Riverpod(keepAlive: true)
+class PendingSearchFocus extends _$PendingSearchFocus {
+  @override
+  bool build() => false;
+
+  void set(bool value) => state = value;
+}
+
 /// 核心 Items Provider —— AsyncNotifier，从数据库读写
 @riverpod
 class Items extends _$Items {

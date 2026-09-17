@@ -178,6 +178,9 @@ class ItemDetailPage extends ConsumerWidget {
       children: [
         Text(
           item.name,
+          // 防护：超长标题折行展示，最多 3 行后省略——不允许把后续内容顶没
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 18 * k,
             fontWeight: FontWeight.w800,
@@ -296,6 +299,7 @@ class ItemDetailPage extends ConsumerWidget {
       String label,
       String value, {
       bool showChevron = false,
+      bool multiLine = false,
       VoidCallback? onTap,
     }) {
       return _InfoRow(
@@ -304,6 +308,7 @@ class ItemDetailPage extends ConsumerWidget {
         value: value,
         k: k,
         showChevron: showChevron,
+        multiLine: multiLine,
         onTap: onTap,
       );
     }
@@ -330,7 +335,10 @@ class ItemDetailPage extends ConsumerWidget {
           Container(height: 1, color: AppColors.cellDivider),
           row('🗓', '登记时间', _formatDate(item.createdAt)),
           Container(height: 1, color: AppColors.cellDivider),
-          row('📝', '备注', item.note.isEmpty ? '暂无备注' : item.note),
+          // 备注多行自适应：不再截成一行（此前 maxLines:1 + ellipsis
+          // 会把长备注截丢，是「内容缺失」的根源）
+          row('📝', '备注', item.note.isEmpty ? '暂无备注' : item.note,
+              multiLine: item.note.isNotEmpty),
         ],
       ),
     );
@@ -663,6 +671,9 @@ class _InfoRow extends StatelessWidget {
   final String value;
   final double k;
   final bool showChevron;
+
+  /// 值多行自适应（备注等长文本用）：不折行截断；默认单行省略。
+  final bool multiLine;
   final VoidCallback? onTap;
 
   const _InfoRow({
@@ -671,6 +682,7 @@ class _InfoRow extends StatelessWidget {
     required this.value,
     required this.k,
     this.showChevron = false,
+    this.multiLine = false,
     this.onTap,
   });
 
@@ -707,10 +719,11 @@ class _InfoRow extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.right,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              maxLines: multiLine ? null : 1,
+              overflow: multiLine ? null : TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 11.5 * k,
+                height: multiLine ? 1.5 : null,
                 color: AppColors.blushInk3,
               ),
             ),

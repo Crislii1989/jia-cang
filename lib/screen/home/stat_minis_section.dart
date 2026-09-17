@@ -11,7 +11,8 @@ import 'package:jia_cang/providers/item_providers.dart';
 /// 每张卡三段：线性图标（25）→ 数字（20/800，带「件」小单位）→ 标签（10.5）；
 /// 卡底是各自色系的水彩渐变（粉 / 绿 / 蓝 / 紫），一眼区分四个维度。
 /// 四个维度固定为：物品总数 / 即将到期 / 出借中 / 长期闲置。
-/// 点击统一进物品库——后续接入「按条件预筛」时只需在这里改跳转参数。
+/// 点击进物品库并按对应条件预筛（「物品总数」不带条件），
+/// 预筛在物品库顶部显示为可一键清除的过滤 chip。
 ///
 /// **尺寸全部经 [DesignMetrics] 等比换算**：设计稿是 320 机型（内容宽 292），
 /// 直接写死绝对值会在宽视口下把卡片拉成横版、数字相对变小
@@ -27,7 +28,15 @@ class StatMinisSection extends ConsumerWidget {
     final lent = ref.watch(lentCountProvider);
     final idle = ref.watch(idleCountProvider);
 
+    // 点击统一进物品库；除「物品总数」外都带上对应的预筛条件，
+    // 由物品库消费（pendingInventoryFilterRequestProvider，应用后自清）。
     void goInventory() => context.go('/inventory');
+    void goWithFilter(PendingInventoryFilter filter) {
+      ref.read(pendingInventoryFilterRequestProvider.notifier).set(filter);
+      // 预筛与分类预选互斥：带上预筛时清掉可能残留的分类请求
+      ref.read(pendingCategoryProvider.notifier).set(null);
+      context.go('/inventory');
+    }
 
     final cards = <Widget>[
       _StatHighCard(
@@ -44,7 +53,8 @@ class StatMinisSection extends ConsumerWidget {
         icon: Icons.schedule,
         fg: AppColors.statHighGreenFg,
         bg: AppColors.statHighGreen,
-        onTap: goInventory,
+        onTap: () =>
+            goWithFilter(const PendingInventoryFilter(special: 'expiring')),
       ),
       _StatHighCard(
         value: lent,
@@ -52,7 +62,8 @@ class StatMinisSection extends ConsumerWidget {
         icon: Icons.send_outlined,
         fg: AppColors.statHighBlueFg,
         bg: AppColors.statHighBlue,
-        onTap: goInventory,
+        onTap: () =>
+            goWithFilter(const PendingInventoryFilter(status: 'lent')),
       ),
       _StatHighCard(
         value: idle,
@@ -60,7 +71,8 @@ class StatMinisSection extends ConsumerWidget {
         icon: Icons.dark_mode_outlined,
         fg: AppColors.statHighPurpleFg,
         bg: AppColors.statHighPurple,
-        onTap: goInventory,
+        onTap: () =>
+            goWithFilter(const PendingInventoryFilter(special: 'idle')),
       ),
     ];
 

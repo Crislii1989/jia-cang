@@ -99,13 +99,17 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  /// 搜索条大胶囊（46pt，V2.1 参考图规格）：假输入框，点击进物品库
+  /// 搜索条大胶囊（46pt，V2.1 参考图规格）：点击进物品库并自动聚焦搜索框
+  ///（经 [PendingSearchFocus] 传递，物品库消费后自清）。
   Widget _buildSearchBar(double k) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: DesignMetrics.pageMargin),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => context.go('/inventory'),
+        onTap: () {
+          ref.read(pendingSearchFocusProvider.notifier).set(true);
+          context.go('/inventory');
+        },
         child: Container(
           height: 46 * k,
           padding: EdgeInsets.symmetric(horizontal: 16 * k),

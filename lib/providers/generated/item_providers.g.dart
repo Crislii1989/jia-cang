@@ -78,6 +78,131 @@ abstract class _$PendingCategory extends $Notifier<String?> {
   }
 }
 
+/// 首页统计卡 → 物品库 的预筛请求（消费方应用后应置回 null）。
+
+@ProviderFor(PendingInventoryFilterRequest)
+final pendingInventoryFilterRequestProvider =
+    PendingInventoryFilterRequestProvider._();
+
+/// 首页统计卡 → 物品库 的预筛请求（消费方应用后应置回 null）。
+final class PendingInventoryFilterRequestProvider
+    extends
+        $NotifierProvider<
+          PendingInventoryFilterRequest,
+          PendingInventoryFilter?
+        > {
+  /// 首页统计卡 → 物品库 的预筛请求（消费方应用后应置回 null）。
+  PendingInventoryFilterRequestProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'pendingInventoryFilterRequestProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$pendingInventoryFilterRequestHash();
+
+  @$internal
+  @override
+  PendingInventoryFilterRequest create() => PendingInventoryFilterRequest();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(PendingInventoryFilter? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PendingInventoryFilter?>(value),
+    );
+  }
+}
+
+String _$pendingInventoryFilterRequestHash() =>
+    r'd21ac0276a9de6264e1da711b9dc5d92809fc9d1';
+
+/// 首页统计卡 → 物品库 的预筛请求（消费方应用后应置回 null）。
+
+abstract class _$PendingInventoryFilterRequest
+    extends $Notifier<PendingInventoryFilter?> {
+  PendingInventoryFilter? build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<PendingInventoryFilter?, PendingInventoryFilter?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<PendingInventoryFilter?, PendingInventoryFilter?>,
+              PendingInventoryFilter?,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 首页搜索胶囊 → 物品库 的「自动聚焦搜索框」请求（消费方应用后应置回 false）。
+
+@ProviderFor(PendingSearchFocus)
+final pendingSearchFocusProvider = PendingSearchFocusProvider._();
+
+/// 首页搜索胶囊 → 物品库 的「自动聚焦搜索框」请求（消费方应用后应置回 false）。
+final class PendingSearchFocusProvider
+    extends $NotifierProvider<PendingSearchFocus, bool> {
+  /// 首页搜索胶囊 → 物品库 的「自动聚焦搜索框」请求（消费方应用后应置回 false）。
+  PendingSearchFocusProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'pendingSearchFocusProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$pendingSearchFocusHash();
+
+  @$internal
+  @override
+  PendingSearchFocus create() => PendingSearchFocus();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$pendingSearchFocusHash() =>
+    r'fd0d23ec55ab1a83e5425fde0e037c8a72fa2b1c';
+
+/// 首页搜索胶囊 → 物品库 的「自动聚焦搜索框」请求（消费方应用后应置回 false）。
+
+abstract class _$PendingSearchFocus extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// 核心 Items Provider —— AsyncNotifier，从数据库读写
 
 @ProviderFor(Items)

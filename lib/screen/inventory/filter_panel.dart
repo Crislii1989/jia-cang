@@ -1,16 +1,49 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart' hide DatePickerTheme;
 import 'package:jia_cang/constants/app_colors.dart';
 import 'package:jia_cang/constants/app_dimensions.dart';
+import 'package:jia_cang/models/category.dart';
 import 'package:jia_cang/widgets/center_sheet.dart';
 import 'package:jia_cang/widgets/pill_content.dart';
 
+/// 筛选结果：三个条件可叠加，null / 'all' 表示该维度不筛选。
+class FilterResult {
+  /// 收纳位置（包含匹配），null 或 '全部' 表示不筛选
+  final String? location;
+
+  /// items.status 原值（'safe'/'lent'/'lost'/'used'），null 表示不筛选
+  final String? status;
+
+  /// 分类 key，'all' 表示不筛选
+  final String? categoryKey;
+
+  const FilterResult({this.location, this.status, this.categoryKey = 'all'});
+}
+
 /// Callback signature for when filters are applied.
-typedef FilterApplyCallback = void Function(String? location);
+typedef FilterApplyCallback = void Function(FilterResult result);
+
+/// 状态选项的显示文案 → items.status 原值
+const Map<String, String> _statusOptionValues = {
+  '在库': 'safe',
+  '借出': 'lent',
+  '丢失': 'lost',
+  '已用': 'used',
+};
 
 /// Standalone filter panel shown as a modal bottom sheet.
 class FilterPanel extends StatefulWidget {
   final String? initialLocation;
+
+  /// 初始状态（items.status 原值），null = 全部
+  final String? initialStatus;
+
+  /// 初始分类 key，'all' = 全部
+  final String initialCategoryKey;
+
+  /// 可选分类清单（物品库页从 availableCategoriesProvider 传入）
+  final List<Category> categories;
+
   final FilterApplyCallback onApply;
   final VoidCallback onReset;
 
@@ -24,6 +57,9 @@ class FilterPanel extends StatefulWidget {
   const FilterPanel({
     super.key,
     this.initialLocation,
+    this.initialStatus,
+    this.initialCategoryKey = 'all',
+    this.categories = const [],
     required this.onApply,
     required this.onReset,
     this.dismissSignal,
@@ -34,6 +70,9 @@ class FilterPanel extends StatefulWidget {
   static Future<void> show(
     BuildContext context, {
     String? initialLocation,
+    String? initialStatus,
+    String initialCategoryKey = 'all',
+    List<Category> categories = const [],
     required FilterApplyCallback onApply,
     required VoidCallback onReset,
     ValueListenable<int>? dismissSignal,
@@ -43,6 +82,9 @@ class FilterPanel extends StatefulWidget {
       backgroundColor: Colors.transparent,
       builder: (ctx) => FilterPanel(
         initialLocation: initialLocation,
+        initialStatus: initialStatus,
+        initialCategoryKey: initialCategoryKey,
+        categories: categories,
         onApply: onApply,
         onReset: onReset,
         dismissSignal: dismissSignal,
@@ -56,6 +98,20 @@ class FilterPanel extends StatefulWidget {
 
 class _FilterPanelState extends State<FilterPanel> {
   late String? _selectedLocation = widget.initialLocation;
+
+  /// 面板内部用显示文案存状态（'全部' = 不筛选）
+  late String _selectedStatusDisplay = _statusDisplayFor(widget.initialStatus);
+
+  static String _statusDisplayFor(String? value) {
+    if (value == null) return '全部';
+    for (final e in _statusOptionValues.entries) {
+      if (e.value == value) return e.key;
+    }
+    return '全部';
+  }
+
+  /// 面板内部用分类 key（'all' = 不筛选）
+  late String _selectedCategoryKey = widget.initialCategoryKey;
 
   /// 收到关闭信号时，用弹窗自身 context 关闭自己。
   /// 此处 context 处于 showModalBottomSheet 创建的 modal route 内，
@@ -83,17 +139,30 @@ class _FilterPanelState extends State<FilterPanel> {
   void _resetFilters() {
     setState(() {
       _selectedLocation = null;
+      _selectedStatusDisplay = '全部';
+      _selectedCategoryKey = 'all';
     });
     widget.onReset();
   }
 
   void _applyFilters() {
     Navigator.of(context).pop(); // close bottom sheet
-    widget.onApply(_selectedLocation);
+    widget.onApply(
+      FilterResult(
+        location: _selectedLocation,
+        status: _selectedStatusDisplay == '全部'
+            ? null
+            : _statusOptionValues[_selectedStatusDisplay],
+        categoryKey: _selectedCategoryKey,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final categoryOptions = ['全部', ...widget.categories.map((c) => c.label)];
+    final categoryKeys = ['all', ...widget.categories.map((c) => c.key)];
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cardBg,
@@ -132,6 +201,27 @@ class _FilterPanelState extends State<FilterPanel> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            // 分类（与物品库页顶部的分类 chip 同一数据源、同一状态）
+            _buildFilterSection(
+              label: '分类',
+              options: categoryOptions,
+              selected: categoryOptions[categoryKeys.indexOf(
+                _selectedCategoryKey,
+              )],
+              onSelect: (v) => setState(
+                () => _selectedCategoryKey = categoryKeys[categoryOptions.indexOf(v)],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // 状态
+            _buildFilterSection(
+              label: '状态',
+              options: ['全部', ..._statusOptionValues.keys],
+              selected: _selectedStatusDisplay,
+              onSelect: (v) =>
+                  setState(() => _selectedStatusDisplay = v),
             ),
             const SizedBox(height: 16),
             // Location
@@ -231,7 +321,7 @@ class _FilterPanelState extends State<FilterPanel> {
                           BoxShadow(
                             color: AppColors.btnPrimaryShadow,
                             blurRadius: 10,
-                            offset: const Offset(0, 3),
+                            offset: Offset(0, 3),
                           ),
                         ]
                       : null,

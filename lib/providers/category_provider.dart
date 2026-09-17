@@ -85,12 +85,15 @@ class CategoryManager extends _$CategoryManager {
     ref.invalidateSelf();
   }
 
-  /// 重排自定义分类
+  /// 重排自定义分类。
+  ///
+  /// [newIndex] 语义与 `ReorderableListView.onReorderItem` 一致：
+  /// 已为「移除 oldIndex 处元素」调整过的最终插入位置，**不要再手动 -1**
+  /// （此前 onReorder 时代的手动调整已随 API 迁移移除，重复调整会错位）。
   Future<void> reorderCustom(int oldIndex, int newIndex) async {
     final all = state.value ?? [];
     final customs = all.where((c) => !c.isBuiltIn).toList();
 
-    if (oldIndex < newIndex) newIndex -= 1;
     final item = customs.removeAt(oldIndex);
     customs.insert(newIndex, item);
 

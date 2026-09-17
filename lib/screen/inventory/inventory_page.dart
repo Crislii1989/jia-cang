@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jia_cang/constants/app_colors.dart';
 import 'package:jia_cang/constants/app_dimensions.dart';
 import 'package:jia_cang/widgets/gradient_background.dart';
@@ -18,19 +19,15 @@ import 'package:jia_cang/providers/category_provider.dart';
 import 'package:jia_cang/screen/inventory/sort_dropdown.dart';
 import 'package:jia_cang/screen/inventory/filter_panel.dart';
 
-// ─────────────────────────────────────────────
-// 分类 & 排序 常量
-// ─────────────────────────────────────────────
+// 排序文案统一放 models/enums/sort_type.dart（kSortLabels / kSortFullLabels），
+// 物品库页与排序下拉共用一份，别再各写各的。
 
-const _sortLabels = {
-  SortType.newest: '新增时间',
-  SortType.oldest: '最早添加',
-};
+/// 排序偏好持久化 key（shared_preferences）
+const String _kSortPrefKey = 'inventory_sort_type';
 
-const _sortFullLabels = {
-  SortType.newest: '新增时间（最新优先）',
-  SortType.oldest: '新增时间（最早优先）',
-};
+/// 长期闲置 / 即将到期 预筛标记（PendingInventoryFilter.special 的取值）
+const String kSpecialFilterExpiring = 'expiring';
+const String kSpecialFilterIdle = 'idle';
 
 // ═════════════════════════════════════════════
 // Inventory Page
@@ -53,7 +50,12 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   SortType _sortType = SortType.newest;
   bool _sortDropdownOpen = false;
 
+  // ── 预筛（首页统计卡点击带过来的条件，可在筛选条上一键清除）──
+  String? _statusFilter; // items.status 原值
+  String? _specialFilter; // 'expiring' | 'idle'
+
   final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocus = FocusNode();
   final ScrollController _scrollController = ScrollController();
 
   // ── 筛选面板 ──
@@ -64,12 +66,15 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   // 未必是同一个，故通过信号让弹窗自关，保证 pop 命中正确的导航器。
   final ValueNotifier<int> _filterDismissSignal = ValueNotifier(0);
 
-  // 标记本次 pending 分类是否已被消费，避免 build 多次触发时重复应用
+  // 标记本次 pending 分类 / 预筛 / 搜索聚焦是否已被消费，避免 build 多次触发时重复应用
   bool _pendingCategoryApplied = false;
+  bool _pendingFilterApplied = false;
+  bool _pendingSearchFocusApplied = false;
 
   @override
   void dispose() {
     _searchController.dispose();
+    _searchFocus.dispose();
     _scrollController.dispose();
     _filterDismissSignal.dispose();
     super.dispose();
@@ -81,13 +86,22 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     _searchQuery = '';
     _searchController.clear();
     _selectedLocation = null;
-    _sortType = SortType.newest;
+    _statusFilter = null;
+    _specialFilter = null;
     _sortDropdownOpen = false;
     _batchMode = false;
     _selectedIds.clear();
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(0);
     }
+  }
+
+  /// 应用首页统计卡带来的预筛请求（分类回「全部」，其余条件清空后叠加预筛）
+  void _applyPendingFilter(PendingInventoryFilter f) {
+    _resetSecondaryState();
+    _activeCategory = 'all';
+    _statusFilter = f.status;
+    _specialFilter = f.special;
   }
 
   @override
@@ -98,6 +112,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     // 清空 provider 的模式存在时序竞态，可能导致首次跳转筛选未应用。
     // initState 一定先于 build 执行，此时 provider 值刚由来源页设置，可稳定读取。
     String? pendingCat = ref.read(pendingCategoryProvider);
+    final pendingFilter = ref.read(pendingInventoryFilterRequestProvider);
 
     if (pendingCat != null) {
       _resetSecondaryState();
@@ -105,14 +120,26 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
       // 标记已消费，避免紧随其后的 build 重复 reset
       _pendingCategoryApplied = true;
     }
+    if (pendingFilter != null) {
+      _applyPendingFilter(pendingFilter);
+      _pendingFilterApplied = true;
+    }
     // 统一在 postFrame 清空 pending provider，避免下次进入重复触发
-    if (pendingCat != null) {
+    if (pendingCat != null || pendingFilter != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           ref.read(pendingCategoryProvider.notifier).set(null);
+          ref.read(pendingInventoryFilterRequestProvider.notifier).set(null);
         }
       });
     }
+    // 恢复持久化的排序偏好（读取是异步的，就绪后回填）
+    SharedPreferences.getInstance().then((prefs) {
+      if (!mounted) return;
+      setState(() {
+        _sortType = sortTypeFromName(prefs.getString(_kSortPrefKey));
+      });
+    });
   }
 
   // ───────────────────────────────────────────
@@ -127,6 +154,8 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   int get _activeFilterCount {
     int count = 0;
     if (_selectedLocation != null && _selectedLocation != '全部') count++;
+    if (_statusFilter != null) count++;
+    if (_specialFilter != null) count++;
     return count;
   }
 
@@ -159,12 +188,53 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
               .where((i) => i.location.contains(_selectedLocation!))
               .toList();
         }
+        // 状态筛选（首页「出借中」卡 / 筛选面板）
+        if (_statusFilter != null) {
+          filtered = filtered
+              .where((i) => i.status == _statusFilter)
+              .toList();
+        }
+        // 派生视图预筛（首页「即将到期」「长期闲置」卡）：判定口径直接复用
+        // expiringSoonItems / idleItems 两个 provider，避免两处逻辑漂移。
+        if (_specialFilter != null) {
+          final allowed = _specialFilter == kSpecialFilterExpiring
+              ? ref.watch(expiringSoonItemsProvider).map((e) => e.id).toSet()
+              : ref.watch(idleItemsProvider).map((e) => e.id).toSet();
+          filtered = filtered.where((i) => allowed.contains(i.id)).toList();
+        }
         switch (_sortType) {
           case SortType.newest:
             filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
             break;
           case SortType.oldest:
             filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+            break;
+          case SortType.nameAsc:
+            filtered.sort((a, b) => a.name.compareTo(b.name));
+            break;
+          case SortType.expiryAsc:
+            filtered.sort((a, b) {
+              // 无到期日的排最后；同为有/无时按时间升序
+              final da = a.expiryDate;
+              final db = b.expiryDate;
+              if (da == null && db == null) return a.name.compareTo(b.name);
+              if (da == null) return 1;
+              if (db == null) return -1;
+              return da.compareTo(db);
+            });
+            break;
+          case SortType.categoryAsc:
+            final cats = ref.watch(availableCategoriesProvider);
+            String labelOf(Item i) {
+              for (final c in cats) {
+                if (c.key == i.categoryKey) return c.label;
+              }
+              return '';
+            }
+            filtered.sort((a, b) {
+              final r = labelOf(a).compareTo(labelOf(b));
+              return r != 0 ? r : a.name.compareTo(b.name);
+            });
             break;
         }
         return filtered;
@@ -216,7 +286,11 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
       _sortType = type;
       _sortDropdownOpen = false;
     });
-    ToastUtils.show(context, '按${_sortFullLabels[type]}排序');
+    // 排序偏好持久化：下次进入物品库保持上一次的选择
+    SharedPreferences.getInstance().then(
+      (prefs) => prefs.setString(_kSortPrefKey, type.name),
+    );
+    ToastUtils.show(context, '按${kSortFullLabels[type]}排序');
   }
 
   Future<void> _onRefresh() async {
@@ -251,6 +325,34 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     } else {
       // pending 已被清空，重置标记，为下一次跳转做准备
       _pendingCategoryApplied = false;
+    }
+
+    // 首页统计卡带来的预筛请求（出借中 / 即将到期 / 长期闲置）
+    final pendingFilter = ref.watch(pendingInventoryFilterRequestProvider);
+    if (pendingFilter != null) {
+      if (!_pendingFilterApplied) {
+        _applyPendingFilter(pendingFilter);
+        _pendingFilterApplied = true;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(pendingInventoryFilterRequestProvider.notifier).set(null);
+        }
+      });
+    } else {
+      _pendingFilterApplied = false;
+    }
+
+    // 首页搜索胶囊带来的「聚焦搜索框」请求
+    final pendingSearchFocus = ref.watch(pendingSearchFocusProvider);
+    if (pendingSearchFocus && !_pendingSearchFocusApplied) {
+      _pendingSearchFocusApplied = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _searchFocus.requestFocus();
+          ref.read(pendingSearchFocusProvider.notifier).set(false);
+        }
+      });
     }
 
     final items = _filteredItems;
@@ -527,6 +629,15 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
   // ─── Filter Bar ────────────────────────────
 
   Widget _buildFilterBar() {
+    // 预筛激活 chip 的文案：状态预筛显示状态名，派生视图显示视图名
+    final String? pendingChipLabel = _statusFilter != null
+        ? (_statusLabels[_statusFilter] ?? _statusFilter)
+        : switch (_specialFilter) {
+            kSpecialFilterExpiring => '即将到期',
+            kSpecialFilterIdle => '长期闲置',
+            _ => null,
+          };
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.pageMarginHorizontal,
@@ -535,7 +646,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         children: [
           // 排序 chip
           _buildFilterChip(
-            label: _sortLabels[_sortType] ?? '排序',
+            label: kSortLabels[_sortType] ?? '排序',
             isActive: true,
             showArrow: true,
             onTap: () {
@@ -551,10 +662,61 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             icon: Icons.tune,
             onTap: () => _showFilterPanel(),
           ),
+          // 首页预筛激活时，显示可一键清除的过滤 chip（如「借出 ✕」）
+          if (pendingChipLabel != null) ...[
+            const SizedBox(width: 6),
+            _buildPendingFilterChip(pendingChipLabel),
+          ],
           const Spacer(),
           // 视图切换
           _buildViewToggle(),
         ],
+      ),
+    );
+  }
+
+  /// 预筛激活 chip：珊瑚实心 + 关闭钮，点击清除预筛回到全量列表。
+  Widget _buildPendingFilterChip(String label) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _statusFilter = null;
+          _specialFilter = null;
+        });
+        ToastUtils.show(context, '已清除预筛条件');
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: AppColors.chipSelectedBg,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.btnPrimaryShadow,
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.chipSelectedFg,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(
+              Icons.close,
+              size: 13,
+              color: AppColors.chipSelectedFg,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1128,16 +1290,26 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
     FilterPanel.show(
       context,
       initialLocation: _selectedLocation,
+      initialStatus: _statusFilter,
+      initialCategoryKey: _activeCategory,
+      categories: ref.read(availableCategoriesProvider),
       dismissSignal: _filterDismissSignal,
-      onApply: (location) {
+      onApply: (FilterResult result) {
         setState(() {
-          _selectedLocation = location;
+          _selectedLocation = result.location;
+          _statusFilter = result.status;
+          // 面板里的分类与顶部分类 chip 是同一状态，改一个即同步
+          _activeCategory = result.categoryKey ?? 'all';
+          _specialFilter = null; // 面板条件与首页预筛互斥，应用面板时清除预筛
         });
         ToastUtils.show(context, '已应用筛选条件');
       },
       onReset: () {
         setState(() {
           _selectedLocation = null;
+          _statusFilter = null;
+          _activeCategory = 'all';
+          _specialFilter = null;
         });
       },
     );

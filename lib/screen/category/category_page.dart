@@ -575,7 +575,9 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
           physics: const NeverScrollableScrollPhysics(),
           buildDefaultDragHandles: false,
           itemCount: customs.length,
-          onReorder: (oldIdx, newIdx) {
+          // onReorderItem（而非已弃用的 onReorder）：newIndex 已为移除元素
+          // 调整过，provider 侧不要再 -1（见 reorderCustom 注释）。
+          onReorderItem: (oldIdx, newIdx) {
             ref
                 .read(categoryManagerProvider.notifier)
                 .reorderCustom(oldIdx, newIdx);

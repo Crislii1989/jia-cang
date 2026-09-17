@@ -3,11 +3,6 @@ import 'package:jia_cang/constants/app_colors.dart';
 import 'package:jia_cang/constants/app_dimensions.dart';
 import 'package:jia_cang/models/enums/sort_type.dart';
 
-const _sortFullLabels = {
-  SortType.newest: '新增时间（最新优先）',
-  SortType.oldest: '新增时间（最早优先）',
-};
-
 /// Sort dropdown overlay widget.
 class SortDropdown extends StatelessWidget {
   final SortType currentSort;
@@ -62,7 +57,7 @@ class SortDropdown extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        _sortFullLabels[type]!,
+                        kSortFullLabels[type]!,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight:
