@@ -558,23 +558,32 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
       );
     }
 
+    // 非排序态：与系统分类一致的两列网格（2026-09-17 反馈「自定义分类
+    // 也一并修改」）。列宽同样必须走 LayoutBuilder 约束——此处原先也
+    // 用 MediaQuery 整窗宽算列宽，宽视口下同样退化成单列。
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children: customs.asMap().entries.map((entry) {
-          final i = entry.key;
-          final cat = entry.value;
-          return SizedBox(
-            width: (MediaQuery.of(context).size.width - 52) / 2,
-            child: _CategoryCard(
-              category: cat,
-              delay: i * 0.06,
-              onTap: () => _showCategoryActions(cat),
-            ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          const gap = 12.0;
+          final colWidth = (constraints.maxWidth - gap) / 2;
+          return Wrap(
+            spacing: gap,
+            runSpacing: gap,
+            children: customs.asMap().entries.map((entry) {
+              final i = entry.key;
+              final cat = entry.value;
+              return SizedBox(
+                width: colWidth,
+                child: _CategoryCard(
+                  category: cat,
+                  delay: i * 0.06,
+                  onTap: () => _showCategoryActions(cat),
+                ),
+              );
+            }).toList(),
           );
-        }).toList(),
+        },
       ),
     );
   }

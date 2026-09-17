@@ -1,0 +1,5 @@
+﻿Analyzing category_page.dart...
+
+   info - category_page.dart:477:11 - Use the null-aware marker '?' rather than a null check via an 'if'. Try using '?'. - use_null_aware_elements
+
+1 issue found.
