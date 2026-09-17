@@ -17,6 +17,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   registerPackageInfoPlus();
 
+  // 手机端锁竖屏：全 App 按竖屏设计（悬浮条 / DesignMetrics 比例），
+  // 横屏会拉出布局问题；桌面与 Web 端该调用是 no-op，不受影响。
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   // 加载 .env 配置文件（含 BUGSNAG_API_KEY 等敏感信息）
   await dotenv.load(fileName: '.env');
 
