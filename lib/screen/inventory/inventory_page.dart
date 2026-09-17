@@ -584,7 +584,10 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             child: _categoryExpanded
                 ? _buildCategoryGrid(tabs)
                 // 折叠态：右端 12% 渐隐遮罩——被裁的 chip 淡出，
-                // 不再出现「切一半的按钮」硬边（2026-09-17 反馈）
+                // 不再出现「切一半的按钮」硬边（2026-09-17 反馈）。
+                // chip 定宽 = 展开态 3 列网格的格子宽（同一 LayoutBuilder
+                // 约束、同一 gap 公式），折叠/展开宽度完全一致
+                // （2026-09-17 反馈「折叠态按钮宽度与展开态统一」）。
                 : ShaderMask(
                     shaderCallback: (bounds) => const LinearGradient(
                       begin: Alignment.centerLeft,
@@ -593,18 +596,31 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
                       stops: [0.0, 0.88, 1.0],
                     ).createShader(bounds),
                     blendMode: BlendMode.dstIn,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      child: Row(
-                        children: [
-                          for (final cat in tabs)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: _buildCategoryChip(cat),
-                            ),
-                        ],
-                      ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        const gap = 8.0;
+                        // 展开态 3 列、两个 8px 列缝——与 _buildCategoryGrid 同式
+                        final cellWidth = (constraints.maxWidth - gap * 2) / 3;
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          child: Row(
+                            children: [
+                              for (final cat in tabs)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: gap),
+                                  child: SizedBox(
+                                    width: cellWidth,
+                                    child: _buildCategoryChip(
+                                      cat,
+                                      centered: true,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
           ),
