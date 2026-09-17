@@ -613,17 +613,19 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
             onTap: () =>
                 setState(() => _categoryExpanded = !_categoryExpanded),
             child: Container(
-              width: 34,
-              height: 34,
+              // 40：与 FloatingBarButton 同高（2026-09-17 反馈分类 chip
+              // 整体升一档后，箭头钮跟随对齐全局 40pt 按钮语言）
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
                 color: AppColors.chipBg,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 _categoryExpanded
                     ? Icons.keyboard_arrow_up
                     : Icons.keyboard_arrow_down,
-                size: 18,
+                size: 20,
                 color: AppColors.textHint,
               ),
             ),
@@ -678,7 +680,10 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
         duration: const Duration(milliseconds: 250),
         // 展开态网格里 chip 撑满等宽格子，文字需显式居中
         alignment: centered ? Alignment.center : null,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+        // 2026-09-17 反馈「缩放的时候按展开的尺寸设置」：折叠态 chip
+        // 放大到与展开态观感一致——字号 14 / 内边距 20×9（高 ~40），
+        // 与全局 40pt 按钮语言对齐。
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
         decoration: BoxDecoration(
           color: isActive ? AppColors.chipSelectedBg : AppColors.chipBg,
           borderRadius: BorderRadius.circular(22),
@@ -699,7 +704,7 @@ class _InventoryPageState extends ConsumerState<InventoryPage> {
           child: Text(
             cat.label,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: isActive ? AppColors.chipSelectedFg : AppColors.chipFg,
               leadingDistribution: TextLeadingDistribution.even,

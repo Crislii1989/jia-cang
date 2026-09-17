@@ -1,0 +1,14 @@
+﻿{
+  "ok": true,
+  "log": [
+    "wait:14000",
+    "click:138,890",
+    "wait:2500",
+    "shot:r13_collapsed.png -> C:\\Users\\o\\shiwuji_build\\.workbuddy\\verify\\2026-09-17\\r13_collapsed.png",
+    "click:391,76",
+    "wait:1500",
+    "shot:r13_expanded.png -> C:\\Users\\o\\shiwuji_build\\.workbuddy\\verify\\2026-09-17\\r13_expanded.png"
+  ],
+  "pageErrors": [],
+  "consoleErrors": []
+}

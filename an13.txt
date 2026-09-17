@@ -1,0 +1,6 @@
+﻿Analyzing inventory_page.dart...
+
+   info - inventory_page.dart:976:29 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
+   info - inventory_page.dart:976:33 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
+
+2 issues found.
