@@ -4,7 +4,9 @@
 import os, re, json, sys
 
 ROOT = r"D:\工作文件\敲代码\家中有数\shiwuji"
-OUT = r"C:\Users\o\shiwuji_build\deadcode.json"
+# ⚠️ 输出必须写到临时目录。原来写的是 C:\Users\o\shiwuji_build\deadcode.json，
+# 而 shiwuji_build 是指向仓库根的联接 → 等于把 deadcode.json 丢进仓库根并提交了。
+OUT = r"C:\Users\o\AppData\Local\Temp\deadcode.json"
 
 decl_re = re.compile(
     r"^(?:@[\w.]+\s+)*"                      # skip annotations

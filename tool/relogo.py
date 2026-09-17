@@ -2,6 +2,8 @@
 """Replace app logo: user-provided JPG -> assets/icon/jia_cang_icon_1024.png (+ web icons)."""
 from PIL import Image
 
+# ⚠️ SRC 是 2026-09-17 那次换 logo 用的一次性临时路径，早已失效：
+#    重跑前请把 SRC 改成真实的源图路径（用户提供的方形 logo 原图）。
 SRC = r"C:\Users\o\WorkBuddy\2026-09-17-14-13-03\tidy-logo_assets\5ff021c5-miora_text_to_image-1789626065990-0-b48f48be7e20.jpg"
 ICON = r"D:\工作文件\敲代码\家中有数\shiwuji\assets\icon\jia_cang_icon_1024.png"
 WEB = r"D:\工作文件\敲代码\家中有数\shiwuji\web"

@@ -67,3 +67,12 @@ app.*.map.json
 #    assets/prompts/item_recognition_prompt.txt 是 PromptService 实际加载的资产，
 #    linux|windows 下的 CMakeLists.txt 是构建文件，它们都是真实文件。
 /*.txt
+
+# Agent / 调试临时输出（第二批，2026-09-17）：E2E 驱动/冒烟日志 JSON 与一次性 python 脚本。
+# 同样**只锚定根目录**（`/*.xxx`），别改成裸 `*.json` / `*.py`：
+#   真实的 .json 全在子目录 —— web/manifest.json、ios|macos 的
+#   Runner/Assets.xcassets/**/Contents.json、.vscode/*.json；
+#   Flutter 项目根本就不该有 .json / .py（可复用的脚本请放 tool/）。
+# 这一批误入库的是 24 个 drive*.json + shot6.json + deadcode.json + 4 个 .py，已清理。
+/*.json
+/*.py
