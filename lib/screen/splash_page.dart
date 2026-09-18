@@ -130,8 +130,8 @@ class _SplashPageState extends State<SplashPage> {
               borderRadius: BorderRadius.circular(52),
               boxShadow: AppShadows.logo,
             ),
-            // 2026-09-17 品牌升级：应用图标改为真实 logo 资产
-            //（assets/icon/jia_cang_icon_1024.png，与桌面/安装图标同源）
+            // 应用图标资产（assets/icon/jia_cang_icon_1024.png，
+            // 与桌面 / 安装图标同源）
             child: ClipRRect(
               borderRadius: BorderRadius.circular(52),
               child: Image.asset(

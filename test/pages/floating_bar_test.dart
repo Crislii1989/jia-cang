@@ -87,7 +87,7 @@ void main() {
     expect(find.text('首页'), findsOneWidget);
     expect(find.text('物品库'), findsOneWidget);
     expect(find.text('收纳'), findsOneWidget);
-    // 第 4 个 Tab 的文案是「我的」（旧版是「个人中心」）
+    // 第 4 个 Tab 的文案是「我的」
     expect(find.text('我的'), findsOneWidget);
     expect(find.text('个人中心'), findsNothing);
     // 中央添加钮（不是 Tab，点击 push /add_item）

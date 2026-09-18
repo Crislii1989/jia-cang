@@ -9,11 +9,10 @@ import 'package:jia_cang/widgets/emoji_text.dart';
 import 'package:jia_cang/widgets/section_title.dart';
 import 'help_feedback_sheet.dart';
 
-/// 应用管理 / 设置 两组功能入口（高保真稿 S5 `.cell-group`，2026-09-16 按稿重排）。
+/// 应用管理 / 设置 两组功能入口（高保真稿 S5 `.cell-group`）。
 ///
 /// 行式白卡组：行内细分割线（cellDivider），每行 = 26·k emoji 底块 +
 /// 标题（12.5·k）+ 右侧灰值（11.5·k）+ 箭头。
-/// 旧版「私密空间 / 家庭共享（即将上线占位）」不在稿内，已随重排移除。
 class FeatureMenuSection extends ConsumerWidget {
   const FeatureMenuSection({super.key});
 

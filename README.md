@@ -130,8 +130,8 @@ flutter run
 #### 命名约定
 
 - **Dart 包名**：`jia_cang`（import 路径为 `package:jia_cang/...`）。
-- **本地数据库存储名**：`jiacang`。历史安装留下的旧库会在首次启动时自动搬迁到当前名字下，旧库保留作兜底、不删除；「清理本地数据」会同时清掉新旧两个名字的库。
-- **WebDAV 备份**：备份上传到 `/jiacang_backups`（文件名前缀 `jiacang_backup_`）；列出备份时也会扫描历史目录 `/shiwuji_backups`，老用户的云端旧备份不受影响。
+- **本地数据库存储名**：`jiacang`。数据库即以此名保存，Web 端落在浏览器的 OPFS / IndexedDB 里。
+- **WebDAV 备份**：备份上传到 `/jiacang_backups`（文件名前缀 `jiacang_backup_`）。
 
 ### 代码生成
 

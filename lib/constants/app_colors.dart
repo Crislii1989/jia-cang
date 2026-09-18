@@ -12,8 +12,8 @@
 ///    这些**故意不随皮肤变**：状态语义不能因为换了绿色皮肤就把「危险」变绿；
 ///    pastel 轮转是设计的视觉签名。
 ///
-/// 默认皮肤 [AppSkins.coral] 把全部动态令牌钉成了改造前的精确值，
-/// 所以「不换皮肤」时的渲染与旧版本完全一致。
+/// 默认皮肤 [AppSkins.coral] 把全部动态令牌钉成了设计稿基准的精确值，
+/// 因此「不换皮肤」时的渲染与设计稿逐像素一致。
 ///
 /// ⚠️ 动态令牌不能再进 `const` 表达式（运行时才能确定），
 /// 写法上用 `final` 或直接在 build 里取用。
@@ -75,7 +75,7 @@ class AppColors {
   // ── 背景（跟随皮肤） ──
   /// 全局页面底色
   static Color get background => _t(SkinTokens.background, blushBg);
-  /// 已废弃：旧版浅金底，随全局改版不再使用
+  /// 已废弃的浅金底，现由 [background] 取代
   static const backgroundLight = Color(0xFFFFE9B0);
   /// 卡片/悬浮条底
   static Color get cardBg => _t(SkinTokens.cardBg, _skin.cardBg);

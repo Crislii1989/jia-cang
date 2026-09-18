@@ -48,7 +48,7 @@ class PillContent extends StatelessWidget {
   /// 胶囊上的文字。
   final String label;
 
-  /// 文字样式；其 `color` 同时用于图标着色（与改造前 `fg` 行为一致）。
+  /// 文字样式；其 `color` 同时用于图标着色。
   final TextStyle? labelStyle;
 
   /// 前置图标（如「筛选」的漏斗）。

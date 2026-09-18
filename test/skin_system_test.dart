@@ -32,8 +32,8 @@ class _SkinRebuildHarness extends ConsumerWidget {
 /// 外观皮肤系统（2026-09-17）的回归测试。
 ///
 /// 重点锁三件事：
-/// 1. **默认皮肤不许改观感**——[AppSkins.coral] 的 exact 表必须等于改造前的
-///    精确取值，否则老用户一升级会以为界面坏了；
+/// 1. **默认皮肤不许改观感**——[AppSkins.coral] 的 exact 表必须等于设计稿基准的
+///    精确取值，改了就等于改全局默认外观；
 /// 2. **换皮肤只换该换的**——品牌/中性/文字随锚点走，语义色（危险/成功）
 ///    与身份色（状态绿蓝）必须纹丝不动；
 /// 3. **自定义皮肤的增删改落盘**，删掉正在用的那套要回落默认。
@@ -47,7 +47,7 @@ void main() {
     await SkinStore.load();
   });
 
-  group('默认皮肤 = 改造前的精确取值', () {
+  group('默认皮肤 = 设计稿基准的精确取值', () {
     test('品牌色与中性面', () {
       expect(AppColors.coral, const Color(0xFFF2705B));
       expect(AppColors.coralDeep, const Color(0xFFDD5B46));

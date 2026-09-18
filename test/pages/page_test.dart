@@ -94,7 +94,7 @@ void main() {
       expect(find.text('长期闲置'), findsOneWidget);
       // 分类大圆入口（假分类：运动）
       expect(find.text('运动'), findsOneWidget);
-      // 旧版卡片已退役
+      // 首页概览里没有「本月新增」卡片
       expect(find.text('本月新增'), findsNothing);
     });
 

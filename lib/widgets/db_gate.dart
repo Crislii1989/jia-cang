@@ -50,7 +50,7 @@ class DbGate extends ConsumerWidget {
           '${kDatabaseOpenTimeout.inSeconds} 秒仍无响应。\n\n'
           '常见原因：\n'
           '· 同一个地址开了多个标签页，互相锁住了本地数据；\n'
-          '· 浏览器里残留了旧版本留下的坏连接。\n\n'
+          '· 浏览器里残留了上次运行留下的坏连接。\n\n'
           '可以先关掉其他标签页再点「重试」；'
           '如果仍然不行，用「清理本地数据」重建。';
     }

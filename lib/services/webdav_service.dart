@@ -18,7 +18,7 @@ class BackupFileInfo {
   /// 备份时物品数量（旧格式文件名无此信息时为 null）
   final int? itemCount;
 
-  /// 是否为 ZIP 格式（false 表示旧版 JSON）
+  /// 是否为 ZIP 格式（false 表示 JSON 格式）
   final bool isZip;
 
   BackupFileInfo({
@@ -33,17 +33,12 @@ class BackupFileInfo {
 /// WebDAV 备份服务
 ///
 /// 备份内容以 ZIP 格式打包，内含 data.json（结构化数据）。
-/// 恢复时兼容新版 .zip 与旧版 .json 两种格式。
+/// 恢复时同时支持 .zip 与 .json 两种备份格式。
 class WebDavService {
   Client? _client;
   String _backupDir = '/jiacang_backups';
 
   static const _filenamePrefix = 'jiacang_backup_';
-
-  /// 历史遗留的备份目录 / 文件名前缀。
-  /// 列出备份时仍会扫描，保证老用户的云端旧备份不会「消失」；勿改。
-  static const _legacyBackupDir = '/shiwuji_backups';
-  static const _legacyFilenamePrefix = 'shiwuji_backup_';
 
   /// 配置 WebDAV 客户端
   void configure(String url, String user, String password, {String? dir}) {
@@ -151,24 +146,18 @@ class WebDavService {
     return filename;
   }
 
-  /// 列出备份历史
-  ///
-  /// 同时扫描当前目录（/jiacang_backups）与历史目录
-  /// （/shiwuji_backups），老用户的旧云端备份继续可见、可恢复。
+  /// 列出备份历史（扫描配置的备份目录）。
   Future<List<BackupFileInfo>> listBackups() async {
     if (_client == null) throw Exception('WebDAV 未配置');
     try {
       final backups = <BackupFileInfo>[];
-      final dirs = <String>{
-        _backupDir,
-        if (_legacyBackupDir != _backupDir) _legacyBackupDir,
-      };
+      final dirs = <String>{_backupDir};
       for (final dir in dirs) {
         final List<dynamic> files;
         try {
           files = await _client!.readDir(dir);
         } catch (_) {
-          continue; // 历史目录不存在是常态，跳过即可
+          continue; // 目录不存在时跳过
         }
         for (final f in files) {
           final name = f.name ?? '';
@@ -222,7 +211,7 @@ class WebDavService {
       final jsonBytes = dataFile.content;
       data = jsonDecode(utf8.decode(jsonBytes)) as Map<String, dynamic>;
     } else {
-      // 旧版 JSON 格式
+      // JSON 格式备份
       data = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
     }
 
@@ -302,7 +291,7 @@ class WebDavService {
   }
 
 
-  /// createdAt 回退解析：旧版本备份使用 purchaseDate 作为时间来源。
+  /// createdAt 回退解析：部分备份以 purchaseDate 作为时间来源。
   static DateTime _parseFallbackCreatedAt(Map<String, dynamic> j) {
     final purchaseRaw = j['purchaseDate'];
     if (purchaseRaw != null) {
@@ -497,18 +486,15 @@ class WebDavService {
 
   /// 从文件名解析备份时间
   ///
-  /// 支持格式（新旧前缀均兼容）：
+  /// 支持格式：
   /// - jiacang_backup_20260917_143000_n42.zip
   /// - jiacang_backup_20260917_143000.zip
-  /// - jiacang_backup_20260917_143000.json（旧版格式）
-  /// - shiwuji_backup_20260627_143000.zip（历史备份）
+  /// - jiacang_backup_20260917_143000.json
   static DateTime? _parseFilenameTime(String name) {
     try {
       var base = _stripExtension(name);
       if (base.startsWith(_filenamePrefix)) {
         base = base.substring(_filenamePrefix.length);
-      } else if (base.startsWith(_legacyFilenamePrefix)) {
-        base = base.substring(_legacyFilenamePrefix.length);
       }
       // 去掉 _n{count} 后缀
       final nIdx = base.lastIndexOf('_n');

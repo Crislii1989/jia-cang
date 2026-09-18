@@ -26,7 +26,7 @@
 | 2.4 | 涨红跌绿等市场配色约定不适用于本应用（非金融场景） | — |
 | 2.5 | **AppColors 的动态令牌跟随皮肤**（品牌/中性面/文字三级/描边/阴影/装饰），语义色与身份色固定不变。新增动态令牌必须：① 在 `app_colors.dart` 里写成 getter 并给出派生公式 `_t(SkinTokens.x, 派生值)`；② 在 `SkinTokens` 加同名 key。**动态令牌不能进 `const` 表达式**（写 `final` 或在 build 里取） | `app_colors.dart` / `app_skin.dart` |
 | 2.6 | **新增路由必须在 `app_router.dart` 用 `_skinKeyed('tag', page)` 包一层**。原因：`const XxxPage()` 在祖辈重建时会被 Element 复用（同实例直接短路、连 build 都不调），不换 key 就换不了色 | `lib/app_router.dart` |
-| 2.7 | 默认皮肤 `AppSkins.coral` 的 exact 表 = 改造前的精确取值，**改它等于改全局默认外观**，必须先对设计稿 | `lib/constants/app_skin.dart` |
+| 2.7 | 默认皮肤 `AppSkins.coral` 的 exact 表 = 设计稿基准的精确取值，**改它等于改全局默认外观**，必须先对设计稿 | `lib/constants/app_skin.dart` |
 
 ## 3. 组件复用
 
@@ -52,17 +52,9 @@
 
 ### 2026-09-17（外观皮肤系统）
 - **引入皮肤（配色方案）系统**：7 个锚点色（主色/页面底色/卡片底/主文字/次文字/分割线/光晕）+ 派生令牌；
-  内置 6 套（暖粉珊瑚为默认，像素级等于改造前），用户可新建/编辑/删除自定义配色，
+  内置 6 套（暖粉珊瑚为默认，与设计稿基准像素级一致），用户可新建/编辑/删除自定义配色，
   入口在「我的 → 设置 → 外观」，存 SharedPreferences（`SkinStore`）。
 - 全库约 450 处 `const` 因动态令牌被拆除（这是换肤的必要代价）。
 - 弹窗统一：12 处裸 `AlertDialog`（storage ×6 / category / ai_settings / data_backup ×2 / db_gate / check_update）全部迁入 `CenterSheetConfirm` / `showCenterSheet` 外壳。
 - 色彩统一：6 个文件手写的 `Color(0xFFF0E4D0)` 归位 `AppColors.border`；`Color(0xBFFFFFFF)` 归位 `AppColors.floatHairlineSoft`。
-- 死代码清理：22 个零引用文件 + 7 个零引用符号删除（详见 commit）。
-
-## 6. 存量债务（不阻塞统一标准，挂账待拍板）
-
-- 老页面（storage/me 部分区块）仍用固定 px，未过 `DesignMetrics`。
-- 「对齐/居中」类视觉反馈先用 widget test 量（tester.getRect），再动代码。
-- lint：12 条 `unnecessary_underscores` info 级风格提示，可随下一次触碰相关文件时顺手清。
-- 外观页尚未画进 `ui-hifi-mockups.html` / `ui-redesign-wireframes.html`（两份设计稿还是 v2.7，没有 S6 外观页）。
-- 深色系皮肤没做：派生规则假设「浅底 + 深字」，深色底要另一套对比度约束。
+- 死代码清理：22 个零引用文件 + 7 个零引用符号删除。

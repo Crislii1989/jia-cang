@@ -15,9 +15,9 @@ import 'edit_profile_modal.dart';
 /// 结构：顶部标题「我的」→ 资料卡 → 数据概览（2×2）→
 /// 应用管理 / 设置 两组行式白卡。
 ///
-/// 旧版页面自绘的三团圆形色斑已移除——全局背景**只有一层**右上角暖光晕
-/// （[GradientBackground]，S1~S5 共用），各页不再私加装饰。
-/// 右上角拍照（扫描识别）入口按用户要求隐藏，不再在本页显示。
+/// 全局背景**只有一层**右上角暖光晕（[GradientBackground]，S1~S5 共用），
+/// 各页不再私加装饰，本页也不自绘任何色斑。
+/// AI 识别入口在下方功能菜单组内（行式白卡），本页右上角不再单设图标。
 class MePage extends ConsumerStatefulWidget {
   const MePage({super.key});
 

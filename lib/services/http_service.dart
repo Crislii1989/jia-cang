@@ -57,7 +57,10 @@ class HttpService {
 
   late Dio _dio = _buildDio();
 
-  /// Base URL：TODO 替换为真实服务器地址
+  /// Dio 的默认 Base URL（占位值）。
+  ///
+  /// 现有调用（如「检查更新」）都直接传完整 URL，不走这个基地址；
+  /// 保留它是为了让 Dio 有一个合法的默认值。
   static const String baseUrl = 'https://api.example.com';
 
   Dio _buildDio() {
