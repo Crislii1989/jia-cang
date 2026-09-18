@@ -82,3 +82,14 @@ app.*.map.json
 # 而这个 .deps 是 dart compile 的依赖清单 —— 仓库里没有任何东西引用它，且里面写满了
 # 绝对路径（pub cache 与本机工程路径），属纯噪音，不入库。
 web/drift_worker.js.deps
+
+# 与 app 本体运行无关的内容不入库（2026-09-18 拍板：纯净初版；本地文件保留，仅停止跟踪）
+#   .vscode/                 个人编辑器配置
+#   devtools_options.yaml    DevTools 本地界面状态
+#   docs/ design_source/     设计稿 / 设计源文件（属过程产物，本地留存）
+#   tool/                    开发辅助脚本（死代码扫描等）
+/.vscode/
+/devtools_options.yaml
+/docs/
+/design_source/
+/tool/

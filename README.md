@@ -254,9 +254,6 @@ Web 端依赖仓库内的 `web/sqlite3.wasm` 与 `web/drift_worker.js`（已随�
 ├── test/                             # 测试：services / providers / pages / widgets / models / daos
 ├── assets/                           # 彩色 emoji 字体、应用图标、AI 提示词、README 截图
 ├── web/                              # Web 壳（index.html / manifest / sqlite3.wasm / drift_worker.js）
-├── docs/                             # 设计稿（线框 + 高保真）、UI 一致性规则、分类设计、部署指南
-├── tool/                             # 开发脚本：死代码扫描、孤儿文件扫描、配色替换、尺寸测量
-├── design_source/                    # 设计源文件（背景图）
 ├── .github/workflows/                # CI：Web 部署（PWA）、Android APK 构建
 └── android/ ios/ macos/ linux/ windows/   # 六端平台工程
 ```
