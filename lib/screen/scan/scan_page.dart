@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,9 +11,18 @@ import 'package:jia_cang/services/ai/ai_provider_type.dart';
 import 'package:jia_cang/services/photo_service.dart';
 import 'package:jia_cang/services/prompt_service.dart';
 import 'package:jia_cang/widgets/center_sheet.dart';
+import 'package:jia_cang/widgets/photo_image.dart';
 
 class ScanPage extends ConsumerStatefulWidget {
-  const ScanPage({super.key});
+  /// 识别结果是否「回填给调用方」。
+  ///
+  /// - `false`（默认，从「我的 → AI 识别」进入）：识别完点确认按钮就跳到
+  ///   新建物品页，由用户补充后保存——这是本页原有的行为。
+  /// - `true`（从「添加物品页」的照片区进入）：识别完把结果 **pop 回去**，
+  ///   直接填进用户正在编辑的那张表单，不再另起一张新表单。
+  final bool returnToCaller;
+
+  const ScanPage({super.key, this.returnToCaller = false});
 
   @override
   ConsumerState<ScanPage> createState() => _ScanPageState();
@@ -203,18 +211,24 @@ class _ScanPageState extends ConsumerState<ScanPage> {
     if (_result == null || _capturedImagePath == null) return;
 
     final result = _result!;
+    final values = AddItemInitialValues(
+      name: result.name,
+      category: result.category,
+      brand: result.brand,
+      description: result.description,
+      photoPath: _capturedImagePath,
+    );
+
+    // 从「添加物品页」进来的：结果交还给那张正在编辑的表单，不再另起一张
+    // 新表单（否则用户已经填了一半的内容会丢）。
+    if (widget.returnToCaller && context.canPop()) {
+      context.pop(values);
+      return;
+    }
+
     // 不直接入库，而是携带识别结果跳转到新建物品页，由用户确认/补充后保存
     if (mounted) {
-      context.push(
-        '/add_item',
-        extra: AddItemInitialValues(
-          name: result.name,
-          category: result.category,
-          brand: result.brand,
-          description: result.description,
-          photoPath: _capturedImagePath,
-        ),
-      );
+      context.push('/add_item', extra: values);
     }
   }
 
@@ -224,23 +238,10 @@ class _ScanPageState extends ConsumerState<ScanPage> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      // appBar: AppBar(
-      //   title: const Text('扫一扫', style: AppTextStyles.titleLarge),
-      //   backgroundColor: AppColors.background,
-      //   foregroundColor: AppColors.textPrimary,
-      //   elevation: 0,
-      //   leading: _capturedImagePath != null
-      //       ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: _reset)
-      //       : null,
-      //   actions: [
-      //     if (_capturedImagePath != null && _result != null)
-      //       TextButton.icon(
-      //         icon: const Icon(Icons.refresh, size: 18),
-      //         label: const Text('重新识别'),
-      //         onPressed: _analyzeWithAI,
-      //       ),
-      //   ],
-      // ),
+      // 不用 AppBar：拍照态要的是沉浸式取景框（深色铺满整屏），
+      // 结果态则用自绘的 [_buildResultTopBar] 提供显式返回入口。
+      // ⚠️ 原来整段 AppBar 被注释掉之后，结果态就**没有任何退出入口**了：
+      // Web 上没有系统返回手势/返回键，用户会被困在结果页，只能刷新页面。
       body: _capturedImagePath == null
           ? _buildCameraView(savedConfigsAsync)
           : _buildResultView(savedConfigsAsync),
@@ -395,7 +396,8 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: GestureDetector(
-               onTap: () =>{},
+              // 原来是空回调 `() {}`（死链），点了没反应，用户只能干瞪眼。
+              onTap: () => context.push('/ai-settings'),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -504,7 +506,15 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           _buildCircleAction(
             icon: Icons.close,
             label: '关闭',
-            onTap: () => context.pop(),
+            // 深链直接进 /scan（栈里没有上一页）时 pop 无处可去，
+            // 兜底回首页，免得在 Web 上被卡死在这一页。
+            onTap: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/home');
+              }
+            },
           ),
         ],
       ),
@@ -548,6 +558,8 @@ class _ScanPageState extends ConsumerState<ScanPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildResultTopBar(),
+          const SizedBox(height: 4),
           _buildModelSelector(savedConfigsAsync),
           const SizedBox(height: 16),
           _buildImagePreview(),
@@ -561,6 +573,35 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           ],
         ],
       ),
+    );
+  }
+
+  /// 结果态顶部的返回条。
+  ///
+  /// 原 AppBar 被注释掉后，拍照进入结果态就再没有任何返回入口（Web 上没有
+  /// 系统返回手势），这里的按钮先 [_reset] 回到拍照态，再由拍照态的「关闭」
+  /// 退出本页——与旧 AppBar 的 leading 行为一致。
+  Widget _buildResultTopBar() {
+    return Row(
+      children: [
+        SizedBox(
+          width: 38,
+          height: 38,
+          child: Material(
+            color: AppColors.cardBg,
+            borderRadius: BorderRadius.circular(12),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: _reset,
+              child: Icon(
+                Icons.chevron_left,
+                size: 22,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -685,10 +726,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                         ],
                       ),
                     ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      color: AppColors.textSecondary,
-                    ),
+                    Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
                   ],
                 ),
               ),
@@ -740,10 +778,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                         (_selectedConfig == null && i == 0);
                     return ListTile(
                       leading: isSelected
-                          ? Icon(
-                              Icons.check_circle,
-                              color: AppColors.coral,
-                            )
+                          ? Icon(Icons.check_circle, color: AppColors.coral)
                           : Icon(
                               Icons.radio_button_unchecked,
                               color: AppColors.textHint,
@@ -779,13 +814,14 @@ class _ScanPageState extends ConsumerState<ScanPage> {
 
   Widget _buildImagePreview() {
     if (_capturedImagePath == null) return const SizedBox.shrink();
+    // 走 PhotoImage：真机是文件路径、Web 是 data:…内联串，两态都渲染得出来。
+    // （原来写死 Image.file(File(path))，Web 上必然加载失败。）
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Image.file(
-        File(_capturedImagePath!),
+      child: SizedBox(
         height: 280,
         width: double.infinity,
-        fit: BoxFit.contain,
+        child: PhotoImage(source: _capturedImagePath!, fit: BoxFit.contain),
       ),
     );
   }
@@ -819,10 +855,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               const SizedBox(height: 6),
               Text(
                 meta != null ? '使用 ${meta.displayName} 分析图片' : '正在分析图片内容',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: AppColors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -855,10 +888,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
             const SizedBox(height: 8),
             Text(
               _errorMessage!,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textPrimary,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 12),
             Row(
@@ -894,11 +924,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           children: [
             Row(
               children: [
-                Icon(
-                  Icons.auto_awesome,
-                  color: AppColors.coral,
-                  size: 22,
-                ),
+                Icon(Icons.auto_awesome, color: AppColors.coral, size: 22),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -922,28 +948,19 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                   const SizedBox(width: 4),
                   Text(
                     meta?.displayName ?? '',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textHint,
-                    ),
+                    style: TextStyle(fontSize: 12, color: AppColors.textHint),
                   ),
                   if (r.model.isNotEmpty) ...[
                     const SizedBox(width: 8),
                     Text(
                       '· ${r.model}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textHint,
-                      ),
+                      style: TextStyle(fontSize: 12, color: AppColors.textHint),
                     ),
                   ],
                   const SizedBox(width: 8),
                   Text(
                     '· ${r.elapsedMs}ms',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textHint,
-                    ),
+                    style: TextStyle(fontSize: 12, color: AppColors.textHint),
                   ),
                 ],
               ),
@@ -1034,19 +1051,13 @@ class _ScanPageState extends ConsumerState<ScanPage> {
             width: 48,
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textPrimary,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
             ),
           ),
         ],
@@ -1061,11 +1072,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.palette_outlined,
-            size: 16,
-            color: AppColors.textHint,
-          ),
+          Icon(Icons.palette_outlined, size: 16, color: AppColors.textHint),
           const SizedBox(width: 8),
           SizedBox(
             width: 48,
@@ -1089,10 +1096,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           Expanded(
             child: Text(
               color,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textPrimary,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
             ),
           ),
         ],
@@ -1188,9 +1192,14 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                 elevation: 2,
               ),
               icon: const Icon(Icons.add_box_outlined),
-              label: const Text(
-                '添加',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              // 回填模式的语义是「把识别结果填进我那张表单」，不是「新建一条
+              // 物品」，所以文案跟着变。
+              label: Text(
+                widget.returnToCaller ? '填入表单' : '添加',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

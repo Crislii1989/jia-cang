@@ -110,7 +110,10 @@ GoRouter createAppRouter({String initialLocation = '/'}) {
       ),
       GoRoute(
         path: '/scan',
-        builder: (context, state) => _skinKeyed('scan', const ScanPage()),
+        // extra == true 表示「识别结果要回填给调用方」（从添加物品页进入），
+        // 否则识别完走原来的「跳去新建物品页」流程。
+        builder: (context, state) =>
+            _skinKeyed('scan', ScanPage(returnToCaller: state.extra == true)),
       ),
       GoRoute(
         path: '/detail/:id',

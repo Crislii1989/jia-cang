@@ -60,9 +60,8 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: configAsync.when(
-          loading: () => Center(
-            child: CircularProgressIndicator(color: AppColors.coral),
-          ),
+          loading: () =>
+              Center(child: CircularProgressIndicator(color: AppColors.coral)),
           error: (e, _) => Center(child: Text('加载失败：$e')),
           data: (config) {
             if (!_initialized) {
@@ -213,56 +212,54 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
             ),
           ),
           const SizedBox(height: 12),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 200),
-            child: SingleChildScrollView(
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: AiProviderType.values.map((type) {
-                  final meta = aiProviderMetas[type]!;
-                  final selected = type == _selectedProviderType;
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedProviderType = type;
-                        _editingModelId = null;
-                        _clearForm();
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: selected
-                            ? AppColors.coral.withValues(alpha: 0.12)
-                            : AppColors.background,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: selected
-                              ? AppColors.coral
-                              : AppColors.border.withValues(alpha: 0.3),
-                          width: selected ? 1.5 : 1,
-                        ),
-                      ),
-                      child: Text(
-                        meta.displayName,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: selected
-                              ? AppColors.coral
-                              : AppColors.textSecondary,
-                        ),
-                      ),
+          // 不套 maxHeight + 内滚：18 家供应商挤在 200pt 的窗口里只露得出 11 家，
+          // 又没有滚动提示，等于把后 7 家藏了起来。这一页外层本来就是 ListView，
+          // 直接让它自然展开即可。
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: AiProviderType.values.map((type) {
+              final meta = aiProviderMetas[type]!;
+              final selected = type == _selectedProviderType;
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedProviderType = type;
+                    _editingModelId = null;
+                    _clearForm();
+                  });
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? AppColors.coral.withValues(alpha: 0.12)
+                        : AppColors.background,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: selected
+                          ? AppColors.coral
+                          : AppColors.border.withValues(alpha: 0.3),
+                      width: selected ? 1.5 : 1,
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
+                  ),
+                  child: Text(
+                    meta.displayName,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: selected
+                          ? AppColors.coral
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -358,12 +355,14 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
               ),
             )
           else
-
-           ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 400),
-            child: SingleChildScrollView(
-              child: Column(
-                children: _savedConfigs.map(_buildSavedModelItem).toList()))),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 400),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: _savedConfigs.map(_buildSavedModelItem).toList(),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -704,9 +703,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
     final confirmed = await CenterSheetConfirm.show<bool>(
       context: context,
       title: '删除 ${config.effectiveDisplayName}？',
-      message: isActive
-          ? '该模型当前正在使用，删除后将自动切换到其他可用模型。'
-          : '删除后该模型配置将被永久清除。',
+      message: isActive ? '该模型当前正在使用，删除后将自动切换到其他可用模型。' : '删除后该模型配置将被永久清除。',
       confirmLabel: '删除',
       danger: true,
       result: true,
@@ -866,11 +863,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
             onTap: () => _launchUrl(meta.apiKeyHelpUrl),
             child: Row(
               children: [
-                Icon(
-                  Icons.open_in_new,
-                  size: 14,
-                  color: AppColors.coral,
-                ),
+                Icon(Icons.open_in_new, size: 14, color: AppColors.coral),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
@@ -939,10 +932,7 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: AppColors.coral,
-                width: 1.5,
-              ),
+              borderSide: BorderSide(color: AppColors.coral, width: 1.5),
             ),
           ),
         ),
@@ -1047,22 +1037,10 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
 
     setState(() => _saving = true);
     try {
-      final callConfig = AiCallConfig(
-        apiKey: _apiKeyController.text,
-        secretKey: _secretKeyController.text.isEmpty
-            ? null
-            : _secretKeyController.text,
-        modelName: _modelNameController.text.isEmpty
-            ? null
-            : _modelNameController.text,
-        baseUrl: _baseUrlController.text.isEmpty
-            ? null
-            : _baseUrlController.text,
-      );
-
-      final provider = AiProviderRegistry.instance.get(_selectedProviderType);
-      await provider.testConnection(callConfig);
-
+      // 保存 = 纯本地写入（SettingsDao + 敏感字段加密），**不联网**。
+      // 老实现要先 await provider.testConnection(...) 成功才肯落盘，于是离线、
+      // Key 填错一个字、供应商临时抽风时统统存不下来；而「能不能连上」本来就是
+      // **测试按钮**的职责，不该拦着用户保存。想验证连通性请点「测试连接」。
       await ref
           .read(aiConfigManagerProvider.notifier)
           .saveConfig(
@@ -1081,9 +1059,6 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
 
       if (!mounted) return;
       ToastUtils.show(context, '保存成功，敏感信息已清除');
-    } on AiException catch (e) {
-      if (!mounted) return;
-      ToastUtils.show(context, '连接失败，未保存：${e.message}');
     } catch (e) {
       if (!mounted) return;
       ToastUtils.show(context, '保存失败：$e');
@@ -1299,11 +1274,14 @@ class _AiSettingsPageState extends ConsumerState<AiSettingsPage> {
               ),
             )
           else
-             ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 200),
-            child: SingleChildScrollView(
-              child: Column(
-                children: _testLogs.map(_buildTestLogItem).toList()))),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: _testLogs.map(_buildTestLogItem).toList(),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide DatePickerTheme;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jia_cang/constants/app_colors.dart';
 import 'package:jia_cang/constants/app_dimensions.dart';
 import 'package:jia_cang/constants/design_metrics.dart';
@@ -28,17 +29,20 @@ class AddItemInitialValues {
   final String? category;
 
   /// AI 识别出的品牌：物品表已无品牌字段，这里只作为识别信息传递，
-  /// 预填时并入备注（见 `_prefillFromScanResult`），避免丢失识别结果。
+  /// 预填时并入备注（见 `_prefillFromValues`），避免丢失识别结果。
   final String? brand;
   final String? description;
   final String? photoPath;
 
   /// 预填收纳位置 —— 房间 id（物品直接存放于房间，不指定柜体时用）
   final String? preselectedRoomId;
+
   /// 预填收纳位置 —— 柜体 id（归属柜体，不指定格子时用）
   final String? preselectedCabinetId;
+
   /// 预填收纳位置 —— 格子 id（指定格子时用）
   final String? preselectedSlotId;
+
   /// 预填收纳位置 —— 显示标签（如 "卧室 / 床头柜"）
   final String? preselectedLocationLabel;
 
@@ -128,12 +132,13 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
     // 登记时间默认按系统时间录入（编辑模式会在 _prefillFromItem 里换成原值）
     _syncDateFields();
 
-    // 编辑模式：从数据库预填充；扫一扫：用识别结果预填充；其余新增模式：空白表单
+    // 编辑模式：从数据库预填充；带 initialValues 进入（扫一扫识别结果、
+    // 新建柜体后预填位置）：用传入值预填充；其余新增模式：空白表单
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_isEdit) {
         _prefillFromItem();
       } else if (widget.initialValues != null) {
-        _prefillFromScanResult();
+        _prefillFromValues(widget.initialValues!);
       }
     });
 
@@ -289,26 +294,41 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
     setState(() {});
   }
 
-  // ==================== 扫一扫预填充 ====================
-  void _prefillFromScanResult() {
-    final iv = widget.initialValues;
-    if (iv == null) return;
+  // ==================== AI 识别结果预填充 ====================
 
+  /// 把一份 [AddItemInitialValues] 填进当前表单。
+  ///
+  /// [replacePhotos] 决定照片怎么处理：
+  /// - `true`（默认；本页被新创建、表单还是空的）：用识别照片整体替换；
+  /// - `false`（用户在本页点「AI 识别」后回填）：**不清空**用户已经选好的
+  ///   照片，只在还没有这张照片时追加一条——用户填到一半的东西不能丢。
+  void _prefillFromValues(
+    AddItemInitialValues iv, {
+    bool replacePhotos = true,
+  }) {
     _nameController.text = iv.name;
     // 识别出的品牌信息没有独立字段可放了（品牌已被到期日取代），
     // 并入备注，避免用户辛苦识别的信息白白丢掉。
     if (iv.brand != null && iv.brand!.isNotEmpty) {
-      _noteController.text = '品牌：${iv.brand}';
+      final brandLine = '品牌：${iv.brand}';
+      _noteController.text = _noteController.text.isEmpty
+          ? brandLine
+          : '${_noteController.text}\n$brandLine';
     }
     if (iv.description != null && iv.description!.isNotEmpty) {
       _noteController.text = _noteController.text.isEmpty
           ? iv.description!
           : '${_noteController.text}\n${iv.description!}';
     }
-    if (iv.photoPath != null && iv.photoPath!.isNotEmpty) {
-      _photos
-        ..clear()
-        ..add(PhotoEntry(path: iv.photoPath!, status: PhotoStatus.success));
+    final photoPath = iv.photoPath;
+    if (photoPath != null && photoPath.isNotEmpty) {
+      if (replacePhotos) {
+        _photos
+          ..clear()
+          ..add(PhotoEntry(path: photoPath, status: PhotoStatus.success));
+      } else if (!_photos.any((p) => p.path == photoPath)) {
+        _photos.add(PhotoEntry(path: photoPath, status: PhotoStatus.success));
+      }
     }
     // 分类需匹配数据库分类（异步），暂存标签等待 provider 就绪后匹配
     if (iv.category != null && iv.category!.isNotEmpty) {
@@ -326,6 +346,22 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
       _tryMatchPendingLocation();
     }
     setState(() {});
+  }
+
+  /// 在本页直接发起一次 AI 识别，把结果回填到**这张**表单。
+  ///
+  /// 与「我的 → AI 识别」的区别：那条路识别完是另开一张新的新建物品页；
+  /// 这条路用 `extra: true` 告诉扫一扫页「结果要还给我」，识别完 pop 回来，
+  /// 直接填进用户正在编辑的表单，不会丢掉已经填好的内容。
+  Future<void> _openScanForRecognition() async {
+    if (_isPicking) return;
+    final values = await context.push<AddItemInitialValues>(
+      '/scan',
+      extra: true,
+    );
+    if (!mounted || values == null) return;
+    _prefillFromValues(values, replacePhotos: false);
+    ToastUtils.show(context, '已填入识别结果，请确认后保存');
   }
 
   /// 将预填的 roomId/cabinetId/slotId 匹配到 storageLocationTree 节点。
@@ -506,10 +542,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
               ),
             ),
             ListTile(
-              leading: Icon(
-                Icons.photo_library,
-                color: AppColors.btnTextFg,
-              ),
+              leading: Icon(Icons.photo_library, color: AppColors.btnTextFg),
               title: const Text('从相册选择'),
               onTap: () {
                 Navigator.pop(ctx);
@@ -517,10 +550,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
               },
             ),
             ListTile(
-              leading: Icon(
-                Icons.camera_alt,
-                color: AppColors.btnTextFg,
-              ),
+              leading: Icon(Icons.camera_alt, color: AppColors.btnTextFg),
               title: const Text('拍照'),
               onTap: () {
                 Navigator.pop(ctx);
@@ -875,6 +905,8 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
   Widget _buildPhotoSection(double k) {
     final canAddMore = _photos.length < PhotoService.maxPhotos;
     final tileSize = AppDimensions.photoTileSize * k;
+    // 照片缩略图 + 可能的「拍照 / 相册」块
+    final tileCount = _photos.length + (canAddMore ? 1 : 0);
 
     Widget addTile() {
       return GestureDetector(
@@ -884,7 +916,9 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
           height: tileSize,
           decoration: BoxDecoration(
             color: AppColors.photoAddBg,
-            borderRadius: BorderRadius.circular(AppDimensions.photoTileRadius * k),
+            borderRadius: BorderRadius.circular(
+              AppDimensions.photoTileRadius * k,
+            ),
             border: Border.all(
               color: AppColors.photoAddBorder,
               width: 1.5,
@@ -922,6 +956,51 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
       );
     }
 
+    /// 拍照区旁边的「AI 识别」入口。
+    ///
+    /// 用户不想手打时从这里直接进扫一扫：拍/选一张图 → AI 识别 →
+    /// 结果 pop 回来填进**这张**表单（见 [_openScanForRecognition]）。
+    /// 和「拍照 / 相册」并排放在同一个横向条里，比藏在「我的」里好找。
+    Widget scanTile() {
+      return GestureDetector(
+        onTap: _openScanForRecognition,
+        child: Container(
+          width: 110 * k,
+          height: tileSize,
+          decoration: BoxDecoration(
+            color: AppColors.coralSoft,
+            borderRadius: BorderRadius.circular(
+              AppDimensions.photoTileRadius * k,
+            ),
+            border: Border.all(
+              color: AppColors.coral,
+              width: 1.5,
+              strokeAlign: BorderSide.strokeAlignInside,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.auto_awesome,
+                size: 18 * k,
+                color: AppColors.coralDeep,
+              ),
+              SizedBox(height: 3 * k),
+              Text(
+                'AI 识别',
+                style: TextStyle(
+                  fontSize: 11 * k,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.coralDeep,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Container(
       padding: EdgeInsets.all(10 * k),
       decoration: BoxDecoration(
@@ -929,7 +1008,11 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
         borderRadius: BorderRadius.circular(16 * k),
         border: Border.all(color: AppColors.blushLine),
         boxShadow: [
-          BoxShadow(color: AppColors.cardShadow, blurRadius: 10, offset: Offset(0, 2)),
+          BoxShadow(
+            color: AppColors.cardShadow,
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
       child: SizedBox(
@@ -937,9 +1020,12 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
         child: ListView.separated(
           scrollDirection: Axis.horizontal,
           padding: EdgeInsets.zero,
-          itemCount: _photos.length + (canAddMore ? 1 : 0),
+          // 末尾固定多一格「AI 识别」入口：照片满了也留着，
+          // 识别与拍照是两条独立的路。
+          itemCount: tileCount + 1,
           separatorBuilder: (_, __) => SizedBox(width: 9 * k),
           itemBuilder: (context, index) {
+            if (index == tileCount) return scanTile();
             if (index == _photos.length) return addTile();
             // 照片缩略图
             final photo = _photos[index];
@@ -1100,10 +1186,7 @@ class _AddItemPageState extends ConsumerState<AddItemPage>
             const SizedBox(height: 6),
             Text(
               _successSub,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
             const SizedBox(height: 24),
             GestureDetector(
@@ -1177,7 +1260,9 @@ class _FormRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        constraints: BoxConstraints(minHeight: AppDimensions.formRowMinHeight * k),
+        constraints: BoxConstraints(
+          minHeight: AppDimensions.formRowMinHeight * k,
+        ),
         padding: EdgeInsets.symmetric(
           horizontal: AppDimensions.formRowPadding * k,
           vertical: 8 * k,
@@ -1204,7 +1289,11 @@ class _FormRow extends StatelessWidget {
               GestureDetector(
                 onTap: onClear,
                 behavior: HitTestBehavior.opaque,
-                child: Icon(Icons.cancel, size: 16 * k, color: AppColors.textHint),
+                child: Icon(
+                  Icons.cancel,
+                  size: 16 * k,
+                  color: AppColors.textHint,
+                ),
               ),
             ],
             if (showChevron) ...[
@@ -1240,7 +1329,10 @@ Widget _formLabel(String text, bool required, double k) {
         ),
         if (required) ...[
           SizedBox(width: 2 * k),
-          Text('*', style: TextStyle(fontSize: 12 * k, color: AppColors.danger)),
+          Text(
+            '*',
+            style: TextStyle(fontSize: 12 * k, color: AppColors.danger),
+          ),
         ],
       ],
     ),
@@ -1266,7 +1358,9 @@ class _FormTextRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(minHeight: AppDimensions.formRowMinHeight * k),
+      constraints: BoxConstraints(
+        minHeight: AppDimensions.formRowMinHeight * k,
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: AppDimensions.formRowPadding * k,
         vertical: 6 * k,
@@ -1340,10 +1434,7 @@ class _FormNoteRow extends StatelessWidget {
               maxLines: null,
               expands: true,
               textAlignVertical: TextAlignVertical.top,
-              style: TextStyle(
-                fontSize: 13 * k,
-                color: AppColors.textPrimary,
-              ),
+              style: TextStyle(fontSize: 13 * k, color: AppColors.textPrimary),
               decoration: InputDecoration(
                 isDense: true,
                 hintText: placeholder,
@@ -1440,7 +1531,9 @@ class _PickerSheet extends StatelessWidget {
                           : AppColors.background,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: isSelected ? AppColors.coral : Colors.transparent,
+                        color: isSelected
+                            ? AppColors.coral
+                            : Colors.transparent,
                         width: 1.5,
                       ),
                     ),
@@ -1547,9 +1640,7 @@ class _LocationPickerSheet extends StatelessWidget {
                 ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(40),
-                      child: CircularProgressIndicator(
-                        color: AppColors.coral,
-                      ),
+                      child: CircularProgressIndicator(color: AppColors.coral),
                     ),
                   )
                 : nodes.isEmpty
@@ -1650,10 +1741,7 @@ class _LocationTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     node.subLabel,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textHint,
-                    ),
+                    style: TextStyle(fontSize: 11, color: AppColors.textHint),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1662,11 +1750,7 @@ class _LocationTile extends StatelessWidget {
             ),
             // 选中标记
             if (isSelected)
-              Icon(
-                Icons.check_circle,
-                color: AppColors.coral,
-                size: 20,
-              ),
+              Icon(Icons.check_circle, color: AppColors.coral, size: 20),
           ],
         ),
       ),
@@ -1785,9 +1869,7 @@ class _PhotoThumb extends StatelessWidget {
               right: 0,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.btnPrimaryBg,
-                ),
+                decoration: BoxDecoration(color: AppColors.btnPrimaryBg),
                 child: Text(
                   '封面',
                   textAlign: TextAlign.center,

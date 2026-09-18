@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import '../photo_service.dart';
 import 'ai_models.dart';
 import 'ai_provider_type.dart';
 
@@ -44,10 +45,37 @@ abstract class AiProvider {
 
   // ============ 共享工具方法 ============
 
-  /// 读取图片并 base64 编码
+  /// 读取图片并 base64 编码。
+  ///
+  /// [imagePath] 有**两种形态**——照片地址本身就是双形态的，判定见
+  /// `services/photo_service.dart` 的 [isInlinePhoto]：
+  /// - 真机：应用文档目录下的文件绝对路径 → 用 `dart:io` 读文件；
+  /// - Web：`data:image/<mime>;base64,<data>` 内联地址 → 直接切出 base64 段。
+  ///
+  /// 老实现一律 `File(imagePath)`：Web 上没有可用文件系统，内联地址会被当成
+  /// 路径去查存在性，必然抛「图片文件不存在」，于是**所有供应商的 Web 识别
+  /// 都死在这一步**。分流放在这里，6 个适配器共用同一方法即可一起修好。
   Future<({String base64, String mimeType, int bytesLength})> readImageAsBase64(
     String imagePath,
   ) async {
+    if (isInlinePhoto(imagePath)) {
+      // data:image/jpeg;base64,<data> —— mime 在冒号与分号之间，数据在逗号之后
+      final comma = imagePath.indexOf(',');
+      if (comma < 0) {
+        throw AiException('图片数据格式不正确', providerId: type.name);
+      }
+      final header = imagePath.substring(0, comma);
+      final payload = imagePath.substring(comma + 1);
+      final semicolon = header.indexOf(';');
+      return (
+        base64: payload,
+        mimeType: semicolon > 0
+            ? header.substring(header.indexOf(':') + 1, semicolon)
+            : 'image/jpeg',
+        bytesLength: decodeInlinePhoto(imagePath).length,
+      );
+    }
+
     final file = File(imagePath);
     if (!await file.exists()) {
       throw AiException('图片文件不存在', providerId: type.name);

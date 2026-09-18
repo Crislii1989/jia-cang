@@ -76,6 +76,14 @@ class FeatureMenuSection extends ConsumerWidget {
                 title: '数据备份与恢复',
                 onTap: () => context.push('/data-backup'),
               ),
+              // 识别功能的显式入口。旧入口只在个人中心右上角、且已被隐藏，
+              // 结果整条 `/scan` 成了没人能走到的孤儿路由（配好模型也没处用）。
+              // 这里补一个常规入口，与下面的「AI 识别设置」相邻。
+              _Cell(
+                emoji: '📷',
+                title: 'AI 识别',
+                onTap: () => context.push('/scan'),
+              ),
               _Cell(
                 emoji: '🤖',
                 title: 'AI 识别设置',
@@ -127,8 +135,7 @@ class _CellGroup extends StatelessWidget {
       child: Column(
         children: [
           for (int i = 0; i < cells.length; i++) ...[
-            if (i > 0)
-              Container(height: 1, color: AppColors.cellDivider),
+            if (i > 0) Container(height: 1, color: AppColors.cellDivider),
             cells[i],
           ],
         ],
@@ -202,11 +209,7 @@ class _Cell extends StatelessWidget {
               ),
             ],
             SizedBox(width: 4 * k),
-            Icon(
-              Icons.chevron_right,
-              size: 14 * k,
-              color: AppColors.blushInk3,
-            ),
+            Icon(Icons.chevron_right, size: 14 * k, color: AppColors.blushInk3),
           ],
         ),
       ),
